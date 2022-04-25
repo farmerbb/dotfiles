@@ -149,7 +149,8 @@ echo "(paste key here)" > ~/.ssh/authorized_keys
 * <s>*Fresh app install:* Three-dot menu → Settings → check "Start on Boot" and "Start on Open"</s>
 
 * <s>*Existing app install:* Three-dot menu → Reset Keys</s>
- 
+
+
 <s>`ssh 100.115.92.14 -p 2222`</s>
 
 <s>`echo "(paste key here)" > authorized_keys`</s>
