@@ -1,0 +1,23 @@
+#!/bin/bash
+
+for dir in $(echo $XDG_DATA_DIRS | sed "s/:/\n/g") ; do
+  sudo mv $dir/applications $dir/applications2 >/dev/null 2>&1
+done
+
+sudo mkdir -p /usr/share/applications
+sudo touch /usr/share/applications/.garcon_trigger
+
+TIME=$1
+[[ -z $TIME ]] && TIME=5
+
+echo "Sleeping for $TIME seconds while garcon does its thing..."
+sleep $TIME
+echo "Done sleeping."
+
+sudo rm -r /usr/share/applications
+
+for dir in $(echo $XDG_DATA_DIRS | sed "s/:/\n/g") ; do
+  sudo mv $dir/applications2 $dir/applications >/dev/null 2>&1
+done
+
+sudo touch /usr/share/applications/.garcon_trigger

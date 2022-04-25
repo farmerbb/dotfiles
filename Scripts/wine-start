@@ -1,0 +1,53 @@
+#!/bin/bash
+
+cd ~/Other\ Stuff/Shortcuts
+
+if [[ $# -eq 0 ]] ; then
+  for dir in */ ; do
+    echo -e "\033[1m$(echo $dir | sed "s#/##g"):\033[0m"
+    ls "$dir" | sed "s/.lnk//g" | sed "s/:/:\n/g" | column
+    echo
+  done
+
+  BASENAME=$(basename "$0")
+  echo -e "\033[1mUsage:\033[0m $BASENAME <name of app>"
+  exit 1
+fi
+
+LNK_PATH=$(find . -iname "$*.lnk")
+
+if [[ -z "$LNK_PATH" ]] ; then
+  echo Unable to find app \"$*\".
+  exit 1
+fi
+
+if [[ -z $(which lnkinfo) ]] ; then
+  sudo apt-get update
+  sudo apt-get install -y liblnk-utils
+fi
+
+LOCAL_PATH=$(lnkinfo "$LNK_PATH" | grep "Local path")
+LOCAL_PATH=$(echo $LOCAL_PATH | sed "s/Local path : //g")
+
+WORKING_DIR=$(lnkinfo "$LNK_PATH" | grep "Working directory")
+WORKING_DIR=$(echo $WORKING_DIR | sed "s/Working directory : //g")
+
+SH_PATH=$(echo $LOCAL_PATH | sed -e "s#D:#$(echo ~)#g" -e "s#\\\#/#g")
+SH_PATH="$(echo ${SH_PATH%.*}.sh)"
+
+if [[ -f "$SH_PATH" ]] ; then
+  echo Running custom shell script for \"$*\".
+  bash "$SH_PATH"
+else
+  if [[ $0 == *winebox* ]] ; then
+    winebox start /d "$WORKING_DIR" "$LOCAL_PATH"
+  else
+    wine start /d "$WORKING_DIR" "$LOCAL_PATH"
+  fi
+
+  if [[ $? -eq 0 ]] ; then
+    echo Starting app \"$*\".
+  else
+    echo Map $(echo ~) to drive D: in winecfg and try again.
+  fi
+fi

@@ -1,0 +1,148 @@
+NOTE: These instructions are tested on Ubuntu 21.10 (desktop, without proprietary drivers)
+
+-------------------------------- VFIO Setup --------------------------------
+
+Kernel parameters (add to /etc/default/grub, GRUB_CMDLINE_LINUX_DEFAULT. Apply with `sudo update-grub`):
+
+  quiet intel_iommu=on iommu=pt video=efifb:off vfio-pci.ids=10de:2504,10de:228e default_hugepagesz=1G hugepagesz=1G hugepages=13 isolcpus=1-3,5-7 nohz_full=1-3,5-7 rcu_nocbs=1-3,5-7
+
+
+Additional kernel parameters (disables Spectre / Meltdown mitigations):
+
+  noibrs noibpb nopti nospectre_v2 nospectre_v1 l1tf=off nospec_store_bypass_disable no_stf_barrier mds=off tsx=on tsx_async_abort=off mitigations=off
+
+
+Blacklist Nouveau driver (add to /etc/modprobe.d/blacklist.conf):
+
+  blacklist nouveau
+  options nouveau modeset-0
+
+
+Allow passthrough of SCSI devices (add to /etc/apparmor.d/abstractions/libvirt-qemu):
+
+  /dev/sg* rwk,
+
+
+Create bridged network connection for virt-manager:
+NOTE: Will disconnect and reconnect your network connection under a different IP address.
+Put the following into a shell script and either daemonize it or run it in a desktop terminal (not ssh)
+
+  for i in $(nmcli -t -f UUID con); do
+    sudo nmcli connection delete uuid $i
+  done
+
+  sudo nmcli con add type bridge ifname br0 con-name br0 stp no ipv4.dns "8.8.8.8 8.8.4.4"
+  sudo nmcli con add type bridge-slave ifname enp3s0 master br0
+  sudo nmcli con up br0
+
+-------------------------------- Info Gathering / Troubleshooting --------------------------------
+
+Determine IOMMU groups (note: must add "intel_iommu=on iommu=pt" kernel parameters first):
+
+  shopt -s nullglob
+  for g in `find /sys/kernel/iommu_groups/* -maxdepth 0 -type d | sort -V`; do
+    echo "IOMMU Group ${g##*/}:"
+    for d in $g/devices/*; do
+      echo -e "\t$(lspci -nns ${d##*/})"
+    done;
+  done;
+
+
+Check that vfio-pci is using the graphics card:
+
+  sudo dmesg | grep -i vfio
+  lspci -nnk -d 10de:2504
+  lspci -nnk -d 10de:228e
+
+
+Check host CPU topology (for CPU pinning):
+
+  lscpu -e
+
+
+Check hugepages:
+
+  sudo apt install libhugetlbfs-bin
+  hugeadm --pool-list
+  
+  
+Check list of allowed CPUs (for host):
+
+  cat /proc/$$/status | grep Cpus_allowed_list
+
+
+Check host SCSI devices:
+
+  sudo apt install lsscsi
+  lsscsi
+
+-------------------------------- Miscellaneous Tips --------------------------------
+
+If GPU successfully passes through to VM, but screen remains blank:
+
+  * Temporarily add QXL video + Spice display to libvirt xml
+  
+  * Boot VM, open Device Manager, and check display adapter for Code 43
+  
+  * Download and install latest NVIDIA drivers (version >= 465)
+  
+  * After drivers finish installing, shutdown VM and remove extra video + display
+
+
+Use TSC timer (supposed to reduce stutters):
+
+  * Add <feature policy='require' name='invtsc'/> into the <cpu> section of the libvirt xml
+
+  * Inside the Windows VM, run the following in an admin command prompt, then reboot:
+
+      bcdedit /set useplatformclock true
+
+  * To undo the timer change, run the following in an admin command prompt, then reboot:
+  
+      bcdedit /deletevalue useplatformclock
+
+  * To check timer frequency, run the following inside PowerShell:
+
+      [System.Diagnostics.Stopwatch]::Frequency
+  
+    Value of 10000000 means it is using the Hyper-V timer.
+    Value of your CPU frequency, bitshifted << 10, means it is using the TSC timer.
+
+
+To start/stop the VM when the host starts/stops:
+
+  * Open the win11-vfio VM in virt-manager, go to Boot Options and check "Start virtual machine on host boot up"
+
+  * Copy the qemu script from the hooks-vfio directory into /etc/libvirt/hooks
+
+  * Mark the script as executable, then run `sudo service libvirtd restart`
+
+  * To temporarily disable the shutdown script, run `touch /tmp/vm-maintenance`
+
+
+To auto-mount D: drive on host when the VM starts:
+
+  * Install WSL1 inside the VM, and set up the WSL2 startup task in Task Scheduler
+
+  * On both host and guest, set up passwordless-sudo, install ssh, and run ssh-keygen
+  
+  * Copy contents of guest's ~/.ssh/id_rsa.pub into host's ~/.ssh/authorized_keys
+
+  * On the host, create the ~/.sharelogin file (see top of WSL2 mounts script)
+
+  * On the guest, add the following line to the crontab:
+
+    @reboot ssh farmerbb@192.168.86.23 "sudo mount -t cifs -o user=Braden,credentials=/home/farmerbb/.sharelogin,uid=farmerbb,gid=farmerbb //192.168.86.24/D /mnt/files"
+
+
+Commands for resizing a qcow2 disk image (run as root):
+
+  qemu-img resize /var/lib/libvirt/images/win11-vfio.qcow2 +160G
+
+  modprobe nbd max_part=8
+  qemu-nbd --connect=/dev/nbd0 /var/lib/libvirt/images/win11-vfio.qcow2
+
+  gparted /dev/nbd0
+
+  qemu-nbd --disconnect /dev/nbd0
+  rmmod nbd

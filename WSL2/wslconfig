@@ -1,0 +1,3 @@
+[wsl2]
+memory=12GB
+swap=12GB

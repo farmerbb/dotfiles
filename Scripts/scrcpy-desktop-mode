@@ -1,0 +1,68 @@
+#!/bin/bash
+
+show-help() {
+  BASENAME=$(basename "$0")
+  echo "Usage: $BASENAME [device-name] [optional-resolution] [optional-density]"
+  exit 1
+}
+
+[[ $1 = "-h" || $1 = "--help" ]] && show-help
+
+for i in adb scrcpy bc; do
+  which $i >/dev/null 2>&1
+  [[ $? -ne 0 ]] && \
+    echo "Please download $i and add it into your path before running this script." && \
+    exit 1
+done
+
+if [[ -z $1 ]]; then
+  [[ $(adb devices | wc -l) != 3 ]] && \
+    echo "Please connect an Android device via adb before running this script." && \
+    echo "Ensure that only one Android device is connected, or specify the device" && \
+    echo "name as a parameter when running this script." && \
+    echo && \
+    adb devices && \
+    show-help
+else
+  adb connect $1 >/dev/null 2>&1
+  DASH_S="-s"
+  DEVICE=$1
+
+  adb devices | grep -w $DEVICE > /dev/null || show-help
+fi
+
+[[ $(adb $DASH_S $DEVICE shell getprop ro.build.version.sdk) < 29 ]] && \
+  echo "Sorry, desktop mode is only supported on Android 10 and up." && \
+  exit 1
+
+[[ $(adb $DASH_S $DEVICE shell settings get global enable_freeform_support) -ne 1 ]] && \
+  adb $DASH_S $DEVICE shell settings put global enable_freeform_support 1
+
+[[ $(adb $DASH_S $DEVICE shell settings get global force_desktop_mode_on_external_displays) -ne 1 ]] && \
+  adb $DASH_S $DEVICE shell settings put global force_desktop_mode_on_external_displays 1 && \
+  echo "Desktop mode enabled. Please reboot your device, then re-run this script." && \
+  exit 1
+
+if [[ -z $2 ]]; then
+  RESOLUTION=$(xdpyinfo | grep dimensions | cut -d' ' -f 7)
+else
+  RESOLUTION=$2
+fi
+
+if [[ -z $3 ]]; then
+  DENSITY=$(echo "$(xdpyinfo | grep resolution | cut -d' ' -f 7 | cut -d'x' -f 1)*1.6666667" | bc | cut -d'.' -f 1)
+else
+  DENSITY=$3
+fi
+
+adb $DASH_S $DEVICE shell settings put global overlay_display_devices $RESOLUTION/$DENSITY
+
+sleep 3 && \
+  echo && \
+  echo "Be sure to close the scrcpy window first before disconnecting your device." && \
+  echo "Press ALT+F inside the scrcpy window to toggle fullscreen." &
+
+DISPLAY_ID=$(scrcpy $DASH_S $DEVICE -V error --display 65535 | grep "\-\-display" | tail -n1 | cut -d' ' -f 9)
+scrcpy $DASH_S $DEVICE --display $DISPLAY_ID
+
+adb $DASH_S $DEVICE shell settings delete global overlay_display_devices >/dev/null 2>&1

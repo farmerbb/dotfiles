@@ -1,0 +1,28 @@
+------------------ Remote Machine -----------------------------
+
+First, ensure that the "emulator" and "platform-tools" directories 
+from the Android SDK are set in the "Path" environment variable.
+
+To start the headless emulator:
+
+    emulator @name_of_avd -gpu host -no-window &
+
+To forward the adb port onto the LAN:
+
+    adb forward tcp:1234 tcp:5555
+    adb tcpip 5555
+
+    # Windows
+    trivial_portforward.exe 1234 127.0.0.1 5555
+
+    # Mac / Linux
+    ssh -Nfg -L 1234:localhost:5555 localhost
+
+------------------- Local Machine -----------------------------
+
+To connect to the emulator instance:
+
+    adb connect <LAN IP>:1234
+
+    # Change the -m<height> value to tweak performance
+    scrcpy -m1024 &

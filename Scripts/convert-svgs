@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [[ -z $(which rsvg-convert) ]] ; then
+  sudo apt-get update
+  sudo apt-get install -y librsvg2-bin
+fi
+
+for dir in $(echo $XDG_DATA_DIRS | sed "s/:/\n/g") ; do
+  for svg in $dir/icons/*/**/apps/*.svg ; do
+    if [[ -f $svg && ! -L $svg ]] ; then
+      echo "Converting $svg..."
+      PNG=$(echo $svg | sed "s/.svg/.png/g")
+      sudo rsvg-convert $svg -o $PNG && sudo rm $svg
+      [[ ! -f $svg ]] && sudo ln -s $PNG $svg
+    fi
+  done
+done

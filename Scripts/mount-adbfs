@@ -1,0 +1,23 @@
+#!/bin/bash
+
+PATH=~/Android/Sdk/platform-tools:/usr/local/bin:$PATH
+
+for i in ~/adbfs/*; do
+  mountpoint -q "$i" || rm -rf "$i"
+done
+
+if [[ ! -z $(pgrep -x adb) ]]; then
+  DEVICE_LIST=$($(which adb) devices | tail -n +2 | column -t | cut -d' ' -f 1 | cut -d':' -f 1)
+  for i in $DEVICE_LIST; do
+    mountpoint -q ~/adbfs/$i || \
+    mkdir -p ~/adbfs/$i && \
+    ANDROID_SERIAL=$i adbfs ~/adbfs/$i
+  done
+
+  for i in ~/adbfs/*; do
+    printf '%s\n' "${DEVICE_LIST[@]}" | grep -q -P "^$(basename $i)$" || \
+    sudo umount "$i"
+  done
+elif [[ ! -z $(pgrep -x adbfs) ]]; then
+  sudo pkill adbfs
+fi

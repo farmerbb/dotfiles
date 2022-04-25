@@ -1,0 +1,56 @@
+#!/bin/bash
+
+chrome-os-install() {
+  download-android-studio $1 cros
+
+  sudo dpkg -i android-studio-*-cros.deb
+  fix-android-studio
+
+  rm android-studio-*-cros.deb
+}
+
+linux-install() {
+  download-android-studio $1 linux
+
+  sudo rm -rf /opt/android-studio
+  sudo tar xzf android-studio-*-linux.tar.gz -C /opt
+
+  rm android-studio-*-linux.tar.gz
+}
+
+download-android-studio() {
+  BASE_URL="https://developer.android.com/studio"
+  IFS=$'\n' URLS=($((curl $BASE_URL; curl $BASE_URL/preview) | grep "redirector.gvt1.com" | grep $2 | cut -d'"' -f2 | sort -u))
+
+  [[ $1 = stable ]] && wget "${URLS[0]}"
+  [[ $1 = beta ]] && wget "${URLS[1]}"
+  [[ $1 = canary ]] && wget "${URLS[2]}"
+}
+
+print-usage() {
+  BASENAME=$(basename "$0")
+  echo "Usage: $BASENAME <channel>"
+  echo "where <channel> is one of: stable, beta, canary"
+  exit 1
+}
+
+[[ $# -ne 1 ]] && print-usage
+[[ $1 != stable && $1 != beta && $1 != canary ]] && print-usage
+
+for i in curl wget; do
+  if [[ -z $(which $i) ]] ; then
+    sudo apt-get update
+    sudo apt-get install -y $i
+  fi
+done
+
+STUDIO_PID=$(pgrep -f '.*com.intellij.idea.Main.*')
+if [[ ! -z $STUDIO_PID ]]; then
+  kill $STUDIO_PID
+  while $(kill -0 $STUDIO_PID 2>/dev/null); do
+    sleep 1
+  done
+fi
+
+[[ $HOSTNAME = penguin ]] && chrome-os-install $1
+[[ $HOSTNAME != penguin ]] && linux-install $1

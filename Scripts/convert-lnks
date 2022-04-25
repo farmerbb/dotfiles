@@ -1,0 +1,89 @@
+#!/bin/bash
+
+if [[ -z $(which lnkinfo) ]] ; then
+  sudo apt-get update
+  sudo apt-get install -y liblnk-utils
+fi
+
+if [[ -z $(which icotool) ]] ; then
+  sudo apt-get update
+  sudo apt-get install -y icoutils
+fi
+
+CONVERT_DIR=~/.converted-lnks
+ICON_DIR=~/.local/share/icons/converted-lnks
+ICON_BAT=$CONVERT_DIR/icons.bat
+INDEX=0
+
+rm -rf $CONVERT_DIR
+rm -rf $ICON_DIR
+mkdir -p $CONVERT_DIR
+mkdir -p $ICON_DIR
+
+sudo rm -rf /usr/share/applications/_*
+LNK_LIST=$(find ~/Other\ Stuff/Shortcuts/ -name *.lnk | sort -t / -k 7)
+echo '@echo off' >> $ICON_BAT
+
+while IFS= read -r lnk; do
+  ((INDEX+=1))
+  BASENAME=$(basename "$lnk" | sed "s/.lnk//g")
+  OUTPUT=${CONVERT_DIR}/_${INDEX}_${BASENAME}.desktop
+  ICON=${ICON_DIR}/_${INDEX}_${BASENAME}.png
+
+  echo "Converting icon for $BASENAME..."
+
+  ICON_LOCATION=$(lnkinfo "$lnk" | grep "Icon location")
+  if [[ -z $ICON_LOCATION ]] ; then
+    ICON_LOCATION=$(lnkinfo "$lnk" | grep "Local path")
+    ICON_LOCATION=$(echo $ICON_LOCATION | sed -e "s/Local path : //g" -e "s#D:#$(echo ~)#g" -e "s#\\\#/#g")
+  else
+    ICON_LOCATION=$(echo $ICON_LOCATION | sed -e "s/Icon location : //g" -e "s#D:#$(echo ~)#g" -e "s#\\\#/#g")
+  fi
+
+  if [[ "${ICON_LOCATION,,}" != *.ico ]] ; then
+    ARGS=$(wrestool -l -t 14 "$ICON_LOCATION" | head -n 1 | cut -d'[' -f 1 | sed "s/'//g")
+    wrestool -x $ARGS -o "$CONVERT_DIR/output.ico" "$ICON_LOCATION" >/dev/null 2>&1
+    ICON_LOCATION=$CONVERT_DIR/output.ico
+  fi
+
+  icotool -x -o "$CONVERT_DIR" "$ICON_LOCATION" >/dev/null 2>&1
+  rm -f "$CONVERT_DIR/output.ico"
+
+  ls $CONVERT_DIR/*.png >/dev/null 2>&1
+  if [[ $? -ne 0 ]] ; then
+    WIN_PATH=$(echo "$lnk" | sed -e "s#$(echo ~)#D:#g" -e "s#/#\\\#g")
+    WIN_ICON=$(echo "$ICON" | sed -e "s#$(echo ~)#D:#g" -e "s#/#\\\#g")
+    echo "echo Converting icon for $(echo $BASENAME | sed "s/\&/and/g")..." >> $ICON_BAT
+    echo "winemenubuilder -t \"${WIN_PATH}\" \"${WIN_ICON}\"" >> $ICON_BAT
+  else
+    mv $(ls -1S $CONVERT_DIR/*.png | head -n 1) "$ICON"
+    rm -f $CONVERT_DIR/*.png
+  fi
+
+  DESCRIPTION=$(lnkinfo "$lnk" | grep "Description")
+  DESCRIPTION=$(echo $DESCRIPTION | sed -e "s/Description : //g")
+
+  DISPLAY_NAME=$BASENAME
+  [[ $DESCRIPTION = "duplicate" ]] && DISPLAY_NAME="$DISPLAY_NAME (Wine)"
+
+  WINE_CMD=wine
+  [[ $DESCRIPTION = "winebox" ]] && WINE_CMD=winebox
+  [[ $DESCRIPTION = "winebox rotate" ]] && WINE_CMD="SCREEN=640x480@270x16 winebox"
+
+  echo '[Desktop Entry]' >> "$OUTPUT"
+  echo "Name=$DISPLAY_NAME" >> "$OUTPUT"
+  echo "Exec=bash -i -c \"$WINE_CMD-start $BASENAME\"" >> "$OUTPUT"
+  echo 'Type=Application' >> "$OUTPUT"
+  echo "Icon=$ICON" >> "$OUTPUT"
+done <<< "$LNK_LIST"
+
+echo "Preparing to convert icons (second pass)..."
+/usr/bin/wine cmd /c $(echo "$ICON_BAT" | sed -e "s#$(echo ~)#D:#g" -e "s#/#\\\#g")
+
+echo "Installing desktop files..."
+for file in ${CONVERT_DIR}/*.desktop; do
+  sudo desktop-file-install "$file"
+done
+
+rm -rf $CONVERT_DIR
+sudo touch /usr/share/applications/.garcon_trigger

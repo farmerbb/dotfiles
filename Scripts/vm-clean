@@ -1,0 +1,9 @@
+#!/bin/bash
+
+for i in $(sudo ls -1 /var/lib/libvirt/images); do
+  [[ -z $(pgrep -a qemu | grep $i) ]] && \
+  sudo virt-sparsify --in-place /var/lib/libvirt/images/$i
+  sudo btrfs fi defrag -rf /var/lib/libvirt/images/$i
+done
+
+sudo rm -rf /var/tmp/.guestfs-0

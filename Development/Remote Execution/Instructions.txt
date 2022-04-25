@@ -1,0 +1,77 @@
+Tools for remote sync and execution:
+
+- Mainframer (general-purpose)
+- Mirakle (Android-specific)
+
+--------------------------------------------------------------------------------
+
+Prerequisites:
+
+- Make sure rsync is installed on both machines:
+
+    sudo apt install rsync
+
+- Make sure the remote machine has the local machine's public SSH key:
+
+    # Local
+    cat ~/.ssh/id_rsa.pub
+
+    # Remote
+    echo "<contents of id_rsa.pub>" >> ~/.ssh/authorized_keys
+
+- In the remote machine's ~/.bashrc file, comment out any logic for handling
+  non-interactive shells, such as the following:
+
+    # If not running interactively, don't do anything
+    case $- in
+        *i*) ;;
+          *) return;;
+    esac
+
+- Make sure the local machine has an ~/.ssh/config file set up with the following:
+
+    Host <name of host>
+      User <name of user>
+      HostName <ip address>
+      Port <port number>
+      IdentityFile ~/.ssh/id_rsa
+      PreferredAuthentications publickey
+      ControlMaster auto
+      ControlPath /tmp/%r@%h:%p
+      ControlPersist 1h
+
+--------------------------------------------------------------------------------
+
+Mainframer setup:
+
+- Create a ~/.gitignore file with the following line:
+
+    .mainframer
+
+- Make sure this command has been run at least once:
+
+    git config --global core.excludesfile ~/.gitignore
+
+- Create a .mainframer folder in your project directory
+- Create a .mainframer/config file with the following line:
+
+    remote_machine=<name of host>
+
+- Create a .mainframer/ignore file containing file/folder paths to ignore (similar syntax to gitignore)
+- Download Mainframer from https://github.com/buildfoundation/mainframer/releases/download/v2.1.0/mainframer.sh
+- Place mainframer.sh somewhere in your PATH (for example, /usr/local/bin)
+- Run the following command from the project directory:
+
+    mainframer.sh "<remote command>"
+
+- If no remote command is needed, simply execute:
+
+    mainframer.sh true
+
+--------------------------------------------------------------------------------
+
+Mirakle setup:
+
+- Place the init.d folder inside of your ~/.gradle folder
+- Create a ~/.gradle/init.d/mirakle_paths.txt file containing names of projects to build with Mirakle
+- Do a Gradle build as normal. Mirakle will automatically build and run the app.

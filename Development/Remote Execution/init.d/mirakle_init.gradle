@@ -1,0 +1,27 @@
+import java.nio.file.Files
+
+initscript {
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+      classpath 'io.github.adambl4:mirakle:1.4.3'
+  }
+}
+
+def paths = Files.readAllLines(file("mirakle_paths.txt").toPath())
+def filename = startParameter.currentDir.toPath().getFileName().toString()
+
+if(paths.contains(filename)
+    && !startParameter.taskNames.contains("useLatestVersions") 
+    && !startParameter.taskNames.contains("wrapper")) {
+  apply plugin: Mirakle
+
+  rootProject {
+    mirakle {
+      host "dell-g3"
+      breakOnTasks += ["package"]
+      remoteFolder "/home/farmerbb/AndroidStudioProjects/"
+    }
+  }
+}

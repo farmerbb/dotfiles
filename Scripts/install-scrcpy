@@ -1,0 +1,25 @@
+#!/bin/bash
+
+CURRENT_DIR=$(pwd)
+rm -rf scrcpy
+
+sudo mv /etc/apt/preferences.d/cros.pref /etc/apt/preferences.d/cros.pref.bak
+sudo apt-get update
+sudo apt-get install -y ffmpeg libsdl2-2.0-0 gcc git pkg-config meson ninja-build wget libusb-1.0-0-dev \
+                        libavcodec-dev libavformat-dev libavutil-dev libsdl2-dev libavdevice-dev
+
+git clone https://github.com/Genymobile/scrcpy
+cd scrcpy
+
+git remote update origin --prune
+VERSION=$(git tag | grep "v" | sort -V | tail -n 1)
+git checkout $VERSION
+
+wget https://github.com/Genymobile/scrcpy/releases/download/$VERSION/scrcpy-server-$VERSION
+
+meson x --buildtype release --strip -Db_lto=true -Dprebuilt_server=./scrcpy-server-$VERSION
+ninja -Cx
+sudo ninja -Cx install
+
+cd $CURRENT_DIR
+rm -rf scrcpy

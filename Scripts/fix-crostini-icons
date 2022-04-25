@@ -1,0 +1,20 @@
+#!/bin/bash
+
+if [[ -z $(which convert) ]] ; then
+  sudo apt-get update
+  sudo apt-get install -y imagemagick
+fi
+
+for i in ~/ChromeOS/home/chronos/user/crostini.icons/* ; do
+  cd $i
+
+  [[ -f icon_200p.png && ! -f icon_100p.png ]] && \
+    echo "Converting $i/icon_200p.png..." && \
+    convert icon_200p.png -resize 48x48 icon_100p.png
+
+  [[ -f icon_100p.png && ! -f icon_200p.png ]] && \
+    echo "Converting $i/icon_100p.png..." && \
+    convert icon_100p.png -resize 256x256 icon_200p.png
+done
+
+true

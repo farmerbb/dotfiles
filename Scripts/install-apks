@@ -1,0 +1,51 @@
+#!/bin/bash
+
+perform-installs() {
+  NUM=$(ls -1 *.apk | wc -l)
+  if [[ $NUM > 1 ]]
+  then
+    if [[ -z $(ls -1 *.apk | grep -wv -e base.apk -e 'split.*\.apk') ]]; then
+      LIST=(`ls *.apk`)
+      $(which adb) $DASH_S $DEVICE install-multiple -r ${LIST[@]}
+    else
+      for i in *.apk; do
+        $(which adb) $DASH_S $DEVICE install -r "$i"
+      done
+    fi
+  else
+    $(which adb) $DASH_S $DEVICE install -r "$(ls *.apk)"
+  fi
+}
+
+if [[ $# -eq 0 ]]
+then
+  echo "Usage: $0 <folder-of-apks> [device]"
+  exit 1
+fi
+
+[[ ! -d "$1" ]] && exit 1
+
+if [[ ! -z $2 ]]; then
+  adb connect $2
+  DASH_S="-s"
+  DEVICE=$2
+fi
+
+cd "$1"
+perform-installs
+
+rm -rf temp
+mkdir temp
+
+for i in *.apk?
+do
+  mv "$i" temp/temp.zip
+  cd temp
+  unzip temp.zip
+  perform-installs
+  mv temp.zip ../"$i"
+  rm -rf *
+  cd ..
+done
+
+rm -rf temp

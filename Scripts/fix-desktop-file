@@ -1,0 +1,17 @@
+#!/bin/bash
+if [[ $# -ne 1 ]] ; then
+    echo "Usage: $0 <path-to-desktop-file>"
+    exit 1
+fi
+
+if [[ $0 == *fix-gtk3* ]] ; then
+  FIX_COMMAND=fix-gtk3
+elif [[ $0 == *fix-qt* ]] ; then
+  FIX_COMMAND=fix-qt
+else
+  FIX_COMMAND=fix
+fi
+
+EXEC=$(cat $1 | grep "Exec=" | head -n 1 | sed -e "s/Exec=//g" -e "s/\"//g" -e "s/ %f//g" -e "s/ %F//g" -e "s/ %u//g" -e "s/ %U//g")
+sudo sed -i "s/\"//g" $1
+sudo sed -i "0,/Exec=/{s#Exec=$EXEC#Exec=bash -i -c \"$FIX_COMMAND $EXEC\"#}" $1

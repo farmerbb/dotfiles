@@ -1,0 +1,32 @@
+#!/bin/bash
+if [[ $# -eq 0 ]]; then
+  BASENAME=$(basename "$0")
+  echo "Usage: $BASENAME <shield | shield2 | pi>"
+  exit 1
+fi
+
+adb connect $1
+sleep 1
+
+if [[ ! -z $DISABLE_ANIMATIONS ]]; then
+  adb -s $1 shell settings put global window_animation_scale 0.0
+  adb -s $1 shell settings put global transition_animation_scale 0.0
+  adb -s $1 shell settings put global animator_duration_scale 0.0
+fi
+
+if [[ $1 == *shield* ]]; then
+  adb -s $1 shell settings put global hdmi_one_touch_play_enabled 0
+fi
+
+scrcpy -s $1 "${@:2}"
+
+if [[ ! -z $DISABLE_ANIMATIONS ]]; then
+  adb -s $1 shell settings put global window_animation_scale 1.0
+  adb -s $1 shell settings put global transition_animation_scale 1.0
+  adb -s $1 shell settings put global animator_duration_scale 1.0
+fi
+
+if [[ $1 == *shield* ]]; then
+  adb -s $1 shell settings put global hdmi_one_touch_play_enabled 1
+  adb -s $1 shell input keyevent 26
+fi

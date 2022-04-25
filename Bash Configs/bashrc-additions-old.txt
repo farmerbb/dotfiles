@@ -1,0 +1,98 @@
+----------- crouton (bash) ----------
+
+export GDK_BACKEND=wayland 
+export CLUTTER_BACKEND=wayland
+export XDG_RUNTIME_DIR='/var/run/chrome'
+export WAYLAND_DISPLAY=wayland-0
+export PS1="\[\033]0;\u@\h:\w\007\]\[\033[01;32m\]\u@\h\[\033[01;34m\] \w \$\[\033[00m\] "
+
+alias sommelier='export DISPLAY=:0; ~/sommelier/sommelier -X --x-display=:0 --no-exit-with-child /bin/sh -c "~/sommelier/sommelierrc" &> /dev/null &'
+alias android-studio='~/android-studio/bin/studio.sh &> /dev/null &'
+alias smartgit='/usr/share/smartgit/bin/smartgit.sh &> /dev/null &'
+alias remount='sudo mount -o remount,exec /media/removable/sdcard'
+alias performance='for i in {0..3}; do echo performance | sudo tee /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor > /dev/null; done'
+alias pi='ssh pi@[REDACTED] -p 34357'
+
+remount
+
+----------- chrx (~/.profile) ----------
+
+# ~1.75 scale:
+sudo xrandr --newmode "1368x912_60.00"  103.00  1368 1448 1592 1816  912 915 925 947 -hsync +vsync
+sudo xrandr --addmode eDP-1 "1368x912_60.00"
+
+# 2.0 scale:
+sudo xrandr --newmode "1200x800_60.00"   78.00  1200 1264 1384 1568  800 803 813 831 -hsync +vsync
+sudo xrandr --addmode eDP-1 "1200x800_60.00"
+
+# For a better-looking picture, run these commands manually
+#
+# ~1.75 scale:
+# sudo xrandr -s 2400x1600
+# sudo xrandr --output eDP-1 --scale 0.57x0.57
+#
+# 2.0 scale:
+# sudo xrandr -s 2400x1600
+# sudo xrandr --output eDP-1 --scale 0.5x0.5
+
+----------- Raspberry Pi 3B+ -----------
+
+alias trim="sudo fstrim -av"
+alias cp="advcp"
+alias mv="advmv"
+
+---------- crosh (fix/restart ARC) ---------
+
+fix-arc() {
+  str=$(cat /etc/chrome_dev.conf)
+  lastline="${str##*$'\n'}"
+  old_md5=$(md5sum /etc/chrome_dev.conf)
+
+  [[ $lastline = \#* ]] && echo -e "--force-remote-shell-scale=1\n--arc-scale=160" | sudo tee -a /etc/chrome_dev.conf > /dev/null
+  [[ $lastline = -* ]] && sudo sed -i "/^-/d" /etc/chrome_dev.conf
+
+# [[ $lastline = --ash* ]] && echo -e "--force-remote-shell-scale=1\n--arc-scale=160" | sudo tee -a /etc/chrome_dev.conf > /dev/null
+# [[ $lastline = --arc* ]] && sudo sed -i "/^-/d" /etc/chrome_dev.conf && echo "--ash-enable-cursor-motion-blur" | sudo tee -a /etc/chrome_dev.conf > /dev/null
+
+  if [[ $old_md5 = $(md5sum /etc/chrome_dev.conf) ]]; then
+    sudo fsck $(mount | grep "on / " | cut -d" " -f1) -y
+    printf "Press Enter to reboot..."
+    read _
+    sudo reboot
+  else
+    printf "Press Enter to restart UI..."
+    read _
+    sudo restart ui
+  fi
+}
+
+restart-arc() {
+  echo 'stop; start' > ~/Downloads/.restart.sh
+  sudo android-sh /sdcard/Download/.restart.sh
+  rm ~/Downloads/.restart.sh
+}
+
+---------- old aliases (ssh/adb) ----------
+
+alias pc="ssh farmerbb@[REDACTED] -p 34350"
+# alias pi="ssh pi@[REDACTED] -p 34357"
+alias pi2="ssh pi@[REDACTED] -p 34359"
+alias nuc="ssh farmerbb@[REDACTED] -p 34361"
+
+alias emulator="adb kill-server; sleep 1; adb connect [REDACTED]:34352; scrcpy -m984 &"
+alias pi="adb kill-server; sleep 1; adb connect [REDACTED]:34362"
+alias shield="adb kill-server; sleep 1; adb connect [REDACTED]:34358"
+alias shield2="adb kill-server; sleep 1; adb connect [REDACTED]:34351"
+
+alias adb-local="adb kill-server; sleep 1; adb connect arc"
+alias crosh="ssh chronos@100.115.92.1"
+
+---------- Ubuntu / Windows dual boot ----------
+
+boot-to-windows() {
+  WINDOWS_MENU_TITLE=$(awk -F\' '/menuentry / {print $2}' /boot/grub/grub.cfg | grep -i windows)
+  sudo grub-reboot "$WINDOWS_MENU_TITLE"
+  sudo shutdown -r now
+}
+
+export -f boot-to-windows

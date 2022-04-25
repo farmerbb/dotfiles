@@ -1,0 +1,30 @@
+#!/bin/bash
+
+MANIFEST=~/.dolphin-install-manifest
+[[ -f $MANIFEST ]] && cat $MANIFEST | gunzip | sudo xargs -d '\n' rm
+
+sudo apt-get update
+sudo apt-get install -y curl git devscripts build-essential software-properties-common cmake pkg-config libao-dev \
+                        libasound2-dev libavcodec-dev libavformat-dev libbluetooth-dev libcurl4-openssl-dev \
+                        libegl1-mesa-dev libenet-dev libevdev-dev libgtk2.0-dev liblzo2-dev libminiupnpc-dev \
+                        libopenal-dev libmbedtls-dev libpulse-dev libreadline-dev libsdl2-dev libsfml-dev libsoil-dev \
+                        libswscale-dev libudev-dev libusb-1.0-0-dev libwxbase3.0-dev libwxgtk3.0-gtk3-dev libxext-dev \
+                        libxrandr-dev qtbase5-private-dev zlib1g-dev libjack-jackd2-dev
+
+rm -rf dolphin-temp
+git clone https://github.com/dolphin-emu/dolphin.git dolphin-temp
+cd dolphin-temp
+[[ ! -z $1 ]] && git checkout $(curl https://dolphin-emu.org/download/dev/master/$1/ | grep commithash | awk -F[\>\<] '{print $5}')
+git submodule update --init
+
+mkdir Build && cd Build
+cmake ..
+make -j$(nproc)
+sudo make install
+
+cat install_manifest.txt | gzip > $MANIFEST
+cd ../..
+rm -rf dolphin-temp
+
+# sudo sed -i "s/Name=Dolphin Emulator/Name=Dolphin (Linux)/g" /usr/local/share/applications/dolphin-emu.desktop
+fix-qt-desktop-file /usr/local/share/applications/dolphin-emu.desktop

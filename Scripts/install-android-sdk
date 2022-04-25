@@ -1,0 +1,25 @@
+#!/bin/bash
+# Adapted from https://git.libretro.com/libretro-infrastructure/libretro-build-android/-/blob/master/Dockerfile
+
+ANDROID_COMPILE_SDK=30
+ANDROID_BUILD_TOOLS=30.0.2
+ANDROID_SDK_TOOLS=6858069
+ANDROID_NDK_VERSION=22.0.7026061
+
+sudo apt-get update
+sudo apt-get -y install wget unzip
+rm -rf android-sdk-linux
+
+wget -O android-sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-${ANDROID_SDK_TOOLS}_latest.zip \
+ && unzip -d android-sdk-linux android-sdk.zip \
+ && rm -f android-sdk.zip \
+ && mkdir -p ~/.android/ && touch ~/.android/repositories.cfg \
+ && mkdir android-sdk-linux/cmdline-tools/latest \
+ && find android-sdk-linux/cmdline-tools -maxdepth 1 -mindepth 1 -not -name latest -print0 | xargs -0 mv -t android-sdk-linux/cmdline-tools/latest/ \
+ && echo y | android-sdk-linux/cmdline-tools/latest/bin/sdkmanager "platforms;android-${ANDROID_COMPILE_SDK}" \
+ && echo y | android-sdk-linux/cmdline-tools/latest/bin/sdkmanager "platform-tools" \
+ && echo y | android-sdk-linux/cmdline-tools/latest/bin/sdkmanager "build-tools;${ANDROID_BUILD_TOOLS}" \
+ && echo y | android-sdk-linux/cmdline-tools/latest/bin/sdkmanager "ndk;${ANDROID_NDK_VERSION}" \
+ && yes | android-sdk-linux/cmdline-tools/latest/bin/sdkmanager --licenses \
+ && mkdir -p ~/Android \
+ && mv android-sdk-linux ~/Android/Sdk

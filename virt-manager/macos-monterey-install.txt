@@ -1,0 +1,15 @@
+MacOS Monterey libvirt config based on:
+https://github.com/NapoleonWils0n/cerberus/blob/master/libvirt/mac-kvm/macOS.xml
+    
+Installation method:
+https://github.com/kholia/OSX-KVM
+
+For installing MacOS Monterey within virt-manager / libvirt,
+temporarily add this to the <devices> section of the xml:
+    
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='raw' cache='writeback'/>
+      <source file='/home/farmerbb/OSX-KVM/BaseSystem.img'/>
+      <target dev='vdc' bus='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
+    </disk>

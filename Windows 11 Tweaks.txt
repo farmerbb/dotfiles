@@ -1,0 +1,94 @@
+-------------------------------- Install Windows Subsystems --------------------------------
+
+Install WSL1:
+
+* Run the following command (as admin):
+
+  dism /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+
+* Reboot, then download Debian from https://aka.ms/wsl-debian-gnulinux
+
+* Open up a PowerShell window and install Debian with:
+
+  Add-AppxPackage .\path\to\file.AppxBundle
+  wsl --set-default-version 1
+
+
+Install WSL2:
+
+* Run the following command (as admin):
+
+  wsl --install
+
+* Uninstall Ubuntu and install Debian from the Microsoft Store
+
+
+Install WSA + Play Store:
+
+  https://github.com/farmerbb/MagiskOnWSA/actions/workflows/magisk.yml
+
+* Run workflow -> Variants of gapps: nano -> Root solution: none -> Run workflow
+
+* Download the generated x64 zip file and extract it to C:\Users\Braden\WSA
+
+* Right-click Install.ps1 and select Run in PowerShell
+
+-------------------------------- Visual Tweaks --------------------------------
+
+Enable new boot animation:
+
+  reg add HKLM\SYSTEM\CurrentControlSet\Control\BootControl /v BootProgressAnimation /t REG_DWORD /d 1
+
+
+Re-enable old right click menu:
+
+  reg add "HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /f /ve
+
+
+Disable "System requirements not met" watermark:
+
+  reg add "HKEY_CURRENT_USER\Control Panel\UnsupportedHardwareNotificationCache" /v SV1 /t REG_DWORD /d 0 /f
+
+-------------------------------- Security Tweaks --------------------------------
+
+Disable Spectre / Meltdown mitigations:
+
+  reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v FeatureSettingsOverride /t REG_DWORD /d 3 /f
+  reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v FeatureSettingsOverrideMask /t REG_DWORD /d 3 /f
+
+
+Disable Windows Defender:
+
+1. Open Windows Security -> Virus & threat protection -> Virus & threat protection settings
+
+   * Disable Tamper Protection first
+   * Disable all other items
+
+2. Open Regedit -> navigate to Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender
+
+3. Right-click the Windows Defender registry key -> Permissions... -> Advanced
+
+4. In the Advanced Dialog:
+
+   * Change Owner -> type in your own username and click Check Names -> OK
+   * Check box for "Replace owner on subcontainers and objects" -> Apply -> OK
+
+5. In the Permissions for Windows Defender dialog: 
+
+   * Remove "Full Control" from all users in the list
+   * Add... -> type in your own username and click Check Names -> OK
+   * Allow your own user account Full Control
+
+6. In the Windows Defender registry key:
+
+   * Set DisableAntiSpyware to 1
+   * Set DisableAntiVirus to 1
+
+
+Disable "These files might be harmful to your computer" warning:
+
+1. Open the Internet Options control panel
+
+2. Security -> Local intranet -> Sites -> Advanced
+
+3. Enter the IP address of the network share (wildcards allowed) and click Add

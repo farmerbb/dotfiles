@@ -1,0 +1,288 @@
+#!/bin/bash
+if [[ $# -eq 0 || $# -eq 1 ]]; then
+  BASENAME=$(basename "$0")
+  echo "Usage: $BASENAME ARCBrowser-export-yyyymmdd-hhmmss.tar <from-device>"
+  echo "(where <from-device> is one of: spin713, pixel4a, shield, or retroid)"
+  exit 1
+fi
+
+convert() {
+  BASENAME=$(basename $1)
+  DIRNAME=$(dirname $1)
+  [[ $DIRNAME = . ]] && DIRNAME=$(pwd)
+
+  WORKING_DIR=$1-working
+  BASE_FILENAME_FIRST=$(echo $BASENAME | sed "s/-mod-$2//g")
+  BASE_FILENAME_SECOND=$(echo $BASE_FILENAME_FIRST | sed 's/.tar//g')
+  FINAL_FILENAME=$DIRNAME/$BASE_FILENAME_SECOND-mod-$3.tar
+
+  SHIELD_DIR=emulated/0
+  SPIN713_DIR=BF17B9A278DEB8F2BC9F49198523B7855CB089E7
+  PIXEL4A_DIR=emulated/0
+  RETROID_DIR=emulated/0
+
+  if [[ $2 = shield ]] ; then
+    STORAGE_DIR_FROM=$SHIELD_DIR
+    HIDE_GC_FROM=false
+    HIDE_WII_FROM=false
+    HIDE_PS1_FROM=false
+    HIDE_DC_FROM=false
+    HIDE_SCD_FROM=false
+    HIDE_SWITCH_FROM=false
+    EMULATOR_SUITE_FROM=HIGH
+    ALT_L2R2_FROM=true
+    UI_SCALE_FROM=0.875
+  elif [[ $2 = spin713 ]] ; then
+    STORAGE_DIR_FROM=$SPIN713_DIR
+    HIDE_GC_FROM=false
+    HIDE_WII_FROM=false
+    HIDE_PS1_FROM=false
+    HIDE_DC_FROM=false
+    HIDE_SCD_FROM=false
+    HIDE_SWITCH_FROM=true
+    EMULATOR_SUITE_FROM=HIGH
+    ALT_L2R2_FROM=false
+    UI_SCALE_FROM=1.0
+  elif [[ $2 = pixel4a ]] ; then
+    STORAGE_DIR_FROM=$PIXEL4A_DIR
+    HIDE_GC_FROM=false
+    HIDE_WII_FROM=true
+    HIDE_PS1_FROM=false
+    HIDE_DC_FROM=false
+    HIDE_SCD_FROM=false
+    HIDE_SWITCH_FROM=false
+    EMULATOR_SUITE_FROM=HIGH
+    ALT_L2R2_FROM=false
+    UI_SCALE_FROM=1.0
+  elif [[ $2 = retroid ]] ; then
+    STORAGE_DIR_FROM=$RETROID_DIR
+    HIDE_GC_FROM=false
+    HIDE_WII_FROM=true
+    HIDE_PS1_FROM=false
+    HIDE_DC_FROM=false
+    HIDE_SCD_FROM=false
+    HIDE_SWITCH_FROM=true
+    EMULATOR_SUITE_FROM=HIGH
+    ALT_L2R2_FROM=false
+    UI_SCALE_FROM=1.0
+  fi
+
+  if [[ $3 = shield ]] ; then
+    STORAGE_DIR_TO=$SHIELD_DIR
+    HIDE_GC_TO=false
+    HIDE_WII_TO=false
+    HIDE_PS1_TO=false
+    HIDE_DC_TO=false
+    HIDE_SCD_TO=false
+    HIDE_SWITCH_TO=false
+    EMULATOR_SUITE_TO=HIGH
+    ALT_L2R2_TO=true
+    UI_SCALE_TO=0.875
+  elif [[ $3 = spin713 ]] ; then
+    STORAGE_DIR_TO=$SPIN713_DIR
+    HIDE_GC_TO=false
+    HIDE_WII_TO=false
+    HIDE_PS1_TO=false
+    HIDE_DC_TO=false
+    HIDE_SCD_TO=false
+    HIDE_SWITCH_TO=true
+    EMULATOR_SUITE_TO=HIGH
+    ALT_L2R2_TO=false
+    UI_SCALE_TO=1.0
+  elif [[ $3 = pixel4a ]] ; then
+    STORAGE_DIR_TO=$PIXEL4A_DIR
+    HIDE_GC_TO=false
+    HIDE_WII_TO=true
+    HIDE_PS1_TO=false
+    HIDE_DC_TO=false
+    HIDE_SCD_TO=false
+    HIDE_SWITCH_TO=false
+    EMULATOR_SUITE_TO=HIGH
+    ALT_L2R2_TO=false
+    UI_SCALE_TO=1.0
+  elif [[ $3 = retroid ]] ; then
+    STORAGE_DIR_TO=$RETROID_DIR
+    HIDE_GC_TO=false
+    HIDE_WII_TO=true
+    HIDE_PS1_TO=false
+    HIDE_DC_TO=false
+    HIDE_SCD_TO=false
+    HIDE_SWITCH_TO=true
+    EMULATOR_SUITE_TO=HIGH
+    ALT_L2R2_TO=false
+    UI_SCALE_TO=1.0
+  fi
+
+  BIG_CHUNGUS_FIRST=\</data\>\<data\ key=\"scrapingBackgroundDownloadCount\"\ nullValue=\"false\"\>1\</data\>\<data\ key=\"scrapingScreenshotSubtypeBlacklist\"\ nullValue=\"false\"\>\</data\>\<data\ key=\"hideFromLists\"\ nullValue=\"false\"\>
+  BIG_CHUNGUS_SECOND=\</data\>\\n\ \ \ \ \ \ \ \ \<data\ key=\"scrapingBackgroundDownloadCount\"\ nullValue=\"false\"\>1\</data\>\\n\ \ \ \ \ \ \ \ \<data\ key=\"scrapingScreenshotSubtypeBlacklist\"\ nullValue=\"false\"\>\</data\>\\n\ \ \ \ \ \ \ \ \<data\ key=\"hideFromLists\"\ nullValue=\"false\"\>
+
+  cd "$DIRNAME"
+  rm -rf "$WORKING_DIR"
+  rm -f "$FINAL_FILENAME"
+
+  mkdir "$WORKING_DIR"
+  tar xf "$1" -C "$WORKING_DIR"
+
+  cd "$WORKING_DIR"
+
+  sed -i "s#${STORAGE_DIR_FROM}#${STORAGE_DIR_TO}#g" emulators.xml
+
+  sed -i "s#GameCube${BIG_CHUNGUS_FIRST}${HIDE_GC_FROM}#GameCube${BIG_CHUNGUS_FIRST}${HIDE_GC_TO}#g" emulators.xml
+  sed -z -i "s#GameCube${BIG_CHUNGUS_SECOND}${HIDE_GC_FROM}#GameCube${BIG_CHUNGUS_SECOND}${HIDE_GC_TO}#g" emulators.xml
+
+  sed -i "s#Wii${BIG_CHUNGUS_FIRST}${HIDE_WII_FROM}#Wii${BIG_CHUNGUS_FIRST}${HIDE_WII_TO}#g" emulators.xml
+  sed -z -i "s#Wii${BIG_CHUNGUS_SECOND}${HIDE_WII_FROM}#Wii${BIG_CHUNGUS_SECOND}${HIDE_WII_TO}#g" emulators.xml
+
+  sed -i "s#PlayStation${BIG_CHUNGUS_FIRST}${HIDE_PS1_FROM}#PlayStation${BIG_CHUNGUS_FIRST}${HIDE_PS1_TO}#g" emulators.xml
+  sed -z -i "s#PlayStation${BIG_CHUNGUS_SECOND}${HIDE_PS1_FROM}#PlayStation${BIG_CHUNGUS_SECOND}${HIDE_PS1_TO}#g" emulators.xml
+
+  sed -i "s#Sega Dreamcast${BIG_CHUNGUS_FIRST}${HIDE_DC_FROM}#Sega Dreamcast${BIG_CHUNGUS_FIRST}${HIDE_DC_TO}#g" emulators.xml
+  sed -z -i "s#Sega Dreamcast${BIG_CHUNGUS_SECOND}${HIDE_DC_FROM}#Sega Dreamcast${BIG_CHUNGUS_SECOND}${HIDE_DC_TO}#g" emulators.xml
+
+  sed -i "s#Sega CD${BIG_CHUNGUS_FIRST}${HIDE_SCD_FROM}#Sega CD${BIG_CHUNGUS_FIRST}${HIDE_SCD_TO}#g" emulators.xml
+  sed -z -i "s#Sega CD${BIG_CHUNGUS_SECOND}${HIDE_SCD_FROM}#Sega CD${BIG_CHUNGUS_SECOND}${HIDE_SCD_TO}#g" emulators.xml
+
+  sed -i "s#Nintendo Switch${BIG_CHUNGUS_FIRST}${HIDE_SWITCH_FROM}#Nintendo Switch${BIG_CHUNGUS_FIRST}${HIDE_SWITCH_TO}#g" emulators.xml
+  sed -z -i "s#Nintendo Switch${BIG_CHUNGUS_SECOND}${HIDE_SWITCH_FROM}#Nintendo Switch${BIG_CHUNGUS_SECOND}${HIDE_SWITCH_TO}#g" emulators.xml
+
+  #################################################################################
+
+  HIGH_1=38
+  HIGH_2=27
+  HIGH_3=31
+  HIGH_4=81
+  HIGH_5=82
+  HIGH_6=83
+
+  LOW_1=68
+  LOW_2=69
+  LOW_3=71
+  LOW_4=67
+  LOW_5=65
+  LOW_6=66
+
+  XML_TAG=\<data\ key=\"emulatorId\"\ nullValue=\"false\"\>
+
+  for i in {1..6} ; do
+    TEMP_FROM="${EMULATOR_SUITE_FROM}_$i"
+    TEMP_TO="${EMULATOR_SUITE_TO}_$i"
+
+    sed -i "s#${XML_TAG}${!TEMP_FROM}<#${XML_TAG}${!TEMP_TO}<#g" games.xml
+  done
+
+  #################################################################################
+
+  NAME_SUFFIX_HIGH=""
+  NAME_SUFFIX_LOW=" "
+  #                ^ this is a non-breaking space
+
+  TEMP_FROM="NAME_SUFFIX_${EMULATOR_SUITE_FROM}"
+  TEMP_TO="NAME_SUFFIX_${EMULATOR_SUITE_TO}"
+
+  sed -i "s#>Sega Dreamcast${!TEMP_FROM}${BIG_CHUNGUS_FIRST}${HIDE_DC_TO}#>Sega Dreamcast${!TEMP_FROM}${BIG_CHUNGUS_FIRST}true#g" emulators.xml
+  sed -z -i "s#>Sega Dreamcast${!TEMP_FROM}${BIG_CHUNGUS_SECOND}${HIDE_DC_TO}#>Sega Dreamcast${!TEMP_FROM}${BIG_CHUNGUS_SECOND}true#g" emulators.xml
+  sed -i "s#>Sega Dreamcast${!TEMP_TO}${BIG_CHUNGUS_FIRST}true#>Sega Dreamcast${!TEMP_TO}${BIG_CHUNGUS_FIRST}${HIDE_DC_TO}#g" emulators.xml
+  sed -z -i "s#>Sega Dreamcast${!TEMP_TO}${BIG_CHUNGUS_SECOND}true#>Sega Dreamcast${!TEMP_TO}${BIG_CHUNGUS_SECOND}${HIDE_DC_TO}#g" emulators.xml
+
+  sed -i "s#>Amiga${!TEMP_FROM}${BIG_CHUNGUS_FIRST}false#>Amiga${!TEMP_FROM}${BIG_CHUNGUS_FIRST}true#g" emulators.xml
+  sed -z -i "s#>Amiga${!TEMP_FROM}${BIG_CHUNGUS_SECOND}false#>Amiga${!TEMP_FROM}${BIG_CHUNGUS_SECOND}true#g" emulators.xml
+  sed -i "s#>Amiga${!TEMP_TO}${BIG_CHUNGUS_FIRST}true#>Amiga${!TEMP_TO}${BIG_CHUNGUS_FIRST}false#g" emulators.xml
+  sed -z -i "s#>Amiga${!TEMP_TO}${BIG_CHUNGUS_SECOND}true#>Amiga${!TEMP_TO}${BIG_CHUNGUS_SECOND}false#g" emulators.xml
+
+  sed -i "s#>Nintendo 64${!TEMP_FROM}${BIG_CHUNGUS_FIRST}false#>Nintendo 64${!TEMP_FROM}${BIG_CHUNGUS_FIRST}true#g" emulators.xml
+  sed -z -i "s#>Nintendo 64${!TEMP_FROM}${BIG_CHUNGUS_SECOND}false#>Nintendo 64${!TEMP_FROM}${BIG_CHUNGUS_SECOND}true#g" emulators.xml
+  sed -i "s#>Nintendo 64${!TEMP_TO}${BIG_CHUNGUS_FIRST}true#>Nintendo 64${!TEMP_TO}${BIG_CHUNGUS_FIRST}false#g" emulators.xml
+  sed -z -i "s#>Nintendo 64${!TEMP_TO}${BIG_CHUNGUS_SECOND}true#>Nintendo 64${!TEMP_TO}${BIG_CHUNGUS_SECOND}false#g" emulators.xml
+
+  #################################################################################
+
+  A2600_CORE_HIGH=stella
+  NES_CORE_HIGH=mesen
+  GBC_CORE_HIGH=sameboy
+  SNES_CORE_HIGH=bsnes
+  PS1_CORE_HIGH=duckstation
+  GBA_CORE_HIGH=mgba
+
+  A2600_CORE_LOW=stella2014
+  NES_CORE_LOW=nestopia
+  GBC_CORE_LOW=gambatte
+  SNES_CORE_LOW=snes9x2005_plus
+  PS1_CORE_LOW=pcsx_rearmed
+  GBA_CORE_LOW=gpsp
+
+  for i in A2600 NES GBC SNES PS1 GBA ; do
+    TEMP_FROM="${i}_CORE_${EMULATOR_SUITE_FROM}"
+    TEMP_TO="${i}_CORE_${EMULATOR_SUITE_TO}"
+
+    sed -i "s#${!TEMP_FROM}_#${!TEMP_TO}_#g" emulators.xml
+  done
+
+  #################################################################################
+
+  if [[ $EMULATOR_SUITE_FROM != $EMULATOR_SUITE_TO ]] ; then
+    [[ $EMULATOR_SUITE_TO = LOW ]] && OPPOSITE=HIGH
+    [[ $EMULATOR_SUITE_TO = HIGH ]] && OPPOSITE=LOW
+
+    sed -i "s#${STORAGE_DIR_TO}//#DUMMY_PATH_${OPPOSITE}/#g" emulators.xml
+    sed -i "s#DUMMY_PATH_${EMULATOR_SUITE_TO}/#${STORAGE_DIR_TO}//#g" emulators.xml
+  fi
+
+  #################################################################################
+
+  AMIGA_SUFFIX_HIGH=""
+  AMIGA_SUFFIX_LOW=".uae"
+
+  for i in .adf \(MD\).m3u ; do
+    TEMP_FROM="AMIGA_SUFFIX_${EMULATOR_SUITE_FROM}"
+    TEMP_TO="AMIGA_SUFFIX_${EMULATOR_SUITE_TO}"
+
+    sed -i "s#${i}${!TEMP_FROM}#${i}${!TEMP_TO}#g" games.xml
+  done
+
+  #################################################################################
+
+  ALT_L2R2_SETTING=\<setting\ key=\"enableControllerAlternativeTriggerMethod\"\>
+  sed -i "s#${ALT_L2R2_SETTING}${ALT_L2R2_FROM}#${ALT_L2R2_SETTING}${ALT_L2R2_TO}#g" settings.xml
+
+  UI_SCALE_SETTING=\<setting\ key=\"uiScaleFactor\"\>
+  sed -i "s#${UI_SCALE_SETTING}${UI_SCALE_FROM}#${UI_SCALE_SETTING}${UI_SCALE_TO}#g" settings.xml
+
+  #################################################################################
+
+  tar cf "$FINAL_FILENAME" *
+
+  cd "$DIRNAME"
+  rm -rf "$WORKING_DIR"
+}
+
+if [[ $# -eq 2 ]]; then
+  rm -rfv "ARC Browser"
+
+  SHIELD_NAME="SHIELD"
+  SPIN713_NAME="Acer Spin 713"
+  PIXEL4A_NAME="Pixel 4a"
+  RETROID_NAME="Retroid Pocket 2+"
+
+  for target in shield spin713 pixel4a retroid ; do
+    [[ $2 != $target ]] && convert $1 $2 $target
+
+    TEMP_NAME="${target^^}_NAME"
+    FINAL_DIR="ARC Browser/${!TEMP_NAME}"
+
+    BASENAME=$(basename $1)
+    DIRNAME=$(dirname $1)
+    [[ $DIRNAME = . ]] && DIRNAME=$(pwd)
+
+    BASE_FILENAME_FIRST=$(echo $BASENAME | sed "s/-mod-$2//g")
+    BASE_FILENAME_SECOND=$(echo $BASE_FILENAME_FIRST | sed 's/.tar//g')
+    FINAL_FILENAME=$DIRNAME/$BASE_FILENAME_SECOND-mod-$target.tar
+
+    mkdir -p "$FINAL_DIR"
+    [[ $2 = $target ]] && cp "$1" "$FINAL_DIR"
+    [[ $2 != $target ]] && mv "$FINAL_FILENAME" "$FINAL_DIR"
+  done
+
+  rm "$1"
+fi
+
+[[ $# -eq 3 ]] && convert $1 $2 $3

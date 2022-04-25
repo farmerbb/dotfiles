@@ -1,0 +1,28 @@
+#!/bin/bash
+if [[ $# -eq 0 ]] ; then
+    echo "Usage: $0 <executable> <args...>"
+    exit 1
+fi
+
+BASENAME=$(basename "$1")
+DIRNAME=$(dirname "$1")
+TEMP_DIR="/tmp/$BASENAME"
+
+if [[ $DIRNAME = . ]] ; then
+    DIRNAME=$(pwd)
+fi
+
+mkdir "$TEMP_DIR"
+cd "$DIRNAME"
+
+if [[ "$BASENAME" == *.AppImage ]] ; then
+    cp "$BASENAME" "$TEMP_DIR"
+else
+    cp -r * "$TEMP_DIR"
+fi
+
+chmod +x "$TEMP_DIR/$BASENAME"
+
+"$TEMP_DIR/$BASENAME" "${@:2}"
+
+rm -r "$TEMP_DIR"

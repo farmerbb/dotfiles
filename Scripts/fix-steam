@@ -1,0 +1,14 @@
+#!/bin/bash
+
+sudo sed -i 's/Exec=steam/Exec=env VIRGL_DEBUG=bgraswz steam/g' /usr/share/applications/steam.desktop
+
+sudo ex /usr/games/steam <<eof
+1 insert
+#!/bin/bash
+
+export XCURSOR_SIZE=\$(echo "\$(xdpyinfo | grep resolution | cut -d' ' -f 7 | cut -d'x' -f 1)/4" | bc | cut -d'.' -f 1)
+export XCURSOR_SIZE_LOW_DENSITY=\$(echo "\$XCURSOR_SIZE/2" | bc)
+
+.
+xit
+eof

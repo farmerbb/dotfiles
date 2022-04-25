@@ -1,0 +1,54 @@
+#!/bin/bash
+
+REDACTED_STRINGS=(
+  "[REDACTED]"
+  "[REDACTED]"
+  "[REDACTED]"
+  "[REDACTED]"
+  "[REDACTED]"
+  "[REDACTED]"
+)
+
+DOTFILE_DIRS=(
+  "Android/Backup/Settings/Termux"
+  "Android/Development"
+  "Games/Utilities/Game\ Scripts"
+  "Other\ Stuff/Linux/*"
+  "Other\ Stuff/Chrome\ OS/Crostini"
+  "Other\ Stuff/Utilities/Command\ Scripts"
+  "Other\ Stuff/Utilities/Windows\ 11\ Tweaks.txt"
+)
+
+echo "Cloning repo..."
+sudo rm -rf dotfiles
+git clone git@github.com:farmerbb/dotfiles.git >/dev/null 2>&1
+cd dotfiles
+
+echo "Syncing files..."
+for i in ${!DOTFILE_DIRS[@]}; do
+  DIR="${DOTFILE_DIRS[$i]}"
+  mkdir -p "$DIR"
+  rsync -a --delete --inplace --exclude 'Source Code' "farmerbb@nuc:/mnt/d/$DIR" .
+done
+
+echo "Redacting strings..."
+shopt -s globstar
+for f in ./**/*; do
+  [[ -f "$f" ]] && \
+  for i in ${!REDACTED_STRINGS[@]}; do
+    sed -i "s/${REDACTED_STRINGS[$i]}/[REDACTED]/g" "$f"
+  done
+done
+
+echo "Showing git diff..."
+echo
+git add .
+git diff --cached
+echo
+printf "Press Enter to push changes or CTRL+C to abort..."
+read _
+
+echo "Pushing changes..."
+git-commit-and-push "Updating dotfiles" >/dev/null 2>&1
+cd ..
+sudo rm -rf dotfiles

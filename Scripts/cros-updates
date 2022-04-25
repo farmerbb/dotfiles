@@ -1,0 +1,33 @@
+#!/bin/bash
+
+cros-info() {
+  cat ~/ChromeOS/etc/lsb-release | grep CHROMEOS_RELEASE_DESCRIPTION
+}
+
+if [[ -z $(which curl) ]] ; then
+  sudo apt-get update
+  sudo apt-get install -y curl
+fi
+
+if [[ -z $(which csvtool) ]] ; then
+  sudo apt-get update
+  sudo apt-get install -y csvtool
+fi
+
+BOARD=$(cros-info | cut -d' ' -f5)
+CHANNEL=$(cros-info | cut -d' ' -f4 | sed "s/-channel//g")
+VERSION=$(cros-info | cut -d'=' -f2 | cut -d' ' -f1)
+OLD_VERSION=$(cros-info | cut -d'=' -f2 | cut -d' ' -f1)
+NEW_VERSION=$(curl -s https://cros-updates-serving.appspot.com/csv | csvtool namedcol board,cros_$CHANNEL - | grep $BOARD | cut -d',' -f2)
+
+[[ $OLD_VERSION = $NEW_VERSION ]] && echo "Chrome OS is up-to-date: $OLD_VERSION" && exit 0
+
+echo "Chrome OS has an update! $OLD_VERSION -> $NEW_VERSION"
+echo
+echo "Starting an update_engine_client cycle. Hold CTRL+C to stop..."
+
+while true; do
+  ssh crosh -o LogLevel=QUIET -t update_engine_client --update 2>&1 > /dev/null
+  [[ $? != 1 ]] && exit 0
+  sleep 1
+done

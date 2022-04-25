@@ -1,0 +1,16 @@
+#!/bin/bash
+
+ERROR=$(sudo dpkg --configure -a 2>&1 > /dev/null)
+LINE=$(echo $ERROR | cut -d' ' -f 8)
+sudo sed -i "$LINE i Maintainer: Some Guy <sguy@google.com>" /var/lib/dpkg/status
+
+sudo ex /opt/android-studio/bin/studio.sh <<eof
+1 insert
+#!/bin/bash
+
+export XCURSOR_SIZE=\$(echo "\$(xdpyinfo | grep resolution | cut -d' ' -f 7 | cut -d'x' -f 1)/4" | bc | cut -d'.' -f 1)
+export XCURSOR_SIZE_LOW_DENSITY=\$(echo "\$XCURSOR_SIZE/2" | bc)
+
+.
+xit
+eof

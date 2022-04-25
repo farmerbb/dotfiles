@@ -1,0 +1,7 @@
+To start WSL2 automatically with services on startup:
+
+* Open Task Scheduler
+* Action -> Import Task... -> select "WSL2 Startup.xml"
+* Change User or Group... -> enter "Braden" and select Check Names
+* Triggers -> Edit... -> Change User... -> enter "Braden" and select Check Names
+* Press OK on any dialog boxes

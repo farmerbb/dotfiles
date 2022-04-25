@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if [[ $2 == "start" ]]; then
+  [[ -f /tmp/daily-maintenance.running ]] && exit 1
+  sudo -u farmerbb bash -i -c "reclaim-vm-memory 4.5" || true
+fi

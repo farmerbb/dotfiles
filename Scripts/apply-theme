@@ -1,0 +1,109 @@
+#!/bin/bash
+
+sudo apt-get update
+sudo apt-get install -y git wget libglib2.0-bin gtk2-engines-murrine gtk2-engines-pixbuf qt5-style-kvantum qt5-style-kvantum-themes qt5ct sassc
+
+for i in Qogir-theme Qogir-icon-theme Qogir-kde; do
+  rm -rf $i
+  git clone https://github.com/vinceliuice/$i.git
+  cd $i
+# [[ $i = Qogir-theme ]] && git checkout f70236b
+
+  if [[ $i = Qogir-theme ]]; then
+    ./install.sh --tweaks square
+  else
+    ./install.sh
+  fi
+
+  cd ..
+  rm -rf $i
+done
+
+FONT_DIR=/usr/share/fonts/truetype/segoe-ui
+# sudo rm -rf $FONT_DIR
+if [[ -d $FONT_DIR ]]; then
+  sudo mkdir -p $FONT_DIR
+
+  for i in segoeui segoeuib segoeuii segoeuiz segoeuil seguili segoeuisl seguisli seguisb seguisbi ; do
+    sudo wget -q https://github.com/mrbvrz/segoe-ui/raw/master/font/$i.ttf?raw=true -O $FONT_DIR/$i.ttf > /dev/null 2>&1
+  done
+fi
+
+# wget https://aka.ms/SegoeUIVariable
+# sudo unzip SegoeUIVariable -d $FONT_DIR
+# rm SegoeUIVariable
+
+install-roboto-mono
+sudo fc-cache -f -v
+
+echo 'gtk-theme-name = Qogir' > ~/.gtkrc-2.0
+echo 'gtk-icon-theme-name = Qogir' >> ~/.gtkrc-2.0
+[[ $HOSTNAME != penguin ]] && \
+echo 'gtk-cursor-theme-name = Qogir' >> ~/.gtkrc-2.0
+echo 'gtk-font-name = Segoe UI Regular 10' >> ~/.gtkrc-2.0
+echo 'gtk-xft-antialias=1' >> ~/.gtkrc-2.0
+echo 'gtk-xft-hinting=1' >> ~/.gtkrc-2.0
+echo 'gtk-xft-hintstyle=hintfull' >> ~/.gtkrc-2.0
+
+[[ -z $XDG_CONFIG_HOME ]] && XDG_CONFIG_HOME=/home/$USER/.config
+mkdir -p $XDG_CONFIG_HOME/gtk-3.0
+echo '[Settings]' > $XDG_CONFIG_HOME/gtk-3.0/settings.ini
+cat ~/.gtkrc-2.0 >> $XDG_CONFIG_HOME/gtk-3.0/settings.ini
+
+sudo ln -fs ~/.themes/Qogir /usr/share/themes/Qogir
+sudo ln -fs ~/.local/share/icons/Qogir /usr/share/icons/Qogir
+
+sudo mkdir -p /root/.config/gtk-3.0
+sudo ln -fs ~/.gtkrc-2.0 /root/.gtkrc-2.0
+sudo ln -fs $XDG_CONFIG_HOME/gtk-3.0/settings.ini /root/.config/gtk-3.0/settings.ini
+
+gsettings set org.gnome.desktop.interface gtk-theme 'Qogir'
+gsettings set org.gnome.desktop.interface icon-theme 'Qogir'
+[[ $HOSTNAME != penguin ]] && \
+gsettings set org.gnome.desktop.interface cursor-theme 'Qogir'
+gsettings set org.gnome.desktop.interface font-name 'Segoe UI Regular 10'
+gsettings set org.gnome.desktop.interface document-font-name 'Segoe UI Regular 10'
+gsettings set org.gnome.desktop.interface monospace-font-name 'Roboto Mono 10'
+gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Segoe UI Regular 10'
+gsettings set org.gnome.settings-daemon.plugins.xsettings hinting 'full'
+gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'grayscale'
+
+mkdir -p ~/.qt
+echo '[General]' > ~/.qt/qtrc
+echo 'enableXft=true' >> ~/.qt/qtrc
+echo 'useXft=true' >> ~/.qt/qtrc
+
+mkdir -p ~/.config/Kvantum
+echo '[General]' > ~/.config/Kvantum/kvantum.kvconfig
+echo 'theme=Qogir-solid' >> ~/.config/Kvantum/kvantum.kvconfig
+
+mkdir -p ~/.config/qt5ct
+echo '[Appearance]' > ~/.config/qt5ct/qt5ct.conf
+echo 'icon_theme=Qogir' >> ~/.config/qt5ct/qt5ct.conf
+echo 'style=kvantum' >> ~/.config/qt5ct/qt5ct.conf
+echo '' >> ~/.config/qt5ct/qt5ct.conf
+echo '[Fonts]' >> ~/.config/qt5ct/qt5ct.conf
+echo 'fixed=@Variant(\0\0\0@\0\0\0$\0R\0o\0\x62\0o\0t\0o\0 \0M\0o\0n\0o\0 \0[\0G\0O\0O\0G\0]@$\0\0\0\0\0\0\xff\xff\xff\xff\x5\x1\0\x32\x10)' >> ~/.config/qt5ct/qt5ct.conf
+echo 'general=@Variant(\0\0\0@\0\0\0\x10\0S\0\x65\0g\0o\0\x65\0 \0U\0I@$\0\0\0\0\0\0\xff\xff\xff\xff\x5\x1\0\x32\x10)' >> ~/.config/qt5ct/qt5ct.conf
+
+mkdir -p ~/.config/fontconfig
+echo '<?xml version="1.0" encoding="UTF-8"?>' > ~/.config/fontconfig/fonts.conf
+echo '<!DOCTYPE fontconfig SYSTEM "fonts.dtd">' >> ~/.config/fontconfig/fonts.conf
+echo '<fontconfig>' >> ~/.config/fontconfig/fonts.conf
+echo '    <match target="font">' >> ~/.config/fontconfig/fonts.conf
+echo '        <edit name="antialias" mode="assign">' >> ~/.config/fontconfig/fonts.conf
+echo '            <bool>true</bool>' >> ~/.config/fontconfig/fonts.conf
+echo '        </edit>' >> ~/.config/fontconfig/fonts.conf
+echo '        <edit name="hinting" mode="assign">' >> ~/.config/fontconfig/fonts.conf
+echo '            <bool>true</bool>' >> ~/.config/fontconfig/fonts.conf
+echo '        </edit>' >> ~/.config/fontconfig/fonts.conf
+echo '        <edit name="hintstyle" mode="assign">' >> ~/.config/fontconfig/fonts.conf
+echo '            <const>hintfull</const>' >> ~/.config/fontconfig/fonts.conf
+echo '        </edit>' >> ~/.config/fontconfig/fonts.conf
+echo '    </match>' >> ~/.config/fontconfig/fonts.conf
+echo '</fontconfig>' >> ~/.config/fontconfig/fonts.conf
+
+rm -f ~/.config/gtk-4.0
+ln -s ~/.themes/Qogir/gtk-4.0 ~/.config
+
+set-window-color 282a33 || xfconf-query -c xsettings -p /Net/ThemeName -s "Qogir" && [[ $HOSTNAME != penguin ]] && xfwm4-settings &

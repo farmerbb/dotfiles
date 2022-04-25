@@ -1,0 +1,20 @@
+#!/bin/bash
+
+[[ $1 != "win11-vfio" ]] && exit 0
+
+case $2 in
+  start)
+    mountpoint -q /mnt/files && sudo umount /dev/sdb2 || true
+  ;;
+
+  release)
+    if [[ -f /tmp/vm-maintenance ]]; then
+      timeout 1 sudo umount -a -t cifs -l
+      sudo mount /dev/sdb2 /mnt/files
+    elif [[ $(ls -1 /dev/sg* | wc -l) = 4 ]]; then
+      sudo poweroff
+    else
+      sudo reboot
+    fi
+  ;;
+esac

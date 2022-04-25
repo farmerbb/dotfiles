@@ -1,0 +1,9 @@
+#!/bin/bash
+
+curl -L "https://chromium.googlesource.com/chromiumos/platform/dev-util/+/master/contrib/gfx/crostini-steam-setup.sh?format=TEXT" | base64 -d > /tmp/crostini-steam-setup.sh
+chmod a+x /tmp/crostini-steam-setup.sh
+
+sudo mv /etc/apt/preferences.d/cros.pref /etc/apt/preferences.d/cros.pref.bak
+
+sudo /tmp/crostini-steam-setup.sh
+sudo rm libwaffle-*
