@@ -190,7 +190,7 @@ cd -
 
 **<s>Set up remote execution (Mirakle):</s>**
 
-<s>`cp -r ~/OneDrive/Android/Miscellaneous/Remote\\ Execution/init.d ~/.gradle`</s>
+<s>`cp -r ~/OneDrive/Android/Miscellaneous/Remote\ Execution/init.d ~/.gradle`</s>
 
 ## Wine
 
