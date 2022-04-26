@@ -1,5 +1,5 @@
 <domain type='kvm'>
-  <name>ubuntu21.10</name>
+  <name>ubuntu22.04</name>
   <uuid>805ba55f-633b-4da5-8a4f-8315678955f5</uuid>
   <metadata>
     <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
@@ -61,7 +61,7 @@
     </disk>
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2' cache='none' io='threads' discard='unmap' iothread='1' queues='6'/>
-      <source file='/var/lib/libvirt/images/ubuntu21.10.qcow2'/>
+      <source file='/var/lib/libvirt/images/ubuntu22.04.qcow2'/>
       <target dev='vda' bus='virtio'/>
       <boot order='2'/>
       <address type='pci' domain='0x0000' bus='0x06' slot='0x00' function='0x0'/>

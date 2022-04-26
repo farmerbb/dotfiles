@@ -16,9 +16,10 @@ ls -d $ANDROID_SDK_ROOT/ndk/*/ >/dev/null 2>&1
 PLATFORM_TOOLS_DIR=$ANDROID_SDK_ROOT/platform-tools
 TOOLS_DIR=$ANDROID_SDK_ROOT/tools
 CMDLINE_TOOLS_DIR=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
+TOOLS_BIN_DIR=$ANDROID_SDK_ROOT/tools/bin
 
 export JAVA_HOME="/opt/android-studio/jre"
-export PATH="$PLUGINS_DIR:$PLATFORM_TOOLS_DIR:$TOOLS_DIR:$CMDLINE_TOOLS_DIR:$BUILD_TOOLS_DIR:$NDK_DIR:$JAVA_HOME/bin:$PATH"
+export PATH="$PLUGINS_DIR:$PLATFORM_TOOLS_DIR:$TOOLS_DIR:$CMDLINE_TOOLS_DIR:$TOOLS_BIN_DIR:$BUILD_TOOLS_DIR:$NDK_DIR:$JAVA_HOME/bin:$PATH"
 
 alias gradle-stop="pkill -f '.*GradleDaemon.*'"
 alias kill-android-studio="pkill -f '.*com.intellij.idea.Main.*' -9"
