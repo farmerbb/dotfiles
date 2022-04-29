@@ -22,6 +22,7 @@ alias docker-run="sudo docker build -t temp-container . && sudo docker run -it t
 alias docker-clean="sudo docker system prune --volumes -a -f"
 alias git-deep-clean="git clean -xfd && git reset --hard"
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
+alias install-micro="cd /usr/local/bin; curl https://getmic.ro/r | sudo bash; cd - >/dev/null 2>&1"
 alias mount-all="sudo mount -a && mount-adbfs"
 alias qcow2-create="qemu-img create -f qcow2 -o cluster_size=2M"
 alias qemu="qemu-system-x86_64 -accel kvm -cpu host -m 1024"
