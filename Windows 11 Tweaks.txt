@@ -91,4 +91,4 @@ Disable "These files might be harmful to your computer" warning:
 
 2. Security -> Local intranet -> Sites -> Advanced
 
-3. Enter the IP address of the network share (wildcards allowed) and click Add
+3. Enter the IP address of the network share (i.e. 192.168.122.1, wildcards allowed) and click Add
