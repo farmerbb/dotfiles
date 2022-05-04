@@ -8,7 +8,7 @@ curl https://raw.githubusercontent.com/rcaloras/bash-preexec/master/bash-preexec
 
 echo '' >> ~/.bashrc
 echo 'for i in linux-generic wsl2; do' >> ~/.bashrc
-echo '  source /mnt/d/Other\ Stuff/Linux/Bash\ Configs/bashrc-additions-$i.sh' >> ~/.bashrc
+echo '  source /mnt/z/Other\ Stuff/Linux/Bash\ Configs/bashrc-additions-$i.sh' >> ~/.bashrc
 echo 'done' >> ~/.bashrc
 
 ##################################################
@@ -33,12 +33,10 @@ generate-aliases() {
 f=$(mktemp)
 (generate-aliases >$f && mv $f /tmp/aliases &)
 
-alias c:="cd /mnt/c"
-alias d:="cd /mnt/d"
-alias o:="cd /mnt/o"
+for i in {a..z}; do alias $i:="cd /mnt/$i"; done
 
-export LINUX_DIR_PREFIX="/mnt/d/Other Stuff/Linux"
-export DEVICE_DIR_PREFIX="/mnt/d/Other Stuff/Linux/WSL2"
+export LINUX_DIR_PREFIX="/mnt/z/Other Stuff/Linux"
+export DEVICE_DIR_PREFIX="/mnt/z/Other Stuff/Linux/WSL2"
 export OD_LINUX_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Linux"
 export OD_DEVICE_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Linux/WSL2"
 

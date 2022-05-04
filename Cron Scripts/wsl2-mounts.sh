@@ -6,8 +6,7 @@ touch /tmp/wsl2-mounts.running
 
 ##################################################
 
-# Mount operations are placed here instead of /etc/fstab,
-# in order to vastly improve container startup time.
+# Mount operations are placed here instead of /etc/fstab.
 
 # Before installing this in crontab, run the following commands:
 #   sudo apt install cifs-utils
@@ -28,8 +27,8 @@ sudo mount -t cifs -o user=farmerbb,password=weeks-pill-bled,uid=farmerbb,gid=fa
 mountpoint -q /mnt/PC/C || ping -c1 -W1 192.168.86.5 && \
 sudo mount -t cifs -o user=Braden,credentials=/home/farmerbb/.sharelogin,uid=farmerbb,gid=farmerbb //192.168.86.5/C /mnt/PC/C || true
 
-mountpoint -q /mnt/PC/D || ping -c1 -W1 192.168.86.5 && \
-sudo mount -t cifs -o user=Braden,credentials=/home/farmerbb/.sharelogin,uid=farmerbb,gid=farmerbb //192.168.86.5/D /mnt/PC/D || true
+mountpoint -q /mnt/PC/Z || ping -c1 -W1 192.168.86.5 && \
+sudo mount -t cifs -o user=Braden,credentials=/home/farmerbb/.sharelogin,uid=farmerbb,gid=farmerbb //192.168.86.5/Z /mnt/PC/Z || true
 
 ##################################################
 

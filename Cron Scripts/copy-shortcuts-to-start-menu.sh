@@ -9,7 +9,7 @@ touch /tmp/copy-shortcuts-to-start-menu.running
 cd /mnt/c/Users/Braden/AppData/Roaming/Microsoft/Windows/Start\ Menu
 rm -r ​*
 
-for i in /mnt/d/Other\ Stuff/Shortcuts/*; do
+for i in /mnt/z/Other\ Stuff/Shortcuts/*; do
   BASENAME=$(basename "$i")
   mkdir "​$BASENAME"
   cp "$i"/* "​$BASENAME"

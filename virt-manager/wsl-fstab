@@ -1,1 +1,1 @@
-Z:\ /mnt/d drvfs defaults,noatime,uid=1000,gid=1000 0 0
+Z:\ /mnt/z drvfs defaults,noatime,uid=1000,gid=1000 0 0
