@@ -1,13 +1,3 @@
-**Ensure that files drive is mounted inside WSL:**
-
-* (VM only) Copy Z:\\Other Stuff\\Linux\\virt-manager\\wsl-fstab to local filesystem, then move to /etc/fstab inside WSL
-
-```
-sudo mkdir -p /mnt/z
-sudo ln -s /mnt/z /mnt/d
-sudo mount -a
-```
-
 **Enable passwordless sudo:**  
 
 ```
@@ -83,6 +73,5 @@ sudo mkdir -p /mnt/shield
 sudo mkdir -p /mnt/shield2
 sudo mkdir -p /mnt/PC/C
 sudo mkdir -p /mnt/PC/Z
-sudo ln -s /mnt/PC/Z /mnt/PC/D
 mkdir -p ~/.lastrun
 ```

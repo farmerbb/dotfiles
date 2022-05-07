@@ -22,8 +22,8 @@
 # 
 # m h  dom mon dow   command
 
-# */5 * * * * /mnt/d/Other\ Stuff/Linux/Cron\ Scripts/duckdns.sh >/dev/null 2>&1
+# */5 * * * * /mnt/z/Other\ Stuff/Linux/Cron\ Scripts/duckdns.sh >/dev/null 2>&1
 
-@reboot daemonize /bin/bash -i /mnt/d/Other\ Stuff/Linux/Cron\ Scripts/wsl2-ongoing-maintenance.sh
-* * * * * bash -i /mnt/d/Other\ Stuff/Linux/Cron\ Scripts/wsl2-mounts.sh
-0 */12 * * * bash -i /mnt/d/Other\ Stuff/Linux/Cron\ Scripts/copy-shortcuts-to-start-menu.sh
+@reboot daemonize /bin/bash -i /mnt/z/Other\ Stuff/Linux/Cron\ Scripts/wsl2-ongoing-maintenance.sh
+* * * * * bash -i /mnt/z/Other\ Stuff/Linux/Cron\ Scripts/wsl2-mounts.sh
+0 */12 * * * bash -i /mnt/z/Other\ Stuff/Linux/Cron\ Scripts/copy-shortcuts-to-start-menu.sh
