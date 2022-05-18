@@ -43,7 +43,7 @@ if [[ $? == 0 ]]; then
     cd "$*"
 
     # Open folder where APKs are stored
-    thunar ./app/build/outputs/apk &
+    thunar ./app/build/outputs/apk
 fi
 
 echo Done!

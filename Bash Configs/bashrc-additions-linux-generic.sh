@@ -26,7 +26,7 @@ alias install-micro="cd /usr/local/bin; curl https://getmic.ro/r | sudo bash; cd
 alias mount-all="sudo mount -a && mount-adbfs"
 alias qcow2-create="qemu-img create -f qcow2 -o cluster_size=2M"
 alias qemu="qemu-system-x86_64 -accel kvm -cpu host -m 1024"
-alias qemu95="qemu-system-i386 -cpu pentium -vga cirrus -device sb16 -netdev user,id=mynet0 -device pcnet,netdev=mynet0"
+alias qemu95="qemu-system-i386 -cpu pentium -vga cirrus -nic user,model=pcnet -soundhw sb16,pcspk"
 alias starwars="telnet towel.blinkenlights.nl"
 alias reboot-device="restart-device"
 alias running-vms="sudo lsof 2>&1 | grep /dev/kvm | awk '!seen[\$2]++'"
@@ -342,6 +342,17 @@ sync-timestamps() {
   cd - >/dev/null 2>&1
 }
 
+what-is() {
+  TYPE=$(type -t $1)
+  [[ $TYPE = file ]] && cat "$(type -p $1)"
+  [[ $TYPE = alias ]] && type $1 | sed -e "s/$1 is aliased to \`//g" -e "s/.$//"
+  [[ $TYPE = function ]] && type $1 | sed -z "s/\n    /\n/g" | sed -z "s/;\n/\n/g" | head -n -1 | tail -n +4
+}
+
+git-clone() {
+  git clone git@github.com:farmerbb/$1.git
+}
+
 export -f find-files
 export -f set-title
 export -f adb
@@ -369,3 +380,5 @@ export -f take-screenshot
 export -f uninstall-all-apps
 export -f reset-config-file
 export -f sync-timestamps
+export -f what-is
+export -f git-clone
