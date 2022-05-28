@@ -43,4 +43,5 @@ if [[ -z $(which wit) ]] ; then
   sudo apt-get install -y wit
 fi
 
-convert-to-game-usbloadergx "$@"
+# convert-to-game-usbloadergx "$@"
+convert-to-game-usbloadergx *.iso

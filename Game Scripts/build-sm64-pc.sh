@@ -12,7 +12,7 @@ cd sm64-port
 patch -p1 < enhancements/60fps.patch
 sed -i "s/G_IM_FMT_RGBA/G_IM_FMT_IA/g" actors/burn_smoke/model.inc.c
 
-cp /d/Games/Emulation/ROMs/Nintendo\ 64/Super\ Mario\ 64.z64 baserom.us.z64
+cp /z/Games/Emulation/Retail/Nintendo\ 64/Super\ Mario\ 64.z64 baserom.us.z64
 make -j4
 
 cp build/us_pc/sm64.us.f3dex2e.exe /c/Users/Braden/Desktop

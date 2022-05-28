@@ -353,6 +353,13 @@ git-clone() {
   git clone git@github.com:farmerbb/$1.git
 }
 
+install-pip2() {
+  sudo apt-get -y install curl python-dev
+  curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
+  sudo python2 get-pip.py
+  rm get-pip.py
+}
+
 export -f find-files
 export -f set-title
 export -f adb
@@ -382,3 +389,4 @@ export -f reset-config-file
 export -f sync-timestamps
 export -f what-is
 export -f git-clone
+export -f install-pip2
