@@ -25,7 +25,7 @@
     <iothreadpin iothread='1' cpuset='0,4'/>
   </cputune>
   <os>
-    <type arch='x86_64' machine='pc-q35-5.2'>hvm</type>
+    <type arch='x86_64' machine='pc-q35-7.0'>hvm</type>
     <loader readonly='yes' type='pflash'>/usr/share/OVMF/OVMF_CODE_4M.ms.fd</loader>
     <nvram>/var/lib/libvirt/qemu/nvram/win11_VARS.fd</nvram>
     <bootmenu enable='no'/>
@@ -33,7 +33,7 @@
   <features>
     <acpi/>
     <apic/>
-    <hyperv>
+    <hyperv mode='custom'>
       <relaxed state='on'/>
       <vapic state='on'/>
       <spinlocks state='on' retries='8191'/>
@@ -50,7 +50,7 @@
     </hyperv>
     <vmport state='off'/>
   </features>
-  <cpu mode='host-passthrough' check='none' migratable='on'>
+  <cpu mode='maximum' check='none' migratable='on'>
     <topology sockets='1' dies='1' cores='3' threads='2'/>
     <cache mode='passthrough'/>
     <feature policy='require' name='invtsc'/>
@@ -174,6 +174,7 @@
     <sound model='ich9'>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x1b' function='0x0'/>
     </sound>
+    <audio id='1' type='spice'/>
     <video>
       <model type='qxl' ram='65536' vram='65536' vgamem='65536' heads='1' primary='yes'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x0'/>

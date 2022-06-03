@@ -12,11 +12,11 @@ REDACTED_STRINGS=(
 DOTFILE_DIRS=(
   "Android/Backup/Settings/Termux"
   "Android/Development"
-  "Games/Utilities/Game\ Scripts"
-  "Other\ Stuff/Linux/*"
-  "Other\ Stuff/Chrome\ OS/Crostini"
-  "Other\ Stuff/Utilities/Command\ Scripts"
-  "Other\ Stuff/Utilities/Windows\ 11\ Tweaks.txt"
+  "Games/Utilities/Game Scripts"
+  "Other Stuff/Linux/*"
+  "Other Stuff/Chrome OS/Crostini"
+  "Other Stuff/Utilities/Command Scripts"
+  "Other Stuff/Utilities/Windows 11 Tweaks.txt"
 )
 
 echo "Cloning repo..."
