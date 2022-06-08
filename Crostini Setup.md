@@ -101,13 +101,14 @@ for i in ~/Downloads/*.deb; do sudo dpkg -i $i; done
 **Install other apps:**
 
 ```
-sudo apt install thunar bleachbit gimp mousepad qdirstat synaptic gnome-system-monitor audacity ristretto rhythmbox evince gnome-tweaks cura
+sudo apt install thunar bleachbit gimp mousepad qdirstat synaptic gnome-system-monitor audacity ristretto rhythmbox evince gnome-tweaks cura vlc
 ```
 
 **Fix desktop files:**
 
 ```
 fix-gtk3-desktop-file /usr/share/applications/syntevo-smartgit.desktop
+fix-qt-desktop-file /usr/share/applications/vlc.desktop
 fix-thunar
 ```
 
