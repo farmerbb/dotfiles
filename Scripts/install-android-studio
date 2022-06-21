@@ -54,3 +54,5 @@ fi
 
 [[ $HOSTNAME = penguin ]] && chrome-os-install $1
 [[ $HOSTNAME != penguin ]] && linux-install $1
+
+sudo ln -s /opt/android-studio/jbr/ /opt/android-studio/jre
