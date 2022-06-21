@@ -96,7 +96,7 @@ Disable "These files might be harmful to your computer" warning:
 
 Disable Windows 11 system requirement checks when upgrading:
 
-Official method (skips CPU requirement and downgrades TPU requirement):
+Official method (skips CPU requirement and downgrades TPM requirement):
 
 * Run the following command (as admin):
 
