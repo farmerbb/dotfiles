@@ -60,11 +60,11 @@ sudo bindfs --perms=0755 ~/Other\ Stuff/Linux/Scripts ~/Other\ Stuff/Linux/Scrip
 mountpoint -q ~/Other\ Stuff/Operating\ Systems || \
 sudo bindfs --perms=0777 --force-user=libvirt-qemu --force-group=libvirt-qemu ~/Other\ Stuff/Operating\ Systems ~/Other\ Stuff/Operating\ Systems
 
-mountpoint -q ~/Games/PC\ Games/Emulators\ \&\ Ports || \
-sudo bindfs --perms=0755 ~/Games/PC\ Games/Emulators\ \&\ Ports ~/Games/PC\ Games/Emulators\ \&\ Ports
+# mountpoint -q ~/Games/PC\ Games/Emulators\ \&\ Ports || \
+# sudo bindfs --perms=0755 ~/Games/PC\ Games/Emulators\ \&\ Ports ~/Games/PC\ Games/Emulators\ \&\ Ports
 
-mountpoint -q ~/Games/Utilities || \
-sudo bindfs --perms=0755 ~/Games/Utilities ~/Games/Utilities
+# mountpoint -q ~/Games/Utilities || \
+# sudo bindfs --perms=0755 ~/Games/Utilities ~/Games/Utilities
 
 mountpoint -q ~/Other\ Stuff/Utilities/7-Zip/Linux || \
 sudo bindfs --perms=0755 ~/Other\ Stuff/Utilities/7-Zip/Linux ~/Other\ Stuff/Utilities/7-Zip/Linux

@@ -2,7 +2,7 @@
 if [[ $# -eq 0 || $# -eq 1 ]]; then
   BASENAME=$(basename "$0")
   echo "Usage: $BASENAME ARCBrowser-export-yyyymmdd-hhmmss.tar <from-device>"
-  echo "(where <from-device> is one of: spin713, pixel4a, shield, or retroid)"
+  echo "(where <from-device> is one of: spin713, pixel5, shield, or retroid)"
   exit 1
 fi
 
@@ -18,7 +18,7 @@ convert() {
 
   SHIELD_DIR=emulated/0
   SPIN713_DIR=BF17B9A278DEB8F2BC9F49198523B7855CB089E7
-  PIXEL4A_DIR=emulated/0
+  PIXEL5_DIR=emulated/0
   RETROID_DIR=emulated/0
 
   if [[ $2 = shield ]] ; then
@@ -43,8 +43,8 @@ convert() {
     EMULATOR_SUITE_FROM=HIGH
     ALT_L2R2_FROM=false
     UI_SCALE_FROM=1.0
-  elif [[ $2 = pixel4a ]] ; then
-    STORAGE_DIR_FROM=$PIXEL4A_DIR
+  elif [[ $2 = pixel5 ]] ; then
+    STORAGE_DIR_FROM=$PIXEL5_DIR
     HIDE_GC_FROM=false
     HIDE_WII_FROM=true
     HIDE_PS1_FROM=false
@@ -89,8 +89,8 @@ convert() {
     EMULATOR_SUITE_TO=HIGH
     ALT_L2R2_TO=false
     UI_SCALE_TO=1.0
-  elif [[ $3 = pixel4a ]] ; then
-    STORAGE_DIR_TO=$PIXEL4A_DIR
+  elif [[ $3 = pixel5 ]] ; then
+    STORAGE_DIR_TO=$PIXEL5_DIR
     HIDE_GC_TO=false
     HIDE_WII_TO=true
     HIDE_PS1_TO=false
@@ -260,10 +260,10 @@ if [[ $# -eq 2 ]]; then
 
   SHIELD_NAME="SHIELD"
   SPIN713_NAME="Acer Spin 713"
-  PIXEL4A_NAME="Pixel 4a"
+  PIXEL5_NAME="Pixel 5"
   RETROID_NAME="Retroid Pocket 2+"
 
-  for target in shield spin713 pixel4a retroid ; do
+  for target in shield spin713 pixel5 retroid ; do
     [[ $2 != $target ]] && convert $1 $2 $target
 
     TEMP_NAME="${target^^}_NAME"
