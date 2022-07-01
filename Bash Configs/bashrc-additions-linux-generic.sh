@@ -272,6 +272,11 @@ qcow2-optimize() {
 }
 
 fix-thunar() {
+  if [[ -z $(which xdg-mime) ]]; then
+    sudo apt-get update
+    sudo apt-get install -y dconf-cli
+  fi
+
   [[ $HOSTNAME = penguin ]] && SUFFIX=".png"
   [[ $HOSTNAME != penguin ]] && SUFFIX=".svg"
 
@@ -281,6 +286,9 @@ fix-thunar() {
 
   sudo sed -i -e '/^inode\/directory=/d' -e '/^x-directory\/normal=/d' /usr/share/applications/defaults.list
   echo -e "inode/directory=thunar.desktop\nx-directory/normal=thunar.desktop" | sudo tee -a /usr/share/applications/defaults.list > /dev/null
+
+  xdg-mime default thunar.desktop inode/directory application/x-gnome-saved-search
+  gsettings set org.gnome.desktop.background show-desktop-icons false
 }
 
 restart-device() {
