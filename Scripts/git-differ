@@ -1,0 +1,36 @@
+#!/bin/bash
+
+print-usage() {
+  BASENAME=$(basename "$0")
+  echo "Usage: $BASENAME <first-file-or-dir> <second-file-or-dir>"
+  exit 1
+}
+
+[[ $# -ne 2 ]] && print-usage
+
+FIRST=$(realpath "$1")
+SECOND=$(realpath "$2")
+BASENAME=$(basename "$2")
+
+[[ -d "$FIRST" ]] && [[ -d "$SECOND" ]] && TYPE=dir
+[[ -f "$FIRST" ]] && [[ -f "$SECOND" ]] && TYPE=file
+[[ -z $TYPE ]] && print-usage
+
+sudo rm -rf temp-repo
+mkdir temp-repo
+cd temp-repo
+git init >/dev/null 2>&1
+
+cp -r "$FIRST" "$BASENAME"
+git add .
+git commit -m "temp" >/dev/null 2>&1
+
+rm -rf "$BASENAME"
+cp -r "$SECOND" "$BASENAME"
+git add .
+
+[[ $TYPE == dir ]] && SUMMARY="--compact-summary"
+git diff --cached $SUMMARY
+
+cd ..
+sudo rm -rf temp-repo

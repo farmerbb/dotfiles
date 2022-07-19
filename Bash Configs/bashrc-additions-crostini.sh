@@ -30,6 +30,7 @@ alias renice-crosvm="vm-escape renice-crosvm"
 alias restart-ui="vm-escape sudo restart ui"
 alias termina="vm-escape vmc start termina"
 alias trim="vm-escape trim"
+alias usb-monitor="vm-escape usb-monitor"
 alias virtualhere-server="vm-escape virtualhere-server"
 
 export LINUX_DIR_PREFIX="$(realpath ~/Other\ Stuff/Linux)"

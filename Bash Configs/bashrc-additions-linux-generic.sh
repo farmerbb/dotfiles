@@ -34,9 +34,14 @@ alias running-vms="sudo lsof 2>&1 | grep /dev/kvm | awk '!seen[\$2]++'"
 alias running-vms-fast="sudo lsof /dev/kvm 2>&1 | grep /dev/kvm | awk '!seen[\$2]++'"
 alias trim="sudo fstrim -av"
 alias turn-off-tv="curl -X POST http://192.168.86.44:8060/keypress/PowerOff"
+alias usb-monitor="clear; sudo udevadm monitor --subsystem-match=usb --property"
 alias wireguard="sudo wg"
 alias wireguard-up="sudo wg-quick up wg0"
 alias wireguard-down="sudo wg-quick down wg0"
+
+alias am="adb shell am"
+alias pm="adb shell pm"
+alias wm="adb shell wm"
 
 echo '"\e[A": history-search-backward' > ~/.inputrc
 echo '"\e[B": history-search-forward' >> ~/.inputrc
@@ -369,6 +374,15 @@ install-pip2() {
   rm get-pip.py
 }
 
+clear-local() {
+  for i in $(cat /etc/mtab | grep $(realpath ~/Local) | cut -d' ' -f2); do
+    sudo umount "$i"
+  done
+
+  sudo rm -rf ~/Local/*
+  sudo rm -rf ~/Local/.* >/dev/null 2>&1
+}
+
 export -f find-files
 export -f set-title
 export -f adb
@@ -399,3 +413,4 @@ export -f sync-timestamps
 export -f what-is
 export -f git-clone
 export -f install-pip2
+export -f clear-local
