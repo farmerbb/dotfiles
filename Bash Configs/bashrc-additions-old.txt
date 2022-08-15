@@ -35,12 +35,6 @@ sudo xrandr --addmode eDP-1 "1200x800_60.00"
 # sudo xrandr -s 2400x1600
 # sudo xrandr --output eDP-1 --scale 0.5x0.5
 
------------ Raspberry Pi 3B+ -----------
-
-alias trim="sudo fstrim -av"
-alias cp="advcp"
-alias mv="advmv"
-
 ---------- crosh (fix/restart ARC) ---------
 
 fix-arc() {
@@ -72,7 +66,7 @@ restart-arc() {
   rm ~/Downloads/.restart.sh
 }
 
----------- old aliases (ssh/adb) ----------
+---------- Old aliases ----------
 
 alias pc="ssh farmerbb@[REDACTED] -p 34350"
 # alias pi="ssh pi@[REDACTED] -p 34357"
@@ -87,12 +81,6 @@ alias shield2="adb kill-server; sleep 1; adb connect [REDACTED]:34351"
 alias adb-local="adb kill-server; sleep 1; adb connect arc"
 alias crosh="ssh chronos@100.115.92.1"
 
----------- Ubuntu / Windows dual boot ----------
-
-boot-to-windows() {
-  WINDOWS_MENU_TITLE=$(awk -F\' '/menuentry / {print $2}' /boot/grub/grub.cfg | grep -i windows)
-  sudo grub-reboot "$WINDOWS_MENU_TITLE"
-  sudo shutdown -r now
-}
-
-export -f boot-to-windows
+alias trim="sudo fstrim -av"
+alias cp="advcp"
+alias mv="advmv"

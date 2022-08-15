@@ -120,7 +120,7 @@ To start/stop the VM when the host starts/stops:
   * To temporarily disable the shutdown script, run `touch /tmp/vm-maintenance`
 
 
-To auto-mount D: drive on host when the VM starts:
+To auto-mount Z: drive on host when the VM starts:
 
   * Install WSL1 inside the VM, and set up the WSL2 startup task in Task Scheduler
 
@@ -132,7 +132,7 @@ To auto-mount D: drive on host when the VM starts:
 
   * On the guest, add the following line to the crontab:
 
-    @reboot ssh farmerbb@192.168.86.23 "sudo mount -t cifs -o user=Braden,credentials=/home/farmerbb/.sharelogin,uid=farmerbb,gid=farmerbb //192.168.86.24/D /mnt/files"
+    @reboot ssh farmerbb@192.168.86.23 "sudo mount -t cifs -o user=Braden,credentials=/home/farmerbb/.sharelogin,uid=farmerbb,gid=farmerbb //192.168.86.24/Z /mnt/files"
 
 
 Commands for resizing a qcow2 disk image (run as root):

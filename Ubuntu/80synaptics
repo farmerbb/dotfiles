@@ -1,0 +1,13 @@
+synclient \
+  SingleTapTimeout=0 \
+  VertScrollDelta=-50 \
+  HorizScrollDelta=-50 \
+  VertEdgeScroll=0 \
+  TapButton3=2 \
+  ClickFinger3=2 \
+  PalmDetect=1 \
+  RightButtonAreaLeft=0 \
+  RightButtonAreaTop=0 \
+  HorizTwoFingerScroll=1 \
+  CoastingSpeed=1 \
+  CoastingFriction=25

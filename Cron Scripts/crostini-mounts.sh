@@ -51,8 +51,7 @@ sshfs crosh:/ ~/ChromeOS -o follow_symlinks
 # check-ssid
 
 # mountpoint -q ~/NUC || ping -c1 -W1 nuc && \
-mountpoint -q ~/NUC || \
-sshfs nuc:/ ~/NUC -o follow_symlinks
+# sshfs nuc:/ ~/NUC -o follow_symlinks
 
 mountpoint -q ~/Other\ Stuff/Linux/Scripts || \
 sudo bindfs --perms=0755 ~/Other\ Stuff/Linux/Scripts ~/Other\ Stuff/Linux/Scripts
@@ -69,6 +68,7 @@ sudo bindfs --perms=0777 --force-user=libvirt-qemu --force-group=libvirt-qemu ~/
 mountpoint -q ~/Other\ Stuff/Utilities/7-Zip/Linux || \
 sudo bindfs --perms=0755 ~/Other\ Stuff/Utilities/7-Zip/Linux ~/Other\ Stuff/Utilities/7-Zip/Linux
 
+timeout 10 mount-nuc
 timeout 10 mount-adbfs
 ssh crosh sudo mount -o remount,exec /home/chronos/user
 

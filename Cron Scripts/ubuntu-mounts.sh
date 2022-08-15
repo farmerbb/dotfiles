@@ -9,6 +9,7 @@ touch /tmp/ubuntu-mounts.running
 mountpoint -q ~/OneDrive || \
 daemonize $(which rclone) --vfs-cache-mode writes mount OneDrive: ~/OneDrive
 
+timeout 10 mount-nuc
 timeout 10 mount-adbfs
 
 ##################################################

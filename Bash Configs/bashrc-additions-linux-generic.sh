@@ -20,11 +20,10 @@ alias btrfs-stats="sudo btrfs filesystem usage / 2>/dev/null"
 alias current-governor="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
 alias docker-run="sudo docker build -t temp-container . && sudo docker run -it temp-container:latest"
 alias docker-clean="sudo docker system prune --volumes -a -f"
-alias ext4-reclaim-reserved-blocks="sudo tune2fs -m 0"
-alias git-deep-clean="git clean -xfd && git reset --hard"
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
-alias install-micro="cd /usr/local/bin; curl https://getmic.ro/r | sudo bash; cd - >/dev/null 2>&1"
 alias mount-all="sudo mount -a && mount-adbfs"
+alias public-ip="dig @resolver4.opendns.com myip.opendns.com +short"
+alias public-ipv6="dig @resolver1.ipv6-sandbox.opendns.com AAAA myip.opendns.com +short -6"
 alias qcow2-create="qemu-img create -f qcow2 -o cluster_size=2M"
 alias qemu="qemu-system-x86_64 -accel kvm -cpu host -m 1024"
 alias qemu95="qemu-system-i386 -cpu pentium -vga cirrus -nic user,model=pcnet -soundhw sb16,pcspk"
@@ -35,9 +34,10 @@ alias running-vms-fast="sudo lsof /dev/kvm 2>&1 | grep /dev/kvm | awk '!seen[\$2
 alias trim="sudo fstrim -av"
 alias turn-off-tv="curl -X POST http://192.168.86.44:8060/keypress/PowerOff"
 alias usb-monitor="clear; sudo udevadm monitor --subsystem-match=usb --property"
+alias usbtop="sudo modprobe usbmon; sudo usbtop"
 alias wireguard="sudo wg"
-alias wireguard-up="sudo wg-quick up wg0"
-alias wireguard-down="sudo wg-quick down wg0"
+alias wireguard-up="sudo wg-quick up wg0 && timeout 10 mount-nuc"
+alias wireguard-down="sudo wg-quick down wg0 && timeout 10 mount-nuc"
 
 alias am="adb shell am"
 alias pm="adb shell pm"
@@ -383,6 +383,28 @@ clear-local() {
   sudo rm -rf ~/Local/.* >/dev/null 2>&1
 }
 
+git-deep-clean() {
+  [[ -f local.properties ]] && mv local.properties /tmp
+
+  git clean -xfd && git reset --hard
+
+  [[ -f /tmp/local.properties ]] && \
+    mv /tmp/local.properties . && \
+    echo && \
+    echo "NOTE: local.properties file has been kept"
+}
+
+install-deb() {
+  sudo dpkg -i "$1"
+  sudo apt --fix-broken install -y
+}
+
+ext4-reclaim-reserved() {
+  for i in $(cat /etc/mtab | grep 'ext4 rw' | cut -d' ' -f1); do
+    sudo tune2fs -m 0 $i
+  done
+}
+
 export -f find-files
 export -f set-title
 export -f adb
@@ -414,3 +436,6 @@ export -f what-is
 export -f git-clone
 export -f install-pip2
 export -f clear-local
+export -f git-deep-clean
+export -f install-deb
+export -f ext4-reclaim-reserved

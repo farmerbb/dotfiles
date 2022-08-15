@@ -1,0 +1,17 @@
+#!/bin/bash
+
+do-mount() {
+  mountpoint -q ~/NUC || sshfs nuc:/ ~/NUC -o follow_symlinks
+}
+
+do-unmount() {
+  sudo umount ~/NUC 2> /dev/null || sudo umount -f ~/NUC 2> /dev/null
+}
+
+PUBLIC_IP=$(dig @resolver4.opendns.com myip.opendns.com +short)
+if [[ $PUBLIC_IP = [REDACTED] ]]; then
+  do-mount
+  [[ $? != 0 ]] && do-unmount && do-mount
+else
+  do-unmount
+fi

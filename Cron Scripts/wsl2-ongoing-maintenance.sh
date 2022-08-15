@@ -6,7 +6,7 @@ sudo sysctl -w net.ipv4.ping_group_range="0 1000"
 sudo chmod 666 /dev/kvm
 
 rm -f /tmp/*.running
-bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/wsl2-mounts.sh
+bash -i /mnt/z/Other\ Stuff/Linux/Cron\ Scripts/wsl2-mounts.sh
 
 # mem-below-threshold() {
 #   echo "$(awk '$3=="kB"{printf ": %.0f:", $2=$2*1024;} 1' /proc/meminfo | grep MemAvailable | cut -d':' -f2 | sed 's/,//g') < $1 * 1024^3" | bc -l

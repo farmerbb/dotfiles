@@ -22,14 +22,12 @@ Install WSL2:
 
 * Uninstall Ubuntu and install Debian from the Microsoft Store
 
+* Upgrade Debian to bookworm: edit /etc/apt/sources.list and change all instances of "bullseye" to "bookworm"
+
 
 Install WSA + Play Store:
 
-  https://github.com/farmerbb/MagiskOnWSA/actions/workflows/magisk.yml
-
-* Run workflow -> Variants of gapps: nano -> Root solution: none -> Run workflow
-
-* Download the generated x64 zip file and extract it to C:\Users\Braden\WSA
+* Extract WSA.7z file to C:\Users\Braden\WSA
 
 * Right-click Install.ps1 and select Run in PowerShell
 
@@ -49,9 +47,15 @@ Disable "System requirements not met" watermark:
 
   reg add "HKEY_CURRENT_USER\Control Panel\UnsupportedHardwareNotificationCache" /v SV1 /t REG_DWORD /d 0 /f
 
+
+Improve touchpad scrolling performance:
+
+  reg add "HKEY_CURRENT_USER\Software\Microsoft\Wisp\Touch" /v Friction /t REG_DWORD /d 10 /f
+  (accepts values from 0 to 100; lower is faster)
+
 -------------------------------- Security Tweaks --------------------------------
 
-Disable Spectre / Meltdown mitigations:
+Disable Spectre / Meltdown mitigations (run as admin):
 
   reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v FeatureSettingsOverride /t REG_DWORD /d 3 /f
   reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v FeatureSettingsOverrideMask /t REG_DWORD /d 3 /f
@@ -66,7 +70,7 @@ Disable Windows Defender:
 
 2. Open Regedit -> navigate to Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender
 
-3. Right-click the Windows Defender registry key -> Permissions... -> Advanced
+3. Right-click the Windows Defender registry key (folder) -> Permissions... -> Advanced
 
 4. In the Advanced Dialog:
 
@@ -93,6 +97,7 @@ Disable "These files might be harmful to your computer" warning:
 
 3. Enter the IP address of the network share (i.e. 192.168.122.1, wildcards allowed) and click Add
 
+-------------------------------- Install / Upgrade Tweaks --------------------------------
 
 Disable Windows 11 system requirement checks when upgrading:
 
@@ -105,3 +110,8 @@ Official method (skips CPU requirement and downgrades TPM requirement):
 Unofficial method (skips all requirements):
 
 * Copy ISO contents to drive, and delete sources\appraiserres.dll
+
+
+Activate Windows 11 using Microsoft Activation Scripts (MAS):
+
+  iwr -useb https://massgrave.dev/get | iex
