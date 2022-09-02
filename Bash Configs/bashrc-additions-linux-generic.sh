@@ -1,8 +1,8 @@
 [[ $PATH != */usr/local/bin* ]] && export PATH="$PATH:/usr/local/bin"
-[[ -z $USER ]] && export USER="$(whoami)"
+[[ -z $USER ]] && export USER="$(id -un)"
 [[ -z $DISPLAY ]] && export DISPLAY=":0"
-[[ -z $DBUS_SESSION_BUS_ADDRESS ]] && export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/1000/bus"
-[[ -z $XDG_RUNTIME_DIR ]] && export XDG_RUNTIME_DIR="/run/user/1000"
+[[ -z $DBUS_SESSION_BUS_ADDRESS ]] && export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
+[[ -z $XDG_RUNTIME_DIR ]] && export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 
 export PATH="/usr/NX/bin:$PATH"
 export WINEDEBUG="-all"
@@ -405,6 +405,16 @@ ext4-reclaim-reserved() {
   done
 }
 
+sort-files-by-md5sum() {
+  for i in *; do
+    if [[ -f "$i" ]]; then
+      MD5=$(md5sum "$i" | cut -d' ' -f1)
+      mkdir -p $MD5
+      mv "$i" $MD5
+    fi
+  done
+}
+
 export -f find-files
 export -f set-title
 export -f adb
@@ -439,3 +449,4 @@ export -f clear-local
 export -f git-deep-clean
 export -f install-deb
 export -f ext4-reclaim-reserved
+export -f sort-files-by-md5sum

@@ -115,3 +115,15 @@ Unofficial method (skips all requirements):
 Activate Windows 11 using Microsoft Activation Scripts (MAS):
 
   iwr -useb https://massgrave.dev/get | iex
+
+-------------------------------- Power Management Tweaks --------------------------------
+
+Disable hibernation (run as admin):
+
+  powercfg /hibernate off
+
+
+Disable network connected standby (run as admin):
+
+  powercfg /setdcvalueindex scheme_current sub_none F15576E8-98B7-4186-B944-EAFA664402D9 0
+  powercfg /setacvalueindex scheme_current sub_none F15576E8-98B7-4186-B944-EAFA664402D9 0

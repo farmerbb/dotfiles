@@ -1,14 +1,25 @@
 #!/bin/bash
 
 do-mount() {
-  mountpoint -q ~/NUC || sshfs nuc:/ ~/NUC -o follow_symlinks
+  mountpoint -q ~/NUC || \
+  sshfs nuc:/ ~/NUC -o follow_symlinks
 }
 
 do-unmount() {
-  sudo umount ~/NUC 2> /dev/null || sudo umount -f ~/NUC 2> /dev/null
+# [[ "$PWD" == $(realpath ~/NUC) ]] && cd
+  sudo umount ~/NUC 2> /dev/null || \
+  sudo umount -f ~/NUC 2> /dev/null || \
+  sudo umount -l ~/NUC 2> /dev/null
 }
 
+if [[ -z $(which dig) ]] ; then
+  sudo apt-get update
+  sudo apt-get install -y dnsutils
+fi
+
 PUBLIC_IP=$(dig @resolver4.opendns.com myip.opendns.com +short)
+[[ -z $PUBLIC_IP ]] && PUBLIC_IP=$(curl https://ipinfo.io/ip)
+
 if [[ $PUBLIC_IP = [REDACTED] ]]; then
   do-mount
   [[ $? != 0 ]] && do-unmount && do-mount

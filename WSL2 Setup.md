@@ -61,6 +61,7 @@ crontab –e
 ```
 sudo ln -s /mnt/z/Other\ Stuff/Utilities/Minimal\ ADB\ \&\ Fastboot/adb.exe /usr/local/bin/adb
 sudo ln -s /mnt/z/Other\ Stuff/Utilities/Minimal\ ADB\ \&\ Fastboot/fastboot.exe /usr/local/bin/fastboot
+sudo ln -s /mnt/z/Other\ Stuff/Utilities/scrcpy/scrcpy.exe /usr/local/bin/scrcpy
 sudo ln -s /mnt/z/Games/Utilities/chdman/chdman.exe /usr/local/bin/chdman
 sudo ln -s /mnt/z/Games/PC\ Games/Emulators\ \&\ Ports/Dolphin/DolphinTool.exe /usr/local/bin/dolphin-tool
 ```

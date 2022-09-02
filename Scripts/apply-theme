@@ -6,20 +6,23 @@ sudo apt-get install -y git wget libglib2.0-bin gtk2-engines-murrine gtk2-engine
 rm -rf ~/.themes/Qogir*
 rm -rf ~/.local/share/icons/Qogir*
 
-for i in Qogir-theme Qogir-icon-theme Qogir-kde; do
-  rm -rf $i
+for i in Qogir-theme Qogir-icon-theme Qogir-kde grub2-themes; do
+  sudo rm -rf $i
   git clone https://github.com/vinceliuice/$i.git
   cd $i
 # [[ $i = Qogir-theme ]] && git checkout f70236b
 
   if [[ $i = Qogir-theme ]]; then
     ./install.sh --tweaks square
+  elif [[ $i = grub2-themes ]]; then
+    [[ $HOSTNAME != penguin ]] && \
+    sudo ./install.sh -t tela -s 4k
   else
     ./install.sh
   fi
 
   cd ..
-  rm -rf $i
+  sudo rm -rf $i
 done
 
 FONT_DIR=/usr/share/fonts/truetype/segoe-ui
@@ -111,4 +114,7 @@ echo '</fontconfig>' >> ~/.config/fontconfig/fonts.conf
 rm -rf ~/.config/gtk-4.0
 ln -s ~/.themes/Qogir/gtk-4.0 ~/.config
 
-set-window-color 282a33 || xfconf-query -c xsettings -p /Net/ThemeName -s "Qogir" && [[ $HOSTNAME != penguin ]] && xfwm4-settings &
+set-window-color 282a33 || \
+xfconf-query -c xsettings -p /Net/ThemeName -s "Qogir" && \
+[[ $HOSTNAME != penguin ]] && \
+xfwm4-settings &

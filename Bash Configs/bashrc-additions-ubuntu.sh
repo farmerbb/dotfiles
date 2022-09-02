@@ -15,8 +15,6 @@ export OD_LINUX_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Linux"
 export OD_DEVICE_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Linux/Ubuntu"
 export PATH="$PATH:$LINUX_DIR_PREFIX/Scripts"
 
-alias arcmenu-hidpi="dconf write /org/gnome/shell/extensions/arcmenu/menu-height 1100"
-alias arcmenu-lodpi="dconf write /org/gnome/shell/extensions/arcmenu/menu-height 550"
 alias virtualhere-client="sudo pkill vhuit64 && sleep 3; sudo daemonize /mnt/files/Other\ Stuff/Utilities/VirtualHere/vhuit64"
 
 chmod +x "$LINUX_DIR_PREFIX/Scripts/"*
@@ -40,41 +38,76 @@ make-trackpad-great-again() {
   echo 'Please log out, and log back in using the "Ubuntu on Xorg" session.'
 }
 
-export-extensions-conf() {
-  FILE="$DEVICE_DIR_PREFIX/extensions.conf"
-  [[ -f "$FILE" ]] && MD5=$(md5sum "$FILE")
+export-extension-config() {
+  DIR="$DEVICE_DIR_PREFIX/extensions"
+  FILE="$DIR/$1.txt"
+  if [[ -f "$FILE" ]]; then
+    MD5=$(md5sum "$FILE")
+    dconf dump /org/gnome/shell/extensions/$1/ > "$FILE"
+    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_DEVICE_DIR_PREFIX/extensions/$1.txt"
+  else
+    echo -e "\033[1m$(echo $DIR | sed "s#$DEVICE_DIR_PREFIX/##g"):\033[0m"
+    ls "$DIR"/*.txt | sed -e "s#$DIR/##g" -e "s/\.txt//g" -e "s/:/:\n/g" | column
+    echo
 
-  dconf dump /org/gnome/shell/extensions/ > "$FILE"
-  [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_DEVICE_DIR_PREFIX/extensions.conf"
+    echo -e "\033[1mUsage:\033[0m export-extension-config <name of extension>"
+  fi
 }
 
-import-extensions-conf() {
-  FILE="$DEVICE_DIR_PREFIX/extensions.conf"
-  dconf load /org/gnome/shell/extensions/ < "$FILE"
+import-extension-config() {
+  DIR="$DEVICE_DIR_PREFIX/extensions"
+  FILE="$DIR/$1.txt"
+  if [[ -f "$FILE" ]]; then
+    dconf load /org/gnome/shell/extensions/$1/ < "$FILE"
+  else
+    echo -e "\033[1m$(echo $DIR | sed "s#$DEVICE_DIR_PREFIX/##g"):\033[0m"
+    ls "$DIR"/*.txt | sed -e "s#$DIR/##g" -e "s/\.txt//g" -e "s/:/:\n/g" | column
+    echo
+
+    echo -e "\033[1mUsage:\033[0m import-extension-config <name of extension>"
+  fi
 }
 
-update-grub() {
-  FILE="$DEVICE_DIR_PREFIX/grub"
-  [[ -f "$FILE" ]] && MD5=$(md5sum "$FILE")
-
-  cp /etc/default/grub "$FILE"
-  [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_DEVICE_DIR_PREFIX/grub"
+edit-grub-config() {
+  DIR="$DEVICE_DIR_PREFIX"
+  FILE="$DIR/grub"
+  if [[ -f "$FILE" ]]; then
+    MD5=$(md5sum "$FILE")
+    sudo nano /etc/default/grub
+    cp /etc/default/grub "$FILE"
+    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_DEVICE_DIR_PREFIX/grub"
+  fi
 
   sudo sed -i 's/quick_boot="1"/quick_boot="0"/g' /etc/grub.d/30_os-prober
-  sudo $(which update-grub)
+  sudo update-grub
+}
+
+edit-fstab() {
+  DIR="$DEVICE_DIR_PREFIX"
+  FILE="$DIR/fstab"
+  if [[ -f "$FILE" ]]; then
+    MD5=$(md5sum "$FILE")
+    sudo nano /etc/fstab
+    cp /etc/fstab "$FILE"
+    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_DEVICE_DIR_PREFIX/fstab"
+  fi
+
+  sudo mount -a
 }
 
 boot-to-windows() {
   timedatectl set-local-rtc 1
 
   WINDOWS_MENU_TITLE=$(sudo awk -F\' '/menuentry / {print $2}' /boot/grub/grub.cfg | grep -i windows)
-  sudo grub-reboot "$WINDOWS_MENU_TITLE"
+# sudo grub-reboot "$WINDOWS_MENU_TITLE"
+  sudo grub-set-default "$WINDOWS_MENU_TITLE"
   sudo shutdown -r now
 }
 
 export -f allow-all-usb
 export -f make-trackpad-great-again
-export -f export-extensions-conf
-export -f import-extensions-conf
-export -f update-grub
+export -f export-extension-config
+export -f import-extension-config
+export -f edit-grub-config
+export -f edit-fstab
 export -f boot-to-windows
