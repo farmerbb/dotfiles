@@ -14,9 +14,6 @@ if [[ $USER != chronos ]]; then
   alias mv="$(which advmv || which mv)"
 fi
 
-alias btrfs-dedupe="sudo jdupes -r1BQ /; gunzip ~/.hashfile; sudo duperemove -drh --hashfile=/home/$USER/.hashfile /; gzip ~/.hashfile"
-alias btrfs-defrag="sudo btrfs filesystem defrag -rfv / || true"
-alias btrfs-stats="sudo btrfs filesystem usage / 2>/dev/null"
 alias current-governor="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
 alias docker-run="sudo docker build -t temp-container . && sudo docker run -it temp-container:latest"
 alias docker-clean="sudo docker system prune --volumes -a -f"
@@ -47,6 +44,23 @@ echo '"\e[A": history-search-backward' > ~/.inputrc
 echo '"\e[B": history-search-forward' >> ~/.inputrc
 echo '"\eOA": history-search-backward' >> ~/.inputrc
 echo '"\eOB": history-search-forward' >> ~/.inputrc
+
+btrfs-dedupe() {
+  sudo jdupes -r1BQ $BTRFS_MNT
+  gunzip ~/.hashfile
+  sudo duperemove -drh --hashfile=/home/$USER/.hashfile $BTRFS_MNT
+  gzip ~/.hashfile
+}
+
+btrfs-defrag() {
+  sudo btrfs filesystem defrag -rfv -czstd $BTRFS_MNT || true
+}
+
+btrfs-stats() {
+  sudo btrfs filesystem usage $BTRFS_MNT 2>/dev/null
+  echo
+  sudo compsize -x $BTRFS_MNT
+}
 
 find-files() {
   find . -exec file -- {} + | grep -i "$*"
@@ -124,7 +138,7 @@ sys-monitor() {
     [[ $HOSTNAME = penguin ]] && FAN_SPEED="echo \"scale=4; \$($SYS_MONITOR_PREFIX cat /sys/class/thermal/cooling_device0/cur_state) / \$($SYS_MONITOR_PREFIX cat /sys/class/thermal/cooling_device0/max_state) * 100\" | bc | sed -e 's/.00/%/g' -e 's/^0$/0%/g' -e 's/%%00/100%/g'; echo"
     [[ $HOSTNAME != penguin ]] && FAN_SPEED="echo; echo"
     [[ -z $(which btrfs) ]] && DISK_MONITOR="df -h | sort | uniq -f0 -w16 | sort -h -k2 | (sed -u 2q; tail -n6; echo)"
-    [[ ! -z $(which btrfs) ]] && DISK_MONITOR="sudo btrfs filesystem usage / 2>/dev/null | sed -e 1d -e 9,10d -e 12d | head -n9"
+    [[ ! -z $(which btrfs) ]] && DISK_MONITOR="sudo btrfs filesystem usage $BTRFS_MNT 2>/dev/null | sed -e 1d -e 9,10d -e 12d | head -n9"
     MEM_MONITOR="sudo smem -c \"$SMEM_COLS\" -tk | (sed -u 1q; tail -n\$((LINES-22)))"
     [[ $1 = "-p" ]] && LAST_LINE="sudo smem -c \"$SMEM_COLS\" -tp | tail -n1"
 
@@ -415,6 +429,20 @@ sort-files-by-md5sum() {
   done
 }
 
+process-args() {
+  regex='^[0-9]+$'
+  if ! [[ $1 =~ $regex ]] ; then
+    for i in $(pidof $1); do
+      ps -p $i -o args | tail -n +2; echo
+    done
+  else
+    ps -p $1 -o args | tail -n +2; echo
+  fi
+}
+
+export -f btrfs-dedupe
+export -f btrfs-defrag
+export -f btrfs-stats
 export -f find-files
 export -f set-title
 export -f adb
@@ -450,3 +478,4 @@ export -f git-deep-clean
 export -f install-deb
 export -f ext4-reclaim-reserved
 export -f sort-files-by-md5sum
+export -f process-args

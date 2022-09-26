@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [[ $# -ne 1 ]]; then
+  BASENAME=$(basename "$0")
+  echo "Usage: $BASENAME <branch-name>"
+  exit 1
+fi
+
+if [[ ! -d .git ]]; then
+  BASENAME=$(basename "$0")
+  echo "$BASENAME must be run at the root of your git repository."
+  exit 1
+fi
+
+SCRATCH_DIR=../.scratch
+
+rm -rf $SCRATCH_DIR
+mkdir $SCRATCH_DIR
+
+shopt -s extglob
+mv !(.git) $SCRATCH_DIR
+
+git clean -xfd
+git reset --hard
+git checkout $1
+
+rm -rf !(.git)
+mv $SCRATCH_DIR/* .
+rm -rf $SCRATCH_DIR

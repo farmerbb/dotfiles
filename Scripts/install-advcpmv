@@ -3,16 +3,9 @@
 sudo apt-get update
 sudo apt-get install -y wget build-essential
 
-wget http://ftp.gnu.org/gnu/coreutils/coreutils-8.32.tar.xz
-tar xvJf coreutils-8.32.tar.xz
-cd coreutils-8.32/
-wget https://raw.githubusercontent.com/jarun/advcpmv/master/advcpmv-0.8-8.32.patch
-patch -p1 -i advcpmv-0.8-8.32.patch
-./configure
-make -j$(nproc)
+curl https://raw.githubusercontent.com/jarun/advcpmv/master/install.sh --create-dirs -o ./advcpmv/install.sh && (cd advcpmv && sh install.sh)
 
-sudo mv ./src/cp /usr/local/bin/advcp
-sudo mv ./src/mv /usr/local/bin/advmv
+sudo mv ./advcpmv/advcp /usr/local/bin/advcp
+sudo mv ./advcpmv/advmv /usr/local/bin/advmv
 
-cd ..
-rm -rf coreutils-8.32*
+rm -rf advcpmv

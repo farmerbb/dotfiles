@@ -56,3 +56,16 @@ preexec() {
   EXISTS2=$(compgen -c "$1" | grep -w "$1")
   [[ -z "$EXISTS" ]] && [[ ! -z "$EXISTS2" ]] && eval "$@"
 }
+
+copy-shortcuts-to-start-menu() {
+  cd /mnt/c/Users/Braden/AppData/Roaming/Microsoft/Windows/Start\ Menu
+  rm -r ​*
+
+  for i in /mnt/z/Other\ Stuff/Shortcuts/*; do
+    BASENAME=$(basename "$i")
+    mkdir "​$BASENAME"
+    cp "$i"/* "​$BASENAME"
+  done
+}
+
+export -f copy-shortcuts-to-start-menu

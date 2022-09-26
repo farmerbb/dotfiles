@@ -1,6 +1,6 @@
 [/]
 alphabetize-all-programs=true
-application-shortcuts-list=[['Software', 'ubuntusoftware', 'ArcMenu_Software'], ['Settings', 'preferences-system-symbolic', 'gnome-control-center.desktop'], ['Tweaks', 'org.gnome.tweaks-symbolic', 'org.gnome.tweaks.desktop'], ['Terminal', 'utilities-terminal-symbolic', 'org.gnome.Terminal.desktop']]
+application-shortcuts-list=[['Software', 'ubuntusoftware', 'ArcMenu_Software'], ['Settings', 'preferences-system-symbolic', 'gnome-control-center.desktop'], ['Extensions', '', 'org.gnome.Extensions.desktop'], ['Tweaks', 'org.gnome.tweaks-symbolic', 'org.gnome.tweaks.desktop'], ['Terminal', 'utilities-terminal-symbolic', 'org.gnome.Terminal.desktop']]
 arc-menu-icon=70
 arc-menu-placement='DTP'
 arcmenu-extra-categories-links=[(0, false), (1, false), (2, false), (3, false), (4, false)]

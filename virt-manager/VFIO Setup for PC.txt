@@ -89,26 +89,6 @@ If GPU successfully passes through to VM, but screen remains blank:
   * After drivers finish installing, shutdown VM and remove extra video + display
 
 
-Use TSC timer (supposed to reduce stutters):
-
-  * Add <feature policy='require' name='invtsc'/> into the <cpu> section of the libvirt xml
-
-  * Inside the Windows VM, run the following in an admin command prompt, then reboot:
-
-      bcdedit /set useplatformclock true
-
-  * To undo the timer change, run the following in an admin command prompt, then reboot:
-  
-      bcdedit /deletevalue useplatformclock
-
-  * To check timer frequency, run the following inside PowerShell:
-
-      [System.Diagnostics.Stopwatch]::Frequency
-  
-    Value of 10000000 means it is using the Hyper-V timer.
-    Value of your CPU frequency, bitshifted << 10, means it is using the TSC timer.
-
-
 To start/stop the VM when the host starts/stops:
 
   * Open the win11-vfio VM in virt-manager, go to Boot Options and check "Start virtual machine on host boot up"

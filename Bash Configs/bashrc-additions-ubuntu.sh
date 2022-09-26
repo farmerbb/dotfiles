@@ -13,11 +13,12 @@ export LINUX_DIR_PREFIX="$(realpath /mnt/files/Other\ Stuff/Linux)"
 export DEVICE_DIR_PREFIX="$(realpath /mnt/files/Other\ Stuff/Linux/Ubuntu)"
 export OD_LINUX_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Linux"
 export OD_DEVICE_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Linux/Ubuntu"
+export BTRFS_MNT="/mnt/files"
 export PATH="$PATH:$LINUX_DIR_PREFIX/Scripts"
 
 alias virtualhere-client="sudo pkill vhuit64 && sleep 3; sudo daemonize /mnt/files/Other\ Stuff/Utilities/VirtualHere/vhuit64"
 
-chmod +x "$LINUX_DIR_PREFIX/Scripts/"*
+chmod +x "$LINUX_DIR_PREFIX/Scripts/"* >/dev/null 2>&1
 echo 10 | sudo tee /proc/sys/vm/swappiness >/dev/null
 
 allow-all-usb() {
@@ -104,6 +105,14 @@ boot-to-windows() {
   sudo shutdown -r now
 }
 
+install-blackbox() {
+  sudo apt-get -y install flatpak
+  flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+  flatpak install -y flathub com.raggesilver.BlackBox
+  flatpak update -y com.raggesilver.BlackBox
+  sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /var/lib/flatpak/exports/bin/com.raggesilver.BlackBox 100
+}
+
 export -f allow-all-usb
 export -f make-trackpad-great-again
 export -f export-extension-config
@@ -111,3 +120,4 @@ export -f import-extension-config
 export -f edit-grub-config
 export -f edit-fstab
 export -f boot-to-windows
+export -f install-blackbox

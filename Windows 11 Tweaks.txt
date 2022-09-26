@@ -22,7 +22,9 @@ Install WSL2:
 
 * Uninstall Ubuntu and install Debian from the Microsoft Store
 
-* Upgrade Debian to bookworm: edit /etc/apt/sources.list and change all instances of "bullseye" to "bookworm"
+* Upgrade Debian to bookworm:
+
+  sudo sed -i "s/bullseye/bookworm/g" /etc/apt/sources.list
 
 
 Install WSA + Play Store:
@@ -52,6 +54,11 @@ Improve touchpad scrolling performance:
 
   reg add "HKEY_CURRENT_USER\Software\Microsoft\Wisp\Touch" /v Friction /t REG_DWORD /d 10 /f
   (accepts values from 0 to 100; lower is faster)
+
+
+Disable swipe gesture from edge of screen:
+
+  reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Policies\Microsoft\Windows\EdgeUI" /v AllowEdgeSwipe /t REG_DWORD /d 0 /f
 
 -------------------------------- Security Tweaks --------------------------------
 
@@ -125,5 +132,14 @@ Disable hibernation (run as admin):
 
 Disable network connected standby (run as admin):
 
+* On battery:
+
   powercfg /setdcvalueindex scheme_current sub_none F15576E8-98B7-4186-B944-EAFA664402D9 0
+
+* While plugged in:
+
   powercfg /setacvalueindex scheme_current sub_none F15576E8-98B7-4186-B944-EAFA664402D9 0
+
+* Confirm sleep state (should say "Network Disconnected"):
+
+  powercfg /a

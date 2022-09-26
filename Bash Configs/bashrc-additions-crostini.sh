@@ -37,6 +37,7 @@ export LINUX_DIR_PREFIX="$(realpath ~/Other\ Stuff/Linux)"
 export DEVICE_DIR_PREFIX="$(realpath ~/Other\ Stuff/Chrome\ OS/Crostini)"
 export OD_LINUX_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Linux"
 export OD_DEVICE_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Chrome OS/Crostini"
+export BTRFS_MNT="/"
 
 export PATH="$PATH:$LINUX_DIR_PREFIX/Scripts"
 export QT_QPA_PLATFORMTHEME=qt5ct
