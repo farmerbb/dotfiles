@@ -66,6 +66,8 @@ copy-shortcuts-to-start-menu() {
     mkdir "​$BASENAME"
     cp "$i"/* "​$BASENAME"
   done
+
+  cd - > /dev/null
 }
 
 export -f copy-shortcuts-to-start-menu
