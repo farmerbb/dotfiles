@@ -21,6 +21,7 @@ TOOLS_BIN_DIR=$ANDROID_SDK_ROOT/tools/bin
 export JAVA_HOME="/opt/android-studio/jbr"
 export PATH="$PLUGINS_DIR:$PLATFORM_TOOLS_DIR:$TOOLS_DIR:$CMDLINE_TOOLS_DIR:$TOOLS_BIN_DIR:$BUILD_TOOLS_DIR:$NDK_DIR:$JAVA_HOME/bin:$PATH"
 
+alias clear-emulator-lockfiles="rm ~/.android/avd/*.avd/*.lock"
 alias gradle-stop="pkill -f '.*GradleDaemon.*'"
 alias kill-android-studio="pkill -f '.*com.intellij.idea.Main.*' -9"
 alias reset-android-studio='for i in ~/.cache ~/.local/share ~/.config; do rm -rf $i/Google; done'

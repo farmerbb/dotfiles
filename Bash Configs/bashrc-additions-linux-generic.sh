@@ -59,7 +59,7 @@ btrfs-defrag() {
 btrfs-stats() {
   sudo btrfs filesystem usage $BTRFS_MNT 2>/dev/null
   echo
-  sudo compsize -x $BTRFS_MNT
+  sudo compsize $BTRFS_MNT
 }
 
 find-files() {

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+sudo rm -rfv bees
+git clone https://github.com/Zygo/bees.git
+cd bees
+
+sudo apt-get -y install build-essential btrfs-progs markdown schedtool
+
+make -j$(nproc)
+sudo make install
+
+cd ..
+sudo rm -rfv bees

@@ -3,7 +3,7 @@
   <uuid>805ba55f-633b-4da5-8a4f-8315678955f5</uuid>
   <metadata>
     <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">
-      <libosinfo:os id="http://ubuntu.com/ubuntu/20.10"/>
+      <libosinfo:os id="http://ubuntu.com/ubuntu/22.10"/>
     </libosinfo:libosinfo>
   </metadata>
   <memory unit='KiB'>4194304</memory>
@@ -25,7 +25,7 @@
     <iothreadpin iothread='1' cpuset='0,4'/>
   </cputune>
   <os>
-    <type arch='x86_64' machine='pc-q35-5.2'>hvm</type>
+    <type arch='x86_64' machine='pc-q35-7.0'>hvm</type>
   </os>
   <features>
     <acpi/>
@@ -61,7 +61,7 @@
     </disk>
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2' cache='none' io='threads' discard='unmap' iothread='1' queues='6'/>
-      <source file='/var/lib/libvirt/images/ubuntu22.10.qcow2'/>
+      <source file='/home/farmerbb/VMs/ubuntu22.10.qcow2'/>
       <target dev='vda' bus='virtio'/>
       <boot order='2'/>
       <address type='pci' domain='0x0000' bus='0x06' slot='0x00' function='0x0'/>
@@ -182,7 +182,7 @@
       <image compression='off'/>
       <playback compression='off'/>
       <streaming mode='off'/>
-      <gl enable='yes' rendernode='/dev/dri/renderD128'/>
+      <gl enable='yes'/>
     </graphics>
     <sound model='ich9'>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x1b' function='0x0'/>

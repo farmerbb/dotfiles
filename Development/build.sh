@@ -25,6 +25,7 @@ rm -f output.zip
 
 # Reset the git repo
 cd "$*"
+[[ -f local.properties ]] && mv local.properties ..
 git clean -xfd
 git reset --hard
 
@@ -46,4 +47,5 @@ if [[ $? == 0 ]]; then
     thunar ./app/build/outputs/apk
 fi
 
+[[ -f ../local.properties ]] && mv ../local.properties .
 echo Done!
