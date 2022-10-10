@@ -15,6 +15,7 @@ if [[ $USER != chronos ]]; then
 fi
 
 alias current-governor="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
+alias disable-android-tv-launcher="adb shell pm disable-user --user 0 com.google.android.tvlauncher"
 alias docker-run="sudo docker build -t temp-container . && sudo docker run -it temp-container:latest"
 alias docker-clean="sudo docker system prune --volumes -a -f"
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
@@ -46,14 +47,22 @@ echo '"\eOA": history-search-backward' >> ~/.inputrc
 echo '"\eOB": history-search-forward' >> ~/.inputrc
 
 btrfs-dedupe() {
-  sudo jdupes -r1BQ $BTRFS_MNT
-  gunzip ~/.hashfile
-  sudo duperemove -drh --hashfile=/home/$USER/.hashfile $BTRFS_MNT
-  gzip ~/.hashfile
+  if [[ -z $(pidof bees) ]]; then
+    sudo jdupes -r1BQ $BTRFS_MNT
+    gunzip ~/.hashfile
+    sudo duperemove -drh --hashfile=/home/$USER/.hashfile $BTRFS_MNT
+    gzip ~/.hashfile
+  else
+    echo "Not starting dedupe while bees is running"
+  fi
 }
 
 btrfs-defrag() {
-  sudo btrfs filesystem defrag -rfv -czstd $BTRFS_MNT || true
+  if [[ -z $(pidof bees) ]]; then
+    sudo btrfs filesystem defrag -rfv -czstd $BTRFS_MNT || true
+  else
+    echo "Not starting defrag while bees is running"
+  fi
 }
 
 btrfs-stats() {
@@ -282,11 +291,16 @@ unsparsify() {
 }
 
 qcow2-optimize() {
-  [[ "$1" != *.qcow2 ]] && return 1
+# [[ "$1" != *.qcow2 ]] && return 1
   [[ ! -f "$1" ]] && return 1
 
   sudo mv "$1" "$1".old
+
+  sudo touch "$1"
+  sudo chattr +C "$1"
+
   sudo qemu-img convert -f qcow2 -O qcow2 -o cluster_size=2M "$1".old "$1" || sudo mv "$1".old "$1"
+  sudo chown $USER:$USER "$1"
   sudo rm -f "$1".old
 }
 

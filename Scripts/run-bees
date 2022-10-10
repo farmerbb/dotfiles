@@ -1,0 +1,31 @@
+#!/bin/bash
+
+start-bees() {
+  [[ ! -z $(pidof bees) ]] && exit 1
+
+  sudo daemonize /usr/sbin/beesd $(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5)
+  sleep 5
+
+  for i in $(pidof bees); do
+    sudo schedtool -D -n20 $i
+    sudo ionice -c3 -p $i
+  done
+}
+
+stop-bees() {
+  [[ -z $(pidof bees) ]] && exit 1
+
+  sudo pkill bees
+  sleep 5
+
+  sudo umount /run/bees/mnt/*
+}
+
+CHARGING=$(cat /sys/class/power_supply/AC/online)
+BATTERY=$(cat /sys/class/power_supply/BAT0/capacity)
+
+if [[ $CHARGING = 1 && $BATTERY > 50 ]]; then
+  start-bees
+else
+  stop-bees
+fi

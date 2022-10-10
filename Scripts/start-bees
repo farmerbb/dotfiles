@@ -1,9 +1,0 @@
-#!/bin/bash
-
-sudo daemonize /usr/sbin/beesd $(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5)
-sleep 5
-
-for i in $(pidof bees); do
-  sudo schedtool -D -n20 $i
-  sudo ionice -c3 -p $i
-done
