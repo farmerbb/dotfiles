@@ -22,7 +22,8 @@ Install WSL2:
 
 * Uninstall Ubuntu and install Debian from the Microsoft Store
 
-* Upgrade Debian to bookworm:
+
+Upgrade Debian to bookworm:
 
   sudo sed -i "s/bullseye/bookworm/g" /etc/apt/sources.list
 
@@ -66,34 +67,6 @@ Disable Spectre / Meltdown mitigations (run as admin):
 
   reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v FeatureSettingsOverride /t REG_DWORD /d 3 /f
   reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" /v FeatureSettingsOverrideMask /t REG_DWORD /d 3 /f
-
-
-Disable Windows Defender:
-
-1. Open Windows Security -> Virus & threat protection -> Virus & threat protection settings
-
-   * Disable Tamper Protection first
-   * Disable all other items
-
-2. Open Regedit -> navigate to Computer\HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows Defender
-
-3. Right-click the Windows Defender registry key (folder) -> Permissions... -> Advanced
-
-4. In the Advanced Dialog:
-
-   * Change Owner -> type in your own username and click Check Names -> OK
-   * Check box for "Replace owner on subcontainers and objects" -> Apply -> OK
-
-5. In the Permissions for Windows Defender dialog: 
-
-   * Remove "Full Control" from all users in the list
-   * Add... -> type in your own username and click Check Names -> OK
-   * Allow your own user account Full Control
-
-6. In the Windows Defender registry key:
-
-   * Set DisableAntiSpyware to 1
-   * Set DisableAntiVirus to 1
 
 
 Disable "These files might be harmful to your computer" warning:

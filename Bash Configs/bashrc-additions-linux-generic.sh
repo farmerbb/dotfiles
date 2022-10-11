@@ -22,7 +22,6 @@ alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | so
 alias mount-all="sudo mount -a && mount-adbfs"
 alias public-ip="dig @resolver4.opendns.com myip.opendns.com +short"
 alias public-ipv6="dig @resolver1.ipv6-sandbox.opendns.com AAAA myip.opendns.com +short -6"
-alias qcow2-create="qemu-img create -f qcow2 -o cluster_size=2M"
 alias qemu="qemu-system-x86_64 -accel kvm -cpu host -m 1024"
 alias qemu95="qemu-system-i386 -cpu pentium -vga cirrus -nic user,model=pcnet -soundhw sb16,pcspk"
 alias starwars="telnet towel.blinkenlights.nl"
@@ -290,6 +289,17 @@ unsparsify() {
     sudo dd if="$1" of="$1" conv=notrunc bs=1M
 }
 
+qcow2-create() {
+  if [[ $# -ne 2 ]]; then
+    echo "Usage: qcow2-create <filename> <size>"
+    return 1
+  fi
+
+  touch "$1"
+  chattr +C "$1"
+  qemu-img create -f qcow2 -o cluster_size=2M "$1" "$2"
+}
+
 qcow2-optimize() {
 # [[ "$1" != *.qcow2 ]] && return 1
   [[ ! -f "$1" ]] && return 1
@@ -477,6 +487,7 @@ export -f edit-ssh-config
 export -f install-apks-recursive
 export -f max-cpu
 export -f unsparsify
+export -f qcow2-create
 export -f qcow2-optimize
 export -f fix-thunar
 export -f restart-device

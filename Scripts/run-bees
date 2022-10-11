@@ -3,8 +3,9 @@
 start-bees() {
   [[ ! -z $(pidof bees) ]] && exit 1
 
+  sudo umount /run/bees/mnt/* >/dev/null 2>&1
   sudo daemonize /usr/sbin/beesd $(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5)
-  sleep 5
+  while [[ -z $(pgrep bees) ]]; do sleep 1; done
 
   for i in $(pidof bees); do
     sudo schedtool -D -n20 $i
@@ -12,20 +13,11 @@ start-bees() {
   done
 }
 
-stop-bees() {
-  [[ -z $(pidof bees) ]] && exit 1
-
-  sudo pkill bees
-  sleep 5
-
-  sudo umount /run/bees/mnt/*
-}
-
 CHARGING=$(cat /sys/class/power_supply/AC/online)
 BATTERY=$(cat /sys/class/power_supply/BAT0/capacity)
 
-if [[ $CHARGING = 1 && $BATTERY > 50 ]]; then
+if [[ $CHARGING = 1 && $BATTERY > 90 || $BATTERY = 100 ]]; then
   start-bees
 else
-  stop-bees
+  sudo pkill bees
 fi
