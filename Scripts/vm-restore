@@ -1,0 +1,42 @@
+#!/bin/bash
+
+print-usage() {
+  BASENAME=$(basename "$0")
+  echo "Usage: $BASENAME <name-of-vm> <name-of-backup>"
+  exit 1
+}
+
+print-available-backups() {
+  ls -1 ~/VMs/$1~*.qcow2 >/dev/null 2>&1
+  if [[ $? = 0 ]]; then
+    echo "Available backups:"
+    ls -1 ~/VMs/$1~*.qcow2 | cut -d'~' -f2 | cut -d'.' -f1
+    echo
+  fi
+
+  print-usage
+}
+
+[[ $# -eq 1 ]] && print-available-backups $1
+[[ $# -ne 2 ]] && print-usage
+
+NAME=$2
+IMAGE_ORIGINAL=~/VMs/$1.qcow2
+IMAGE_BACKUP=~/VMs/$1~$NAME.qcow2
+
+[[ ! -f "$IMAGE_BACKUP" ]] && print-available-backups $1
+[[ ! -f "$IMAGE_ORIGINAL" ]] && print-usage
+
+while sudo virsh list | grep $1 >/dev/null 2>&1; do
+  echo "Not restoring backup while VM is running"
+  exit 1
+done
+
+rm -f "$IMAGE_ORIGINAL"
+lsattr -l "$IMAGE_BACKUP" | grep -q No_COW
+if [[ $? = 0 ]]; then
+  touch "$IMAGE_ORIGINAL"
+  chattr +C "$IMAGE_ORIGINAL"
+fi
+
+cp --reflink=auto "$IMAGE_BACKUP" "$IMAGE_ORIGINAL"

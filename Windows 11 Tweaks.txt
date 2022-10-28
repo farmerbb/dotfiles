@@ -49,6 +49,7 @@ Re-enable old right click menu:
 Disable "System requirements not met" watermark:
 
   reg add "HKEY_CURRENT_USER\Control Panel\UnsupportedHardwareNotificationCache" /v SV1 /t REG_DWORD /d 0 /f
+  reg add "HKEY_CURRENT_USER\Control Panel\UnsupportedHardwareNotificationCache" /v SV2 /t REG_DWORD /d 0 /f
 
 
 Improve touchpad scrolling performance:

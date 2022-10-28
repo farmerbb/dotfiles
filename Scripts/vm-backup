@@ -1,0 +1,32 @@
+#!/bin/bash
+
+print-usage() {
+  BASENAME=$(basename "$0")
+  echo "Usage: $BASENAME <name-of-vm> <optional-backup-name>"
+  exit 1
+}
+
+[[ $# -ne 1 && $# -ne 2 ]] && print-usage
+
+NAME=$2
+[[ -z "$NAME" ]] && NAME="$(date +%Y%m%d)"
+
+IMAGE_ORIGINAL=~/VMs/$1.qcow2
+IMAGE_BACKUP=~/VMs/$1~$NAME.qcow2
+
+[[ ! -f "$IMAGE_ORIGINAL" ]] && print-usage
+
+while sudo virsh list | grep $1 >/dev/null 2>&1; do
+  echo "Not creating backup while VM is running"
+  exit 1
+done
+
+[[ -f "$IMAGE_BACKUP" ]] && rm -f "$IMAGE_BACKUP"
+
+lsattr -l "$IMAGE_ORIGINAL" | grep -q No_COW
+if [[ $? = 0 ]]; then
+  touch "$IMAGE_BACKUP"
+  chattr +C "$IMAGE_BACKUP"
+fi
+
+cp --reflink=auto "$IMAGE_ORIGINAL" "$IMAGE_BACKUP"

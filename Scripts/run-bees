@@ -7,7 +7,7 @@ start-bees() {
   sudo daemonize /usr/sbin/beesd $(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5)
   while [[ -z $(pgrep bees) ]]; do sleep 1; done
 
-  for i in $(pidof bees); do
+  for i in $(pgrep bees); do
     sudo schedtool -D -n20 $i
     sudo ionice -c3 -p $i
   done

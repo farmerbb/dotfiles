@@ -297,7 +297,7 @@ qcow2-create() {
 
   touch "$1"
   chattr +C "$1"
-  qemu-img create -f qcow2 -o cluster_size=2M "$1" "$2"
+  qemu-img create -f qcow2 -o cluster_size=2M,compression_type=zstd "$1" "$2"
 }
 
 qcow2-optimize() {
@@ -309,7 +309,7 @@ qcow2-optimize() {
   sudo touch "$1"
   sudo chattr +C "$1"
 
-  sudo qemu-img convert -f qcow2 -O qcow2 -o cluster_size=2M "$1".old "$1" || sudo mv "$1".old "$1"
+  sudo qemu-img convert -c -f qcow2 -O qcow2 -o cluster_size=2M,compression_type=zstd "$1".old "$1" || sudo mv "$1".old "$1"
   sudo chown $USER:$USER "$1"
   sudo rm -f "$1".old
 }

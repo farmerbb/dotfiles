@@ -61,7 +61,7 @@
     </disk>
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2' cache='none' io='threads' discard='unmap' iothread='1' queues='6'/>
-      <source file='/home/farmerbb/VMs/ubuntu22.10.qcow2'/>
+      <source file='/mnt/files/Local/VMs/ubuntu22.10.qcow2'/>
       <target dev='vda' bus='virtio'/>
       <boot order='2'/>
       <address type='pci' domain='0x0000' bus='0x06' slot='0x00' function='0x0'/>

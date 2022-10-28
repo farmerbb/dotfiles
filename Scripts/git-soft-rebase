@@ -17,13 +17,18 @@ SCRATCH_DIR=../.scratch
 rm -rf $SCRATCH_DIR
 mkdir $SCRATCH_DIR
 
-shopt -s extglob
-mv !(.git) $SCRATCH_DIR
+mv * $SCRATCH_DIR
+mv .* $SCRATCH_DIR
+mv $SCRATCH_DIR/.git .
 
 git clean -xfd
 git reset --hard
-git checkout $1
+git checkout $1 2>/dev/null || git checkout -b $1
 
-rm -rf !(.git)
+mv .git $SCRATCH_DIR
+rm -rf *
+rm -rf .*
+
 mv $SCRATCH_DIR/* .
+mv $SCRATCH_DIR/.* .
 rm -rf $SCRATCH_DIR

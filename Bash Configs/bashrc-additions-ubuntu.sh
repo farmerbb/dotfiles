@@ -16,6 +16,9 @@ export OD_DEVICE_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Linux/Ubuntu"
 export BTRFS_MNT="/mnt/files"
 export PATH="$PATH:$LINUX_DIR_PREFIX/Scripts"
 
+alias enable-touchscreen="xinput --enable $(xinput --list | grep -i 'Finger touch' | grep -o 'id=[0-9]*' | sed 's/id=//')"
+alias disable-touchscreen="xinput --disable $(xinput --list | grep -i 'Finger touch' | grep -o 'id=[0-9]*' | sed 's/id=//')"
+alias snapper="$(which snapper) -c home"
 alias virtualhere-client="sudo pkill vhuit64 && sleep 3; sudo daemonize /mnt/files/Other\ Stuff/Utilities/VirtualHere/vhuit64"
 
 chmod +x "$LINUX_DIR_PREFIX/Scripts/"* >/dev/null 2>&1
