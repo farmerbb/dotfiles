@@ -55,4 +55,5 @@ fi
 [[ $HOSTNAME = penguin ]] && chrome-os-install $1
 [[ $HOSTNAME != penguin ]] && linux-install $1
 
-sudo ln -s /opt/android-studio/jbr/bin/java /usr/share/java
+sudo rm -f /usr/local/bin/java
+sudo ln -s /opt/android-studio/jbr/bin/java /usr/local/bin/java

@@ -32,7 +32,7 @@
     <apic/>
     <vmport state='off'/>
   </features>
-  <cpu mode='host-passthrough' check='none' migratable='on'>
+  <cpu mode='maximum' check='none' migratable='on'>
     <cache mode='passthrough'/>
     <numa>
       <cell id='0' cpus='0-5' memory='4194304' unit='KiB' memAccess='shared'/>

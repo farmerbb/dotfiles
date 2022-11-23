@@ -424,7 +424,7 @@ clear-local() {
 git-deep-clean() {
   [[ -f local.properties ]] && mv local.properties /tmp
 
-  git clean -xfd && git reset --hard
+  sudo git clean -xfd && git reset --hard
 
   [[ -f /tmp/local.properties ]] && \
     mv /tmp/local.properties . && \

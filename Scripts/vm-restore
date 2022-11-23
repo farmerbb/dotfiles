@@ -40,3 +40,8 @@ if [[ $? = 0 ]]; then
 fi
 
 cp --reflink=auto "$IMAGE_BACKUP" "$IMAGE_ORIGINAL"
+
+if [[ $1 = macos* ]]; then
+  sudo rm -rf ~/VMs/OSX-KVM
+  cp -r ~/VMs/OSX-KVM~$NAME ~/VMs/OSX-KVM
+fi

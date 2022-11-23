@@ -30,3 +30,5 @@ if [[ $? = 0 ]]; then
 fi
 
 cp --reflink=auto "$IMAGE_ORIGINAL" "$IMAGE_BACKUP"
+
+[[ $1 = macos* ]] && cp -r ~/VMs/OSX-KVM ~/VMs/OSX-KVM~$NAME
