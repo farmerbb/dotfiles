@@ -24,7 +24,6 @@ alias snapper="$(which snapper) -c home"
 alias virtualhere-client="sudo pkill vhuit64 && sleep 3; sudo daemonize /mnt/files/Other\ Stuff/Utilities/VirtualHere/vhuit64"
 
 chmod +x "$LINUX_DIR_PREFIX/Scripts/"* >/dev/null 2>&1
-echo 10 | sudo tee /proc/sys/vm/swappiness >/dev/null
 
 allow-all-usb() {
   echo 'SUBSYSTEM=="usb", MODE="0660", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/00-usb-permissions.rules >/dev/null

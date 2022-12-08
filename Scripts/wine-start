@@ -32,7 +32,7 @@ LOCAL_PATH=$(echo $LOCAL_PATH | sed "s/Local path : //g")
 WORKING_DIR=$(lnkinfo "$LNK_PATH" | grep "Working directory")
 WORKING_DIR=$(echo $WORKING_DIR | sed "s/Working directory : //g")
 
-SH_PATH=$(echo $LOCAL_PATH | sed -e "s#D:#$(echo ~)#g" -e "s#\\\#/#g")
+SH_PATH=$(echo $LOCAL_PATH | sed -e "s#Z:#$(echo ~)#g" -e "s#\\\#/#g")
 SH_PATH="$(echo ${SH_PATH%.*}.sh)"
 
 if [[ -f "$SH_PATH" ]] ; then
@@ -48,6 +48,6 @@ else
   if [[ $? -eq 0 ]] ; then
     echo Starting app \"$*\".
   else
-    echo Map $(echo ~) to drive D: in winecfg and try again.
+    echo Map $(echo ~) to drive Z: in winecfg and try again.
   fi
 fi
