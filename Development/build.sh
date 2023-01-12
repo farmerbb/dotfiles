@@ -44,7 +44,7 @@ if [[ $? == 0 ]]; then
     cd "$*"
 
     # Open folder where APKs are stored
-    thunar ./app/build/outputs/apk
+    open ./app/build/outputs/apk
 fi
 
 [[ -f ../local.properties ]] && mv ../local.properties .

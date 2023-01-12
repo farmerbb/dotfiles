@@ -15,6 +15,13 @@ export OD_LINUX_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Linux"
 export OD_DEVICE_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Linux/Ubuntu"
 export BTRFS_MNT="/mnt/files"
 export PATH="$PATH:$LINUX_DIR_PREFIX/Scripts"
+# [[ -d ~/.nimble/bin ]] && export PATH="$PATH:/home/$USER/.nimble/bin"
+
+export SYNC_DIRS=(
+  "Games"
+  "Media/Braden's Music"
+  "Other Stuff"
+)
 
 alias enable-touchscreen="xinput --enable $(xinput --list | grep -i 'Finger touch' | grep -o 'id=[0-9]*' | sed 's/id=//')"
 alias enable-trackpad="xinput --enable $(xinput --list | grep -i 'Touchpad' | grep -o 'id=[0-9]*' | sed 's/id=//')"
@@ -114,7 +121,15 @@ install-blackbox() {
   flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
   flatpak install -y flathub com.raggesilver.BlackBox
   flatpak update -y com.raggesilver.BlackBox
+  sudo flatpak override com.raggesilver.BlackBox --filesystem=host
   sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /var/lib/flatpak/exports/bin/com.raggesilver.BlackBox 100
+
+  echo '#!/bin/bash' | sudo tee /usr/local/bin/blackbox > /dev/null
+  echo 'REALPATH=$(realpath "$1")' | sudo tee -a /usr/local/bin/blackbox > /dev/null
+  echo 'flatpak run com.raggesilver.BlackBox --working-directory="$REALPATH"' | sudo tee -a /usr/local/bin/blackbox > /dev/null
+  sudo chmod +x /usr/local/bin/blackbox
+
+  gsettings set org.cinnamon.desktop.default-applications.terminal exec blackbox
 }
 
 export -f allow-all-usb

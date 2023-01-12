@@ -1,0 +1,19 @@
+# Place inside /etc/X11/Xsession.d/
+
+synclient \
+  FingerLow=1 \
+  FingerHigh=1 \
+  SingleTapTimeout=0 \
+  VertScrollDelta=-79 \
+  HorizScrollDelta=-79 \
+  VertEdgeScroll=0 \
+  TapButton3=2 \
+  ClickFinger3=2 \
+  PalmDetect=1 \
+  PalmMinWidth=8 \
+  PalmMinZ=100 \
+  RightButtonAreaLeft=0 \
+  RightButtonAreaTop=0 \
+  HorizTwoFingerScroll=1
+
+syndaemon -i 0.8 -tRd

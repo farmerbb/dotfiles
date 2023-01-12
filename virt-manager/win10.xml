@@ -49,7 +49,7 @@
     </hyperv>
     <vmport state='off'/>
   </features>
-  <cpu mode='maximum' check='none' migratable='on'>
+  <cpu mode='maximum' check='none' migratable='off'>
     <topology sockets='1' dies='1' cores='3' threads='2'/>
     <cache mode='passthrough'/>
     <feature policy='require' name='invtsc'/>

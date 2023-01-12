@@ -1,6 +1,6 @@
 #!/bin/bash
 
-sudo rm -rfv bees
+sudo rm -rf bees
 git clone https://github.com/Zygo/bees.git
 cd bees
 
@@ -10,4 +10,4 @@ make -j$(nproc)
 sudo make install
 
 cd ..
-sudo rm -rfv bees
+sudo rm -rf bees

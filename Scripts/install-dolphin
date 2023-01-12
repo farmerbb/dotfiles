@@ -12,10 +12,10 @@ sudo apt-get install -y curl git devscripts build-essential software-properties-
                         libxrandr-dev qtbase5-private-dev zlib1g-dev libjack-jackd2-dev
 
 rm -rf dolphin-temp
-git clone https://github.com/dolphin-emu/dolphin.git dolphin-temp
+git clone --depth 1 https://github.com/dolphin-emu/dolphin.git dolphin-temp
 cd dolphin-temp
 [[ ! -z $1 ]] && git checkout $(curl https://dolphin-emu.org/download/dev/master/$1/ | grep commithash | awk -F[\>\<] '{print $5}')
-git submodule update --init
+git submodule update --init --recursive
 
 mkdir Build && cd Build
 cmake ..

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [[ -z $(which cookies) ]]; then
+  sudo apt-get update
+  sudo apt-get -y install git golang-go
+
+  rm -rf cookies
+  git clone https://github.com/barnardb/cookies.git
+  cd cookies
+
+  go get github.com/zellyn/kooky/internal/chrome@v0.0.0-20201108220156-bec09c12c339
+  go build
+
+  sudo mv cookies /usr/bin
+  cd ..
+  rm -rf cookies
+fi
+
+GOG_URL="https://www.gog.com"
+curl -b $(cookies $GOG_URL) $GOG_URL/giveaway/claim
+echo

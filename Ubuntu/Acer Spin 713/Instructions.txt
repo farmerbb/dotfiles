@@ -1,0 +1,16 @@
+Disable broken X11 screen auto-rotation:
+
+  sudo apt-get remove -y iio-sensor-proxy
+
+
+Enable audio support:
+
+  git clone https://github.com/eupnea-linux/audio-scripts
+  cd audio-scripts
+  ./setup-audio
+
+
+Enable Chromebook function key bindings:
+
+  sudo cp /usr/share/X11/xkb/symbols/pc /usr/share/X11/xkb/symbols/pc.default
+  sudo cp xkb.chromebook /usr/share/X11/xkb/symbols/pc

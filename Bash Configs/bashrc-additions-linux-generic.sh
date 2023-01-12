@@ -65,7 +65,7 @@ btrfs-defrag() {
 }
 
 btrfs-stats() {
-  sudo btrfs filesystem usage $BTRFS_MNT 2>/dev/null
+  sudo btrfs filesystem usage -T $BTRFS_MNT 2>/dev/null
   echo
   sudo compsize $BTRFS_MNT
 }
@@ -314,12 +314,23 @@ qcow2-optimize() {
   sudo rm -f "$1".old
 }
 
-fix-thunar() {
+set-default-filemanager() {
+  [[ -z $1 ]] && return 1
+  [[ ! -f /usr/share/applications/$1.desktop ]] && return 1
+
   if [[ -z $(which xdg-mime) ]]; then
     sudo apt-get update
     sudo apt-get install -y dconf-cli
   fi
 
+  sudo sed -i -e '/^inode\/directory=/d' -e '/^x-directory\/normal=/d' /usr/share/applications/defaults.list
+  echo -e "inode/directory=$1.desktop\nx-directory/normal=$1.desktop" | sudo tee -a /usr/share/applications/defaults.list > /dev/null
+
+  xdg-mime default $1.desktop inode/directory application/x-gnome-saved-search
+  gsettings set org.gnome.desktop.background show-desktop-icons false
+}
+
+fix-thunar() {
   [[ $HOSTNAME = penguin ]] && SUFFIX=".png"
   [[ $HOSTNAME != penguin ]] && SUFFIX=".svg"
 
@@ -327,11 +338,7 @@ fix-thunar() {
     sudo sed -i "s#Icon=org.xfce.thunar#Icon=/usr/share/icons/Qogir/scalable/apps/file-manager$SUFFIX#g" $i
   done
 
-  sudo sed -i -e '/^inode\/directory=/d' -e '/^x-directory\/normal=/d' /usr/share/applications/defaults.list
-  echo -e "inode/directory=thunar.desktop\nx-directory/normal=thunar.desktop" | sudo tee -a /usr/share/applications/defaults.list > /dev/null
-
-  xdg-mime default thunar.desktop inode/directory application/x-gnome-saved-search
-  gsettings set org.gnome.desktop.background show-desktop-icons false
+  set-default-filemanager thunar
 }
 
 restart-device() {
@@ -464,6 +471,32 @@ process-args() {
   fi
 }
 
+robomirror() {
+  [[ ${#SYNC_DIRS[@]} -eq 0 ]] && \
+    echo 'SYNC_DIRS variable is not defined; exiting' && \
+    return 1
+
+  for i in ${!SYNC_DIRS[@]}; do
+    DIR="${SYNC_DIRS[$i]}"
+
+    nc -z nuc 22 2> /dev/null
+    if [[ $? = 0 ]]; then
+      echo "Mirroring $DIR from NUC using rsync..."
+      echo
+      rsync -avuz --no-perms --delete --inplace --compress-choice=zstd --compress-level=1 "farmerbb@nuc:/mnt/z/$DIR/" "/home/farmerbb/$DIR"
+    else
+      echo "Mirroring $DIR from OneDrive using rclone..."
+      echo
+      rclone sync -v "OneDrive:$DIR" "/home/farmerbb/$DIR"
+    fi
+    echo
+  done
+}
+
+docker-stop() {
+  docker stop $(docker ps -a -q)
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -489,6 +522,7 @@ export -f max-cpu
 export -f unsparsify
 export -f qcow2-create
 export -f qcow2-optimize
+export -f set-default-filemanager
 export -f fix-thunar
 export -f restart-device
 export -f take-screenshot
@@ -504,3 +538,5 @@ export -f install-deb
 export -f ext4-reclaim-reserved
 export -f sort-files-by-md5sum
 export -f process-args
+export -f robomirror
+export -f docker-stop
