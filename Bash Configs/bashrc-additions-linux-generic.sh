@@ -330,17 +330,6 @@ set-default-filemanager() {
   gsettings set org.gnome.desktop.background show-desktop-icons false
 }
 
-fix-thunar() {
-  [[ $HOSTNAME = penguin ]] && SUFFIX=".png"
-  [[ $HOSTNAME != penguin ]] && SUFFIX=".svg"
-
-  for i in /usr/share/applications/thunar*.desktop; do
-    sudo sed -i "s#Icon=org.xfce.thunar#Icon=/usr/share/icons/Qogir/scalable/apps/file-manager$SUFFIX#g" $i
-  done
-
-  set-default-filemanager thunar
-}
-
 restart-device() {
   [[ -z $1 ]] && return 0
   ssh $1 '/mnt/c/Windows/System32/cmd.exe /c shutdown /f /r /t 0 || sudo reboot' && return 0
@@ -472,6 +461,22 @@ process-args() {
 }
 
 robomirror() {
+  if [[ -z $1 ]]; then
+    nc -z nuc 22 2> /dev/null
+    if [[ $? = 0 ]]; then
+      SOURCE=nuc
+    else
+      SOURCE=onedrive
+    fi
+  fi
+
+  [[ $1 = nuc ]] && SOURCE=nuc
+  [[ $1 = onedrive ]] && SOURCE=onedrive
+
+  [[ -z $SOURCE ]] && \
+    echo 'Usage: robomirror <nuc | onedrive>' && \
+    return 1
+
   [[ ${#SYNC_DIRS[@]} -eq 0 ]] && \
     echo 'SYNC_DIRS variable is not defined; exiting' && \
     return 1
@@ -479,16 +484,18 @@ robomirror() {
   for i in ${!SYNC_DIRS[@]}; do
     DIR="${SYNC_DIRS[$i]}"
 
-    nc -z nuc 22 2> /dev/null
-    if [[ $? = 0 ]]; then
+    if [[ $SOURCE = nuc ]]; then
       echo "Mirroring $DIR from NUC using rsync..."
       echo
       rsync -avuz --no-perms --delete --inplace --compress-choice=zstd --compress-level=1 "farmerbb@nuc:/mnt/z/$DIR/" "/home/farmerbb/$DIR"
-    else
+    fi
+
+    if [[ $SOURCE = onedrive ]]; then
       echo "Mirroring $DIR from OneDrive using rclone..."
       echo
       rclone sync -v "OneDrive:$DIR" "/home/farmerbb/$DIR"
     fi
+
     echo
   done
 }
@@ -523,7 +530,6 @@ export -f unsparsify
 export -f qcow2-create
 export -f qcow2-optimize
 export -f set-default-filemanager
-export -f fix-thunar
 export -f restart-device
 export -f take-screenshot
 export -f uninstall-all-apps
