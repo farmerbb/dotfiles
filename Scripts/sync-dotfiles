@@ -29,7 +29,7 @@ echo "Syncing files..."
 for i in ${!DOTFILE_DIRS[@]}; do
   DIR="${DOTFILE_DIRS[$i]}"
   mkdir -p "$DIR"
-  rsync -a --delete --inplace --exclude 'Source Code' "farmerbb@nuc:/mnt/z/$DIR" .
+  rsync -a --delete --inplace --exclude 'Source Code' "farmerbb@nuc:/mnt/files/$DIR" .
 done
 
 echo "Redacting strings..."

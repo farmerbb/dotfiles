@@ -85,8 +85,8 @@ xkb_symbols "editing" {
     key <FK01> { 	[XF86Back, NoSymbol, NoSymbol, NoSymbol, F1] 			};
     key <FK02> { 	[XF86Forward, NoSymbol, NoSymbol, NoSymbol, F2] 		};
     key <FK03> { 	[XF86Refresh, NoSymbol, NoSymbol, NoSymbol, F3] 		};
-    key <FK04> { 	[Print, NoSymbol, NoSymbol, NoSymbol, F4] 			};
-    key <FK05> { 	[Super_L, NoSymbol, NoSymbol, NoSymbol, F5] 			};
+    key <FK04> { 	[Insert, NoSymbol, NoSymbol, NoSymbol, F4] 			};
+    key <FK05> { 	[Print, NoSymbol, NoSymbol, NoSymbol, F5] 			};
     key <FK06> { 	[XF86MonBrightnessDown, NoSymbol, NoSymbol, NoSymbol, F6] 	};
     key <FK07> { 	[XF86MonBrightnessUp, NoSymbol, NoSymbol, NoSymbol, F7] 	};
     key <FK08> { 	[XF86AudioMute, NoSymbol, NoSymbol, NoSymbol, F8] 		};

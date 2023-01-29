@@ -1,36 +1,8 @@
-<<'##################################################'
-
-# To install, run the following:
-
-echo '' >> ~/.bashrc
-echo 'for i in linux-generic android-dev ubuntu; do' >> ~/.bashrc
-echo '  source /mnt/files/Other\ Stuff/Linux/Bash\ Configs/bashrc-additions-$i.sh' >> ~/.bashrc
-echo 'done' >> ~/.bashrc
-
-##################################################
-
-export LINUX_DIR_PREFIX="$(realpath /mnt/files/Other\ Stuff/Linux)"
-export DEVICE_DIR_PREFIX="$(realpath /mnt/files/Other\ Stuff/Linux/Ubuntu)"
-export OD_LINUX_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Linux"
-export OD_DEVICE_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Linux/Ubuntu"
-export BTRFS_MNT="/mnt/files"
-export PATH="$PATH:$LINUX_DIR_PREFIX/Scripts"
-# [[ -d ~/.nimble/bin ]] && export PATH="$PATH:/home/$USER/.nimble/bin"
-
-export SYNC_DIRS=(
-  "Games"
-  "Media/Braden's Music"
-  "Other Stuff"
-)
-
 alias enable-touchscreen="xinput --enable $(xinput --list | grep -i 'Finger touch' | grep -o 'id=[0-9]*' | sed 's/id=//')"
 alias enable-trackpad="xinput --enable $(xinput --list | grep -i 'Touchpad' | grep -o 'id=[0-9]*' | sed 's/id=//')"
 alias disable-touchscreen="xinput --disable $(xinput --list | grep -i 'Finger touch' | grep -o 'id=[0-9]*' | sed 's/id=//')"
 alias disable-trackpad="xinput --disable $(xinput --list | grep -i 'Touchpad' | grep -o 'id=[0-9]*' | sed 's/id=//')"
-alias snapper="$(which snapper) -c home"
 alias virtualhere-client="sudo pkill vhuit64 && sleep 3; sudo daemonize /mnt/files/Other\ Stuff/Utilities/VirtualHere/vhuit64"
-
-chmod +x "$LINUX_DIR_PREFIX/Scripts/"* >/dev/null 2>&1
 
 allow-all-usb() {
   echo 'SUBSYSTEM=="usb", MODE="0660", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/00-usb-permissions.rules >/dev/null
@@ -43,7 +15,7 @@ make-trackpad-great-again() {
   sudo apt-get -y install touchegg xserver-xorg-input-synaptics
 
   mkdir -p ~/.config/touchegg
-  cp "$DEVICE_DIR_PREFIX/touchegg.conf" ~/.config/touchegg
+  cp "$LINUX_DIR_PREFIX/Ubuntu/touchegg.conf" ~/.config/touchegg
   sudo cp "$DEVICE_DIR_PREFIX/80synaptics" /etc/X11/Xsession.d
 
   echo
@@ -51,14 +23,14 @@ make-trackpad-great-again() {
 }
 
 export-extension-config() {
-  DIR="$DEVICE_DIR_PREFIX/extensions"
+  DIR="$LINUX_DIR_PREFIX/Ubuntu/extensions"
   FILE="$DIR/$1.txt"
   if [[ -f "$FILE" ]]; then
     MD5=$(md5sum "$FILE")
     dconf dump /org/gnome/shell/extensions/$1/ > "$FILE"
-    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_DEVICE_DIR_PREFIX/extensions/$1.txt"
+    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_LINUX_DIR_PREFIX/Ubuntu/extensions/$1.txt"
   else
-    echo -e "\033[1m$(echo $DIR | sed "s#$DEVICE_DIR_PREFIX/##g"):\033[0m"
+    echo -e "\033[1m$(echo $DIR | sed "s#$LINUX_DIR_PREFIX/Ubuntu/##g"):\033[0m"
     ls "$DIR"/*.txt | sed -e "s#$DIR/##g" -e "s/\.txt//g" -e "s/:/:\n/g" | column
     echo
 
@@ -67,12 +39,12 @@ export-extension-config() {
 }
 
 import-extension-config() {
-  DIR="$DEVICE_DIR_PREFIX/extensions"
+  DIR="$LINUX_DIR_PREFIX/Ubuntu/extensions"
   FILE="$DIR/$1.txt"
   if [[ -f "$FILE" ]]; then
     dconf load /org/gnome/shell/extensions/$1/ < "$FILE"
   else
-    echo -e "\033[1m$(echo $DIR | sed "s#$DEVICE_DIR_PREFIX/##g"):\033[0m"
+    echo -e "\033[1m$(echo $DIR | sed "s#$LINUX_DIR_PREFIX/Ubuntu/##g"):\033[0m"
     ls "$DIR"/*.txt | sed -e "s#$DIR/##g" -e "s/\.txt//g" -e "s/:/:\n/g" | column
     echo
 
@@ -117,6 +89,7 @@ boot-to-windows() {
 }
 
 install-blackbox() {
+  sudo apt-get update
   sudo apt-get -y install flatpak
   flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
   flatpak install -y flathub com.raggesilver.BlackBox
@@ -124,12 +97,29 @@ install-blackbox() {
   sudo flatpak override com.raggesilver.BlackBox --filesystem=host
   sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /var/lib/flatpak/exports/bin/com.raggesilver.BlackBox 100
 
+  mkdir -p ~/.var/app
+  cp -r "$LINUX_DIR_PREFIX/Ubuntu/com.raggesilver.BlackBox" ~/.var/app
+
   echo '#!/bin/bash' | sudo tee /usr/local/bin/blackbox > /dev/null
   echo 'REALPATH=$(realpath "$1")' | sudo tee -a /usr/local/bin/blackbox > /dev/null
   echo 'flatpak run com.raggesilver.BlackBox --working-directory="$REALPATH"' | sudo tee -a /usr/local/bin/blackbox > /dev/null
   sudo chmod +x /usr/local/bin/blackbox
 
   gsettings set org.cinnamon.desktop.default-applications.terminal exec blackbox
+}
+
+install-tlp() {
+  sudo apt-get update
+  sudo apt-get -y install tlp tlp-rdw
+  sudo systemctl enable tlp.service
+  sudo tlp start
+  tlp-stat -s
+}
+
+install-ssh-server() {
+  sudo apt-get update
+  sudo apt-get -y install openssh-server
+  sudo ufw allow ssh
 }
 
 export -f allow-all-usb
@@ -140,3 +130,5 @@ export -f edit-grub-config
 export -f edit-fstab
 export -f boot-to-windows
 export -f install-blackbox
+export -f install-tlp
+export -f install-ssh-server

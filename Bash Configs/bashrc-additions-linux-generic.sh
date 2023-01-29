@@ -462,11 +462,15 @@ process-args() {
 
 robomirror() {
   if [[ -z $1 ]]; then
-    nc -z nuc 22 2> /dev/null
-    if [[ $? = 0 ]]; then
-      SOURCE=nuc
-    else
+    if [[ $HOSTNAME = NUC ]]; then
       SOURCE=onedrive
+    else
+      nc -z nuc 22 2> /dev/null
+      if [[ $? = 0 ]]; then
+        SOURCE=nuc
+      else
+        SOURCE=onedrive
+      fi
     fi
   fi
 
@@ -487,7 +491,7 @@ robomirror() {
     if [[ $SOURCE = nuc ]]; then
       echo "Mirroring $DIR from NUC using rsync..."
       echo
-      rsync -avuz --no-perms --delete --inplace --compress-choice=zstd --compress-level=1 "farmerbb@nuc:/mnt/z/$DIR/" "/home/farmerbb/$DIR"
+      rsync -avuz --no-perms --delete --inplace --compress-choice=zstd --compress-level=1 "farmerbb@nuc:/mnt/files/$DIR/" "/home/farmerbb/$DIR"
     fi
 
     if [[ $SOURCE = onedrive ]]; then

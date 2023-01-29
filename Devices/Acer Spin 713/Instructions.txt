@@ -14,3 +14,8 @@ Enable Chromebook function key bindings:
 
   sudo cp /usr/share/X11/xkb/symbols/pc /usr/share/X11/xkb/symbols/pc.default
   sudo cp xkb.chromebook /usr/share/X11/xkb/symbols/pc
+
+
+Enable keyboard backlight:
+
+  echo 100 | sudo tee '/sys/class/leds/chromeos::kbd_backlight/brightness' > /dev/null

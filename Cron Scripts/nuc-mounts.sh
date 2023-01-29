@@ -1,8 +1,8 @@
 #!/bin/bash
 unset HISTFILE
 
-[[ -f /tmp/wsl2-mounts.running ]] && exit 1
-touch /tmp/wsl2-mounts.running
+[[ -f /tmp/nuc-mounts.running ]] && exit 1
+touch /tmp/nuc-mounts.running
 
 ##################################################
 
@@ -32,5 +32,5 @@ sudo mount -t cifs -o user=Braden,credentials=/home/farmerbb/.sharelogin,uid=far
 
 ##################################################
 
-[[ $? -eq 0 ]] && touch ~/.lastrun/wsl2-mounts.lastrun
-rm -f /tmp/wsl2-mounts.running
+[[ $? -eq 0 ]] && touch ~/.lastrun/nuc-mounts.lastrun
+rm -f /tmp/nuc-mounts.running

@@ -12,3 +12,4 @@ UUID=BA20-BF6B  /boot/efi       vfat    umask=0077      0       1
 # /swapfile                                 none            swap    sw              0       0
 
 UUID=ac10b390-43e2-4094-8d18-6136409b0568   /mnt/files       btrfs   defaults,noatime,compress-force=zstd:1,discard=async                       0   2
+UUID=ac10b390-43e2-4094-8d18-6136409b0568   /home/farmerbb   btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=/Local/Home    0   2
