@@ -122,6 +122,43 @@ install-ssh-server() {
   sudo ufw allow ssh
 }
 
+install-unclutter() {
+  sudo apt-get update
+  sudo apt-get -y install unclutter-xfixes
+  sudo cp "$LINUX_DIR_PREFIX/Ubuntu/unclutter" /etc/default/unclutter
+}
+
+open-youtube-tv() {
+  x-www-browser youtube.com/tv &
+  sleep 3
+
+  xdotool key ctrl+r
+  xdotool key F11
+  xdotool mousemove 2970 165
+  xdotool click 1
+}
+
+install-wireguard-server() {
+  [[ -z $(which docker) ]] && install-docker
+
+  docker run -d \
+    --name=wireguard \
+    --cap-add=NET_ADMIN \
+    -e PUID=1000 \
+    -e PGID=1000 \
+    -e TZ=America/Denver \
+    -e SERVERURL=[REDACTED] \
+    -e SERVERPORT=[REDACTED] \
+    -e PEERS=5 \
+    -e PEERDNS=1.1.1.1 \
+    -e LOG_CONFS=true \
+    -p 51820:51820/udp \
+    -v /mnt/files/Other\ Stuff/Network\ Config/WireGuard:/config \
+    --sysctl="net.ipv4.conf.all.src_valid_mark=1" \
+    --restart unless-stopped \
+    lscr.io/linuxserver/wireguard:latest
+}
+
 export -f allow-all-usb
 export -f make-trackpad-great-again
 export -f export-extension-config
@@ -132,3 +169,6 @@ export -f boot-to-windows
 export -f install-blackbox
 export -f install-tlp
 export -f install-ssh-server
+export -f install-unclutter
+export -f open-youtube-tv
+export -f install-wireguard-server

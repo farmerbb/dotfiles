@@ -22,5 +22,10 @@
 # 
 # m h  dom mon dow   command
 
+@reboot docker start wireguard
 @reboot bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/nuc-mounts.sh
 * * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/nuc-mounts.sh
+
+45 0 * * * bash -i -c robomirror
+45 8 * * * bash -i -c robomirror
+45 16 * * * bash -i -c robomirror

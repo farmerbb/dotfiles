@@ -465,7 +465,7 @@ robomirror() {
     if [[ $HOSTNAME = NUC ]]; then
       SOURCE=onedrive
     else
-      nc -z nuc 22 2> /dev/null
+      nc -z 192.168.86.10 22 2> /dev/null
       if [[ $? = 0 ]]; then
         SOURCE=nuc
       else
@@ -506,6 +506,38 @@ robomirror() {
 
 docker-stop() {
   docker stop $(docker ps -a -q)
+}
+
+install-samba() {
+  sudo apt-get update
+  sudo apt-get y install samba
+
+  sudo mkdir -p /etc/samba
+  sudo cp ~/Other\ Stuff/Chrome\ OS/Crostini/smb.conf /etc/samba/smb.conf
+  echo "farmerbb = Braden" | sudo tee /etc/samba/usermap.txt > /dev/null
+
+  sudo smbpasswd -a farmerbb
+  sudo systemctl restart smbd.service
+}
+
+iommu-groups() {
+  shopt -s nullglob
+  for g in `find /sys/kernel/iommu_groups/* -maxdepth 0 -type d | sort -V`; do
+    echo "IOMMU Group ${g##*/}:"
+    for d in $g/devices/*; do
+      echo -e "\t$(lspci -nns ${d##*/})"
+    done;
+  done;
+}
+
+install-wireguard-client() {
+  [[ $1 != peer* ]] && \
+    echo "Usage: install-wireguard-client <peer#>" && \
+    return 1
+
+  sudo apt-get update
+  sudo apt-get -y install wireguard resolvconf
+  sudo cp ~/Other\ Stuff/Network\ Config/WireGuard/$1/$1.conf /etc/wireguard/wg0.conf
 }
 
 export -f btrfs-dedupe
@@ -550,3 +582,6 @@ export -f sort-files-by-md5sum
 export -f process-args
 export -f robomirror
 export -f docker-stop
+export -f install-samba
+export -f iommu-groups
+export -f install-wireguard-client
