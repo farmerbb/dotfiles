@@ -26,6 +26,6 @@
 @reboot bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/nuc-mounts.sh
 * * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/nuc-mounts.sh
 
-45 0 * * * bash -i -c robomirror
-45 8 * * * bash -i -c robomirror
-45 16 * * * bash -i -c robomirror
+45 0,8,16 * * * bash -i -c robomirror
+0 10 * * * bash -i -c gog-claim-giveaway
+0 5 * * * bash -i -c restart-device shield

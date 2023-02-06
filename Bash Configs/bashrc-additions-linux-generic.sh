@@ -26,6 +26,7 @@ alias qemu="qemu-system-x86_64 -accel kvm -cpu host -m 1024"
 alias qemu95="qemu-system-i386 -cpu pentium -vga cirrus -nic user,model=pcnet -soundhw sb16,pcspk"
 alias starwars="telnet towel.blinkenlights.nl"
 alias reboot-device="restart-device"
+alias robomirror-linux-dir='SYNC_DIRS=("Other Stuff/Linux"); robomirror'
 alias running-vms="sudo lsof 2>&1 | grep /dev/kvm | awk '!seen[\$2]++'"
 alias running-vms-fast="sudo lsof /dev/kvm 2>&1 | grep /dev/kvm | awk '!seen[\$2]++'"
 alias trim="sudo fstrim -av"
@@ -332,13 +333,28 @@ set-default-filemanager() {
 
 restart-device() {
   [[ -z $1 ]] && return 0
-  ssh $1 '/mnt/c/Windows/System32/cmd.exe /c shutdown /f /r /t 0 || sudo reboot' && return 0
+  ssh $1 '/mnt/c/Windows/System32/cmd.exe /c shutdown /f /r /t 0 || sudo reboot' 2&>/dev/null && return 0
 
   adb connect $1
   sleep 1
-  adb -s $1 shell settings put global hdmi_one_touch_play_enabled 0
-  sleep 1
+
+  if [[ $1 == *shield* ]]; then
+    adb -s $1 shell settings put global hdmi_one_touch_play_enabled 0
+    sleep 1
+  fi
+
   adb -s $1 reboot
+
+  if [[ $1 == *shield* ]]; then
+    while [[ ! -z $(adb -s $1 shell settings put global hdmi_one_touch_play_enabled 1 2>&1) ]]; do
+      [[ $SECONDS > 300 ]] && return 1
+
+      echo "Waiting for SHIELD to reboot..."
+      sleep 5
+    done
+
+    adb -s $1 shell input keyevent 26
+  fi
 }
 
 take-screenshot() {

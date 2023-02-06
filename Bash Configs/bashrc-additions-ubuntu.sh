@@ -129,11 +129,15 @@ install-unclutter() {
 }
 
 open-youtube-tv() {
+  [[ ! -z $(pgrep chrome) ]] && return 1
+
   x-www-browser youtube.com/tv &
   sleep 3
 
   xdotool key ctrl+r
   xdotool key F11
+  sleep 1
+
   xdotool mousemove 2970 165
   xdotool click 1
 }
@@ -159,6 +163,12 @@ install-wireguard-server() {
     lscr.io/linuxserver/wireguard:latest
 }
 
+install-input-remapper() {
+  sudo apt-get update
+  sudo apt-get -y install input-remapper
+  sudo cp -r "$DEVICE_DIR_PREFIX/input-remapper" ~/.config
+}
+
 export -f allow-all-usb
 export -f make-trackpad-great-again
 export -f export-extension-config
@@ -172,3 +182,4 @@ export -f install-ssh-server
 export -f install-unclutter
 export -f open-youtube-tv
 export -f install-wireguard-server
+export -f install-input-remapper

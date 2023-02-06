@@ -3,6 +3,10 @@
         "1,353,1": [
             "KEY_ENTER",
             "keyboard"
+        ],
+        "1,158,1": [
+            "KEY_ESC",
+            "keyboard"
         ]
     }
 }
