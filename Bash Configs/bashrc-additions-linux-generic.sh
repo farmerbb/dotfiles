@@ -14,6 +14,7 @@ if [[ $USER != chronos ]]; then
   alias mv="$(which advmv || which mv)"
 fi
 
+alias cpu-monitor='watch -n1 "lscpu -e; echo; sensors coretemp-isa-0000 dell_smm-isa-0000"'
 alias current-governor="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
 alias disable-android-tv-launcher="adb shell pm disable-user --user 0 com.google.android.tvlauncher"
 alias docker-run="sudo docker build -t temp-container . && sudo docker run -it temp-container:latest"
@@ -33,7 +34,6 @@ alias trim="sudo fstrim -av"
 alias turn-off-tv="curl -X POST http://192.168.86.44:8060/keypress/PowerOff"
 alias usb-monitor="clear; sudo udevadm monitor --subsystem-match=usb --property"
 alias usbtop="sudo modprobe usbmon; sudo usbtop"
-alias wireguard="sudo wg"
 alias wireguard-up="sudo wg-quick up wg0 && timeout 10 mount-nuc"
 alias wireguard-down="sudo wg-quick down wg0 && timeout 10 mount-nuc"
 
@@ -556,6 +556,12 @@ install-wireguard-client() {
   sudo cp ~/Other\ Stuff/Network\ Config/WireGuard/$1/$1.conf /etc/wireguard/wg0.conf
 }
 
+wireguard-run() {
+  sudo wg-quick up wg0 2>/dev/null
+  ${@:1}
+  sudo wg-quick down wg0 2>/dev/null
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -601,3 +607,4 @@ export -f docker-stop
 export -f install-samba
 export -f iommu-groups
 export -f install-wireguard-client
+export -f wireguard-run

@@ -1,0 +1,27 @@
+#!/bin/bash
+
+sudo apt-get update
+sudo apt-get -y install golang-go scdoc build-essential
+
+rm -rf darkman
+git clone https://gitlab.com/WhyNotHugo/darkman.git
+cd darkman
+make
+sudo make install
+cd ..
+rm -rf darkman
+
+mkdir -p ~/.local/share/dark-mode.d
+echo "gsettings set org.gnome.desktop.interface gtk-theme 'Qogir-Dark'" > ~/.local/share/dark-mode.d/dark-theme.sh
+echo "dconf write /org/gnome/shell/extensions/user-theme/name \"'Qogir-Dark'\"" >> ~/.local/share/dark-mode.d/dark-theme.sh
+chmod +x ~/.local/share/dark-mode.d/dark-theme.sh
+
+mkdir -p ~/.local/share/light-mode.d
+echo "gsettings set org.gnome.desktop.interface gtk-theme 'Qogir'" > ~/.local/share/light-mode.d/light-theme.sh
+echo "dconf write /org/gnome/shell/extensions/user-theme/name \"'Qogir'\"" >> ~/.local/share/light-mode.d/light-theme.sh
+chmod +x ~/.local/share/light-mode.d/light-theme.sh
+
+systemctl --user enable --now darkman.service
+
+echo
+echo "Please go to Settings -> Privacy and make sure that Location Services are enabled, then reboot."

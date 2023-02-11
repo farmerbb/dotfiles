@@ -122,12 +122,6 @@ install-ssh-server() {
   sudo ufw allow ssh
 }
 
-install-unclutter() {
-  sudo apt-get update
-  sudo apt-get -y install unclutter-xfixes
-  sudo cp "$LINUX_DIR_PREFIX/Ubuntu/unclutter" /etc/default/unclutter
-}
-
 open-youtube-tv() {
   [[ ! -z $(pgrep chrome) ]] && return 1
 
@@ -179,7 +173,6 @@ export -f boot-to-windows
 export -f install-blackbox
 export -f install-tlp
 export -f install-ssh-server
-export -f install-unclutter
 export -f open-youtube-tv
 export -f install-wireguard-server
 export -f install-input-remapper

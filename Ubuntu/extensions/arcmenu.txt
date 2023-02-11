@@ -1,6 +1,6 @@
 [/]
 alphabetize-all-programs=true
-application-shortcuts-list=[['Software', 'ubuntusoftware', 'ArcMenu_Software'], ['Settings', '', 'org.gnome.Settings.desktop'], ['Extensions', '', 'org.gnome.Extensions.desktop'], ['Tweaks', 'org.gnome.tweaks-symbolic', 'org.gnome.tweaks.desktop'], ['Terminal', 'utilities-terminal-symbolic', 'org.gnome.Terminal.desktop']]
+application-shortcuts-list=[['Software', 'ubuntusoftware', 'ArcMenu_Software'], ['Settings', 'org.gnome.Settings', 'org.gnome.Settings.desktop'], ['Extensions', 'org.gnome.Shell.Extensions', 'com.mattjakeman.ExtensionManager.desktop'], ['Tweaks', 'org.gnome.tweaks-symbolic', 'org.gnome.tweaks.desktop'], ['Terminal', 'utilities-terminal-symbolic', 'org.gnome.Terminal.desktop']]
 arc-menu-icon=70
 arc-menu-placement='DTP'
 arcmenu-extra-categories-links=[(0, false), (1, false), (2, false), (3, false), (4, false)]
@@ -50,9 +50,10 @@ multi-monitor=true
 override-menu-theme=false
 pinned-app-list=['Google Chrome', '', 'google-chrome.desktop', 'Terminal', '', 'org.gnome.Terminal.desktop', 'ArcMenu Settings', 'ArcMenu_ArcMenuIcon', 'gnome-extensions prefs arcmenu@arcmenu.com']
 prefs-visible-page=0
-recently-installed-apps=['org.gnome.gedit.desktop', 'com.gexperts.Tilix.desktop', 'thunderbird.desktop', 'ca.desrt.dconf-editor.desktop', 'org.gnome.TextEditor.desktop']
+recently-installed-apps=['org.gnome.gedit.desktop', 'com.gexperts.Tilix.desktop', 'thunderbird.desktop', 'ca.desrt.dconf-editor.desktop', 'org.gnome.TextEditor.desktop', 'paprefs.desktop', 'pavucontrol.desktop', 'com.mattjakeman.ExtensionManager.desktop']
 remove-menu-arrow=true
 right-panel-width=200
+search-entry-border-radius=(true, 25)
 searchbar-default-top-location='Bottom'
 show-activities-button=false
 show-external-devices=false

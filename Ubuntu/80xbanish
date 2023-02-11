@@ -1,0 +1,3 @@
+# Place inside /etc/X11/Xsession.d/
+
+xbanish -i control -i mod1 -t 10 -s &

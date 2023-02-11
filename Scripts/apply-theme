@@ -71,8 +71,8 @@ gsettings set org.gnome.desktop.interface font-name 'Segoe UI Regular 10'
 gsettings set org.gnome.desktop.interface document-font-name 'Segoe UI Regular 10'
 gsettings set org.gnome.desktop.interface monospace-font-name 'Roboto Mono 10'
 gsettings set org.gnome.desktop.wm.preferences titlebar-font 'Segoe UI Regular 10'
-gsettings set org.gnome.settings-daemon.plugins.xsettings hinting 'full'
-gsettings set org.gnome.settings-daemon.plugins.xsettings antialiasing 'grayscale'
+gsettings set org.gnome.desktop.interface font-hinting 'full'
+gsettings set org.gnome.desktop.interface font-antialiasing 'rgba'
 
 dconf write /org/gnome/shell/extensions/user-theme/name "'Qogir'"
 
