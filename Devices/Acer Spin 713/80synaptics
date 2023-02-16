@@ -16,4 +16,4 @@ synclient \
   RightButtonAreaTop=0 \
   HorizTwoFingerScroll=1
 
-syndaemon -i 0.8 -tRd
+syndaemon -i 0.25 -KRd

@@ -18,6 +18,6 @@ synclient \
   VertHysteresis=0 \
   HorizHysteresis=0
 
-syndaemon -i 0.8 -tRd
+syndaemon -i 0.25 -KRd
 
 xinput --disable $(xinput --list | grep -i 'Finger touch' | grep -o 'id=[0-9]*' | sed 's/id=//')

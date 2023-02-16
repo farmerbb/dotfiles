@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Like `git reset <branch-name>`, except without affecting commit history
+
 if [[ $# -ne 1 ]]; then
   BASENAME=$(basename "$0")
   echo "Usage: $BASENAME <branch-name>"

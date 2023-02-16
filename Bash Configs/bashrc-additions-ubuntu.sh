@@ -79,6 +79,20 @@ edit-fstab() {
   sudo mount -a
 }
 
+edit-synaptics() {
+  DIR="$DEVICE_DIR_PREFIX"
+  FILE="$DIR/80synaptics"
+  if [[ -f "$FILE" ]]; then
+    MD5=$(md5sum "$FILE")
+    sudo nano /etc/X11/Xsession.d/80synaptics
+    cp /etc/X11/Xsession.d/80synaptics "$FILE"
+    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_DEVICE_DIR_PREFIX/80synaptics"
+  fi
+
+  pkill syndaemon
+  bash /etc/X11/Xsession.d/80synaptics
+}
+
 boot-to-windows() {
   timedatectl set-local-rtc 1
 
@@ -126,7 +140,7 @@ open-youtube-tv() {
   [[ ! -z $(pgrep chrome) ]] && return 1
 
   x-www-browser youtube.com/tv &
-  sleep 3
+  sleep 5
 
   xdotool key ctrl+r
   xdotool key F11
@@ -169,6 +183,7 @@ export -f export-extension-config
 export -f import-extension-config
 export -f edit-grub-config
 export -f edit-fstab
+export -f edit-synaptics
 export -f boot-to-windows
 export -f install-blackbox
 export -f install-tlp

@@ -6,11 +6,13 @@
 #
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
 # / was on /dev/nvme0n1p3 during installation
+
 UUID=58b9d63d-21b1-4016-b205-5628fdb29170 /               ext4    errors=remount-ro 0       1
+# UUID=48676fe5-97c0-43d5-9143-5111cab5a9cf /               ext4    errors=remount-ro 0       1
+
 # /boot/efi was on /dev/nvme0n1p1 during installation
 UUID=68D6-0E5F  /boot/efi       vfat    umask=0077      0       1
 # /swapfile                                 none            swap    sw              0       0
 
 UUID=c175fde1-554a-4555-8598-68d3d325fcc0   /mnt/files       btrfs   defaults,noatime,compress-force=zstd:1,discard=async                       0   2
 UUID=c175fde1-554a-4555-8598-68d3d325fcc0   /home/farmerbb   btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=/Local/Home    0   2
-UUID=32FE8A60FE8A1C6B                       /mnt/c           ntfs3   defaults,noatime,nofail,noauto,x-systemd.automount,uid=1001,gid=1001       0   2

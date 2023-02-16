@@ -14,11 +14,15 @@ rm -rf darkman
 mkdir -p ~/.local/share/dark-mode.d
 echo "gsettings set org.gnome.desktop.interface gtk-theme 'Qogir-Dark'" > ~/.local/share/dark-mode.d/dark-theme.sh
 echo "dconf write /org/gnome/shell/extensions/user-theme/name \"'Qogir-Dark'\"" >> ~/.local/share/dark-mode.d/dark-theme.sh
+echo "ln -sfn ~/.themes/Qogir-Dark/gtk-4.0 ~/.config/gtk-4.0" >> ~/.local/share/dark-mode.d/dark-theme.sh
+echo "sed -i 's/theme=Qogir-solid/theme=Qogir-dark-solid/g' ~/.config/Kvantum/kvantum.kvconfig" >> ~/.local/share/dark-mode.d/dark-theme.sh
 chmod +x ~/.local/share/dark-mode.d/dark-theme.sh
 
 mkdir -p ~/.local/share/light-mode.d
 echo "gsettings set org.gnome.desktop.interface gtk-theme 'Qogir'" > ~/.local/share/light-mode.d/light-theme.sh
 echo "dconf write /org/gnome/shell/extensions/user-theme/name \"'Qogir'\"" >> ~/.local/share/light-mode.d/light-theme.sh
+echo "ln -sfn ~/.themes/Qogir/gtk-4.0 ~/.config/gtk-4.0" >> ~/.local/share/light-mode.d/light-theme.sh
+echo "sed -i 's/theme=Qogir-dark-solid/theme=Qogir-solid/g' ~/.config/Kvantum/kvantum.kvconfig" >> ~/.local/share/light-mode.d/light-theme.sh
 chmod +x ~/.local/share/light-mode.d/light-theme.sh
 
 systemctl --user enable --now darkman.service
