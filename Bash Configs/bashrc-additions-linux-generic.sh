@@ -10,7 +10,7 @@ export XAUTHORITY=$HOME/.Xauthority
 xhost + > /dev/null 2>&1
 
 if [[ $USER != chronos ]]; then
-  alias cp="$(which advcp || which cp) --reflink=auto"
+  alias cp="$(which advcp || which cp) --reflink=auto --sparse=auto"
   alias mv="$(which advmv || which mv)"
 fi
 
