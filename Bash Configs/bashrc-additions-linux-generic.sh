@@ -302,17 +302,33 @@ qcow2-create() {
 }
 
 qcow2-optimize() {
-# [[ "$1" != *.qcow2 ]] && return 1
   [[ ! -f "$1" ]] && return 1
 
-  sudo mv "$1" "$1".old
+  mv "$1" "$1".old
 
-# sudo touch "$1"
-# sudo chattr +C "$1"
+# touch "$1"
+# chattr +C "$1"
 
-  sudo qemu-img convert -c -f qcow2 -O qcow2 -o cluster_size=2M,compression_type=zstd "$1".old "$1" || sudo mv "$1".old "$1"
-  sudo chown $USER:$USER "$1"
-  sudo rm -f "$1".old
+  qemu-img convert -c -f qcow2 -O qcow2 -o cluster_size=2M,compression_type=zstd "$1".old "$1" || mv "$1".old "$1"
+  rm -f "$1".old
+}
+
+qcow2-to-raw() {
+  [[ ! -f "$1" ]] && return 1
+
+  NEW_FILENAME=$(echo "$1" | sed "s/.qcow2/.img/g")
+  [[ "$1" = "$NEW_FILENAME" ]] && NEW_FILENAME="$1.img"
+
+  qemu-img convert -f qcow2 -O raw "$1" "$NEW_FILENAME"
+}
+
+raw-to-qcow2() {
+  [[ ! -f "$1" ]] && return 1
+
+  NEW_FILENAME=$(echo "$1" | sed "s/.img/.qcow2/g")
+  [[ "$1" = "$NEW_FILENAME" ]] && NEW_FILENAME="$1.qcow2"
+
+  qemu-img convert -c -f raw -O qcow2 -o cluster_size=2M,compression_type=zstd "$1" "$NEW_FILENAME"
 }
 
 set-default-filemanager() {
@@ -587,6 +603,8 @@ export -f max-cpu
 export -f unsparsify
 export -f qcow2-create
 export -f qcow2-optimize
+export -f qcow2-to-raw
+export -f raw-to-qcow2
 export -f set-default-filemanager
 export -f restart-device
 export -f take-screenshot

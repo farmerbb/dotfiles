@@ -60,8 +60,8 @@
       <address type='drive' controller='0' bus='0' target='0' unit='0'/>
     </disk>
     <disk type='file' device='disk'>
-      <driver name='qemu' type='qcow2' cache='writeback' io='threads' discard='unmap' iothread='1' queues='6'/>
-      <source file='/home/farmerbb/VMs/ubuntu22.10.qcow2'/>
+      <driver name='qemu' type='raw' cache='writeback' io='threads' discard='unmap' iothread='1' queues='6'/>
+      <source file='/home/farmerbb/VMs/ubuntu22.10.img'/>
       <target dev='vda' bus='virtio'/>
       <boot order='2'/>
       <address type='pci' domain='0x0000' bus='0x06' slot='0x00' function='0x0'/>

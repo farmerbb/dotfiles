@@ -53,8 +53,8 @@
       <address type='pci' domain='0x0000' bus='0x03' slot='0x00' function='0x0'/>
     </disk>
     <disk type='file' device='disk'>
-      <driver name='qemu' type='qcow2' cache='writeback' io='threads' discard='unmap' iothread='1' queues='4'/>
-      <source file='/home/farmerbb/VMs/macos-monterey.qcow2'/>
+      <driver name='qemu' type='raw' cache='writeback' io='threads' discard='unmap' iothread='1' queues='4'/>
+      <source file='/home/farmerbb/VMs/macos-monterey.img'/>
       <target dev='vdb' bus='virtio'/>
       <boot order='2'/>
       <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
