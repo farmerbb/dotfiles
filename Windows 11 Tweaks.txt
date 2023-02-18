@@ -6,7 +6,10 @@ Install WSL1:
 
   dism /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
 
-* Reboot, then download Debian from https://aka.ms/wsl-debian-gnulinux
+* Reboot, then download a distro:
+
+  Debian: https://aka.ms/wsl-debian-gnulinux
+  Ubuntu: https://aka.ms/wslubuntu
 
 * Open up a PowerShell window and install Debian with:
 
@@ -20,7 +23,7 @@ Install WSL2:
 
   wsl --install
 
-* Uninstall Ubuntu and install Debian from the Microsoft Store
+* (if desired) Uninstall Ubuntu and install Debian from the Microsoft Store
 
 
 Upgrade Debian to bookworm:

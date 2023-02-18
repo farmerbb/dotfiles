@@ -1,0 +1,2 @@
+# For WSL1 inside VMs
+\\192.168.122.1\Files /mnt/z drvfs defaults 0 0

@@ -23,11 +23,11 @@ done
 
 [[ -f "$IMAGE_BACKUP" ]] && rm -f "$IMAGE_BACKUP"
 
-lsattr -l "$IMAGE_ORIGINAL" | grep -q No_COW
-if [[ $? = 0 ]]; then
-  touch "$IMAGE_BACKUP"
-  chattr +C "$IMAGE_BACKUP"
-fi
+# lsattr -l "$IMAGE_ORIGINAL" | grep -q No_COW
+# if [[ $? = 0 ]]; then
+#   touch "$IMAGE_BACKUP"
+#   chattr +C "$IMAGE_BACKUP"
+# fi
 
 cp --reflink=auto "$IMAGE_ORIGINAL" "$IMAGE_BACKUP"
 

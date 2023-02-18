@@ -33,11 +33,12 @@ while sudo virsh list | grep $1 >/dev/null 2>&1; do
 done
 
 rm -f "$IMAGE_ORIGINAL"
-lsattr -l "$IMAGE_BACKUP" | grep -q No_COW
-if [[ $? = 0 ]]; then
-  touch "$IMAGE_ORIGINAL"
-  chattr +C "$IMAGE_ORIGINAL"
-fi
+
+# lsattr -l "$IMAGE_BACKUP" | grep -q No_COW
+# if [[ $? = 0 ]]; then
+#   touch "$IMAGE_ORIGINAL"
+#   chattr +C "$IMAGE_ORIGINAL"
+# fi
 
 cp --reflink=auto "$IMAGE_BACKUP" "$IMAGE_ORIGINAL"
 
