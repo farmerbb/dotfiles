@@ -1,0 +1,77 @@
+#!/bin/sh --
+# From https://unix.stackexchange.com/a/646901
+
+sysd=/etc/systemd/system
+
+set -e
+
+mkdir -p "$sysd/systemd-suspend.service.d"
+
+cat > "$sysd/systemd-suspend.service.d/99-trigger-system-back-after-suspend.conf" <<'EOF'
+[Service]
+ExecStopPost=-/bin/systemctl --no-block start system-is-back-after-suspend.target
+EOF
+
+cat > "$sysd/cancel-self-poweroff.service" <<'EOF'
+[Unit]
+Description=Cancel self-poweroff after suspend
+After=system-is-back-after-suspend.target
+Conflicts=self-poweroff.timer
+
+[Service]
+Type=oneshot
+ExecStart=/bin/rm -f /run/systemd/system/self-poweroff.timer
+
+[Install]
+WantedBy=system-is-back-after-suspend.target
+EOF
+
+cat > "$sysd/self-poweroff.service" <<'EOF'
+[Unit]
+Description=Actual self-poweroff after suspend
+After=suspend.target 
+Before=system-is-back-after-suspend.target
+RefuseManualStart=true
+
+[Service]
+Type=oneshot
+ExecStart=/bin/systemctl --no-block poweroff
+# Uncomment the following line while commenting out the above line for testing.
+#ExecStart=/bin/echo poweroff
+# Note the echoed string goes to systemd journal log.
+# Do a `systemctl daemon-reload` after modifying this file.
+EOF
+
+cat > "$sysd/schedule-self-poweroff.service" <<'EOF'
+[Unit]
+Description=Schedulation of self-poweroff after some time spent in suspend state
+Before=systemd-suspend.service
+Requisite=suspend.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/self-poweroff.conf
+ExecStartPre=/bin/sh -c 'printf -- %%s\\\\n "[Timer]" "Persistent=yes" "OnCalendar=$(date -d "now + ${MY_SUSPEND_TIMEOUT}" "+%%Y-%%m-%%d %%H:%%M:%%S")" "AccuracySec=1s" "WakeSystem=yes" >| /run/systemd/system/self-poweroff.timer'
+ExecStart=/bin/systemctl start self-poweroff.timer
+# On systemd 237 onwards (Fedora 28 onwards) you may uncomment the line below while commenting out the above ExecStart and ExecStartPre lines
+#ExecStart=/bin/sh -c 'systemd-run --on-calendar="$(date -d "now + ${MY_SUSPEND_TIMEOUT}" "+%%Y-%%m-%%d %%H:%%M:%%S")" --timer-property=AccuracySec=1s --timer-property=WakeSystem=yes --timer-property=Persistent=yes --unit=self-poweroff.service'
+# Do a `systemctl daemon-reload` after modifying this file.
+
+[Install]
+WantedBy=suspend.target
+EOF
+
+cat > "$sysd/system-is-back-after-suspend.target" <<'EOF'
+[Unit]
+Description=Synchronization point for self-poweroff after suspend
+DefaultDependencies=no
+After=suspend.target
+StopWhenUnneeded=yes
+EOF
+
+cat > /etc/self-poweroff.conf <<'EOF'
+MY_SUSPEND_TIMEOUT=12 hours
+EOF
+
+systemctl enable schedule-self-poweroff.service cancel-self-poweroff.service
+systemctl daemon-reload
