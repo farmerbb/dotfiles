@@ -1,18 +1,3 @@
-<<'##################################################'
-
-# To install, run the following:
-
-sudo apt-get update
-sudo apt-get -y install curl
-curl https://raw.githubusercontent.com/rcaloras/bash-preexec/master/bash-preexec.sh -o ~/.bash-preexec.sh
-
-echo '' >> ~/.bashrc
-echo 'for i in linux-generic wsl2; do' >> ~/.bashrc
-echo '  source /mnt/z/Other\ Stuff/Linux/Bash\ Configs/bashrc-additions-$i.sh' >> ~/.bashrc
-echo 'done' >> ~/.bashrc
-
-##################################################
-
 generate-aliases() {
   cd /mnt/c
   WIN_PATH=$(/mnt/c/Windows/System32/cmd.exe /c 'echo %PATH%' | sed -e "s#\\\#/#g" -e "s#C:#\/mnt/c#g" -e "s#;#\n#g" -e "s#\r##g")

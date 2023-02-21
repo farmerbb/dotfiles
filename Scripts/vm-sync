@@ -1,0 +1,52 @@
+#!/bin/bash
+
+print-usage() {
+  BASENAME=$(basename "$0")
+  echo "Usage: $BASENAME <upload | download> <name-of-vm>"
+  exit 1
+}
+
+[[ $# -ne 2 ]] && print-usage
+[[ $HOSTNAME = NUC ]] && exit 1
+
+nc -z 192.168.86.10 22 2> /dev/null
+[[ $? != 0 ]] && \
+  echo "Unable to reach NUC" && \
+  exit 1
+
+upload() {
+  [[ -z $(which virt-sparsify) ]] && \
+    sudo apt-get update && \
+    sudo apt-get -y install guestfs-tools
+
+  sudo virt-sparsify --in-place /home/farmerbb/VMs/$1.img
+  rsync -avzSPh --no-perms --inplace --compress-choice=zstd --compress-level=1 \
+    /home/farmerbb/VMs/$1.img \
+    farmerbb@nuc:/home/farmerbb/VMs/$1.img
+  exit 0
+}
+
+download() {
+  ssh nuc -o LogLevel=QUIET -t '[[ -z $(which virt-sparsify) ]] && \
+    sudo apt-get update && \
+    sudo apt-get -y install guestfs-tools'
+
+  ssh nuc -o LogLevel=QUIET -t sudo virt-sparsify --in-place /home/farmerbb/VMs/$1.img
+  rsync -avzSPh --no-perms --inplace --compress-choice=zstd --compress-level=1 \
+    farmerbb@nuc:/home/farmerbb/VMs/$1.img \
+    /home/farmerbb/VMs/$1.img
+  exit 0
+}
+
+perform-operation() {
+  [[ $1 = upload ]] && upload $2
+  [[ $1 = download ]] && download $2
+  print-usage
+}
+
+sudo virsh list | grep -q $2 || \
+  ssh nuc -o LogLevel=QUIET -t sudo virsh list | grep -q $2 || \
+  perform-operation $1 $2
+
+echo "VM is running either locally or on NUC; aborting sync"
+exit 1

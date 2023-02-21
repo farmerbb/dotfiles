@@ -76,8 +76,8 @@
   <devices>
     <emulator>/usr/bin/qemu-system-x86_64</emulator>
     <disk type='file' device='disk'>
-      <driver name='qemu' type='qcow2' cache='none' io='threads' discard='unmap' iothread='1' queues='6'/>
-      <source file='/var/lib/libvirt/images/win11-vfio.qcow2'/>
+      <driver name='qemu' type='raw' cache='none' io='threads' discard='unmap' iothread='1' queues='6'/>
+      <source file='/var/lib/libvirt/images/win11.img'/>
       <target dev='vda' bus='virtio'/>
       <boot order='1'/>
       <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>

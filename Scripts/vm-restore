@@ -40,9 +40,9 @@ rm -f "$IMAGE_ORIGINAL"
 #   chattr +C "$IMAGE_ORIGINAL"
 # fi
 
-cp --reflink=auto "$IMAGE_BACKUP" "$IMAGE_ORIGINAL"
+cp --reflink=auto --sparse=auto "$IMAGE_BACKUP" "$IMAGE_ORIGINAL"
 
 if [[ $1 = macos* ]]; then
   sudo rm -rf ~/VMs/OSX-KVM
-  cp -r --reflink=auto ~/VMs/OSX-KVM~$NAME ~/VMs/OSX-KVM
+  cp -r --reflink=auto --sparse=auto ~/VMs/OSX-KVM~$NAME ~/VMs/OSX-KVM
 fi

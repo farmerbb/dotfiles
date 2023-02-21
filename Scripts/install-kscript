@@ -1,0 +1,18 @@
+#!/bin/bash
+
+rm -rf kscript-*.zip kscript-*/
+
+curl -s https://api.github.com/repos/kscripting/kscript/releases/latest \
+| grep "browser_download_url" \
+| cut -d : -f 2,3 \
+| tr -d \" \
+| wget -qi -
+
+unzip -q kscript-*.zip
+
+for i in kscript kscript.jar; do
+  sudo cp kscript-*/bin/$i /usr/local/bin
+done
+
+sudo chmod -x /usr/local/bin/kscript.jar
+rm -rf kscript-*.zip kscript-*/

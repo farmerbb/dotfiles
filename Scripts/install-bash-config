@@ -1,0 +1,43 @@
+#!/bin/bash
+
+bashrc-additions() {
+  source ~/Other\ Stuff/Linux/Bash\ Configs/bashrc-additions-$1.sh
+}
+
+bashrc-additions linux-generic
+[[ -d /opt/android-studio ]] && bashrc-additions android-dev
+[[ $(lsb_release -is 2>/dev/null) = Ubuntu ]] && bashrc-additions ubuntu
+$(uname -r | grep "[m|M]icrosoft" > /dev/null) && bashrc-additions wsl
+
+case $(sudo dmidecode -s system-product-name 2>/dev/null) in
+  "XPS 13 9310")
+    bashrc-additions xps13
+  ;;
+
+  "Kled")
+    bashrc-additions spin713
+  ;;
+
+  "NUC8i5BEK")
+    bashrc-additions nuc
+  ;;
+esac
+
+unset -f bashrc-additions
+return 0 2>/dev/null
+
+SOURCE_PATH=$(realpath "$0")
+cat ~/.bashrc | grep -q "source \"$SOURCE_PATH\"" && \
+  echo "Already installed, exiting..." && \
+  exit 0
+
+echo "Installing bash config..."
+echo '' >> ~/.bashrc
+echo "source \"$SOURCE_PATH\"" >> ~/.bashrc
+
+$(uname -r | grep "[m|M]icrosoft" > /dev/null) || exit 0
+[[ -f ~/.bash-preexec.sh ]] && exit 0
+
+sudo apt-get update
+sudo apt-get -y install curl
+curl https://raw.githubusercontent.com/rcaloras/bash-preexec/master/bash-preexec.sh -o ~/.bash-preexec.sh

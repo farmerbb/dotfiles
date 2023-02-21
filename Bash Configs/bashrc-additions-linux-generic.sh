@@ -27,7 +27,7 @@ alias qemu="qemu-system-x86_64 -accel kvm -cpu host -m 1024"
 alias qemu95="qemu-system-i386 -cpu pentium -vga cirrus -nic user,model=pcnet -soundhw sb16,pcspk"
 alias starwars="telnet towel.blinkenlights.nl"
 alias reboot-device="restart-device"
-alias robomirror-linux-dir='SYNC_DIRS=("Other Stuff/Linux"); robomirror'
+alias robomirror-linux-dir='SYNC_DIRS=("Other Stuff/Linux"); robomirror onedrive'
 alias running-vms="sudo lsof 2>&1 | grep /dev/kvm | awk '!seen[\$2]++'"
 alias running-vms-fast="sudo lsof /dev/kvm 2>&1 | grep /dev/kvm | awk '!seen[\$2]++'"
 alias trim="sudo fstrim -av"
@@ -309,26 +309,28 @@ qcow2-optimize() {
 # touch "$1"
 # chattr +C "$1"
 
-  qemu-img convert -c -f qcow2 -O qcow2 -o cluster_size=2M,compression_type=zstd "$1".old "$1" || mv "$1".old "$1"
+  qemu-img convert -p -c -f qcow2 -O qcow2 -o cluster_size=2M,compression_type=zstd "$1".old "$1" || mv "$1".old "$1"
   rm -f "$1".old
 }
 
 qcow2-to-raw() {
   [[ ! -f "$1" ]] && return 1
+  [[ "$1" = *.img ]] && return 1
 
   NEW_FILENAME=$(echo "$1" | sed "s/.qcow2/.img/g")
   [[ "$1" = "$NEW_FILENAME" ]] && NEW_FILENAME="$1.img"
 
-  qemu-img convert -f qcow2 -O raw "$1" "$NEW_FILENAME"
+  qemu-img convert -p -f qcow2 -O raw "$1" "$NEW_FILENAME" || rm "$NEW_FILENAME"
 }
 
 raw-to-qcow2() {
   [[ ! -f "$1" ]] && return 1
+  [[ "$1" = *.qcow2 ]] && return 1
 
   NEW_FILENAME=$(echo "$1" | sed "s/.img/.qcow2/g")
   [[ "$1" = "$NEW_FILENAME" ]] && NEW_FILENAME="$1.qcow2"
 
-  qemu-img convert -c -f raw -O qcow2 -o cluster_size=2M,compression_type=zstd "$1" "$NEW_FILENAME"
+  qemu-img convert -p -c -f raw -O qcow2 -o cluster_size=2M,compression_type=zstd "$1" "$NEW_FILENAME" || rm "$NEW_FILENAME"
 }
 
 set-default-filemanager() {
@@ -542,12 +544,13 @@ docker-stop() {
 
 install-samba() {
   sudo apt-get update
-  sudo apt-get y install samba
+  sudo apt-get -y install samba
 
   sudo mkdir -p /etc/samba
   sudo cp ~/Other\ Stuff/Chrome\ OS/Crostini/smb.conf /etc/samba/smb.conf
   echo "farmerbb = Braden" | sudo tee /etc/samba/usermap.txt > /dev/null
 
+  echo
   sudo smbpasswd -a farmerbb
   sudo systemctl restart smbd.service
 }

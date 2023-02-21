@@ -29,6 +29,6 @@ done
 #   chattr +C "$IMAGE_BACKUP"
 # fi
 
-cp --reflink=auto "$IMAGE_ORIGINAL" "$IMAGE_BACKUP"
+cp --reflink=auto --sparse=auto "$IMAGE_ORIGINAL" "$IMAGE_BACKUP"
 
-[[ $1 = macos* ]] && cp -r --reflink=auto ~/VMs/OSX-KVM ~/VMs/OSX-KVM~$NAME
+[[ $1 = macos* ]] && cp -r --reflink=auto --sparse=auto ~/VMs/OSX-KVM ~/VMs/OSX-KVM~$NAME

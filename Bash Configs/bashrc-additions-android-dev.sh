@@ -1,5 +1,6 @@
 export ANDROID_SDK_ROOT="/home/$USER/Android/Sdk"
-BUILD_TOOLS_DIR="$(ls -d1 $ANDROID_SDK_ROOT/build-tools/* | tail -n 1)"
+ls -d $ANDROID_SDK_ROOT/build-tools/* >/dev/null 2>&1
+[[ $? -eq 0 ]] && BUILD_TOOLS_DIR="$(ls -d1 $ANDROID_SDK_ROOT/build-tools/* | tail -n 1)"
 
 ls -d ~/.local/share/Google/AndroidStudio*/Kotlin/kotlinc/bin >/dev/null 2>&1
 [[ $? -eq 0 ]] && PLUGINS_DIR="$(ls -d1 ~/.local/share/Google/AndroidStudio*/Kotlin/kotlinc/bin | tail -n 1)"
