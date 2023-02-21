@@ -177,6 +177,14 @@ install-input-remapper() {
   sudo cp -r "$DEVICE_DIR_PREFIX/input-remapper" ~/.config
 }
 
+fix-extensions() {
+  for i in $(gnome-extensions list); do
+    EXT_PATH=$(gnome-extensions info $i | grep "Path:" | cut -d' ' -f4)
+    [[ "$EXT_PATH" = /home/$USER/* ]] && EXT_COMMAND=enable || EXT_COMMAND=disable
+    gnome-extensions $EXT_COMMAND $i
+  done
+}
+
 export -f allow-all-usb
 export -f make-trackpad-great-again
 export -f export-extension-config
@@ -191,3 +199,4 @@ export -f install-ssh-server
 export -f open-youtube-tv
 export -f install-wireguard-server
 export -f install-input-remapper
+export -f fix-extensions
