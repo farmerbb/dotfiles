@@ -24,11 +24,11 @@ sudo mount -t cifs -o user=farmerbb,password=bile-scam-kx,uid=farmerbb,gid=farme
 # mountpoint -q /mnt/shield2 || ping -c1 -W1 192.168.86.8 && \
 # sudo mount -t cifs -o user=farmerbb,password=weeks-pill-bled,uid=farmerbb,gid=farmerbb //192.168.86.8/internal /mnt/shield2
 
-mountpoint -q /mnt/PC/C || ping -c1 -W1 192.168.86.5 && \
-sudo mount -t cifs -o user=Braden,credentials=/home/farmerbb/.sharelogin,uid=farmerbb,gid=farmerbb //192.168.86.5/C /mnt/PC/C || true
+mountpoint -q /mnt/PC/C || ping -c1 -W1 192.168.86.24 && \
+sudo mount -t cifs -o user=Braden,credentials=/home/farmerbb/.sharelogin,uid=farmerbb,gid=farmerbb //192.168.86.24/C /mnt/PC/C || true
 
-mountpoint -q /mnt/PC/Z || ping -c1 -W1 192.168.86.5 && \
-sudo mount -t cifs -o user=Braden,credentials=/home/farmerbb/.sharelogin,uid=farmerbb,gid=farmerbb //192.168.86.5/Z /mnt/PC/Z || true
+mountpoint -q /mnt/PC/Z || ping -c1 -W1 192.168.86.24 && \
+sudo mount -t cifs -o user=Braden,credentials=/home/farmerbb/.sharelogin,uid=farmerbb,gid=farmerbb //192.168.86.24/Z /mnt/PC/Z || true
 
 ##################################################
 
