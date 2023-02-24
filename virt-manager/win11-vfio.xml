@@ -34,7 +34,7 @@
   <features>
     <acpi/>
     <apic/>
-    <hyperv>
+    <hyperv mode='custom'>
       <relaxed state='on'/>
       <vapic state='on'/>
       <spinlocks state='on' retries='8191'/>
@@ -76,17 +76,23 @@
   <devices>
     <emulator>/usr/bin/qemu-system-x86_64</emulator>
     <disk type='file' device='disk'>
-      <driver name='qemu' type='raw' cache='none' io='threads' discard='unmap' iothread='1' queues='6'/>
-      <source file='/var/lib/libvirt/images/win11.img'/>
+      <driver name='qemu' type='raw' cache='writeback' io='threads' discard='unmap' iothread='1' queues='6'/>
+      <source file='/home/farmerbb/VMs/win11.img'/>
       <target dev='vda' bus='virtio'/>
       <boot order='1'/>
       <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
     </disk>
-    <disk type='block' device='disk'>
-      <driver name='qemu' type='raw' cache='none' io='native' iothread='2'/>
+    <disk type='block' device='lun'>
+      <driver name='qemu' type='raw' cache='writeback' io='threads' discard='unmap'/>
       <source dev='/dev/sdb'/>
-      <target dev='vdb' bus='virtio'/>
-      <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
+      <target dev='sda' bus='scsi'/>
+      <address type='drive' controller='0' bus='0' target='0' unit='0'/>
+    </disk>
+    <disk type='block' device='lun'>
+      <driver name='qemu' type='raw' cache='writeback' io='threads' discard='unmap'/>
+      <source dev='/dev/sdc'/>
+      <target dev='sdb' bus='scsi'/>
+      <address type='drive' controller='0' bus='0' target='0' unit='1'/>
     </disk>
     <controller type='scsi' index='0' model='virtio-scsi'>
       <driver queues='6' iothread='2'/>
@@ -173,20 +179,6 @@
       <address type='pci' domain='0x0000' bus='0x00' slot='0x1b' function='0x0'/>
     </sound>
     <audio id='1' type='none'/>
-    <hostdev mode='subsystem' type='scsi' managed='no' rawio='yes'>
-      <source>
-        <adapter name='scsi_host2'/>
-        <address bus='0' target='0' unit='0'/>
-      </source>
-      <address type='drive' controller='0' bus='0' target='0' unit='1'/>
-    </hostdev>
-    <hostdev mode='subsystem' type='scsi' managed='no' rawio='yes'>
-      <source>
-        <adapter name='scsi_host3'/>
-        <address bus='0' target='0' unit='0'/>
-      </source>
-      <address type='drive' controller='0' bus='0' target='0' unit='2'/>
-    </hostdev>
     <hostdev mode='subsystem' type='pci' managed='yes'>
       <source>
         <address domain='0x0000' bus='0x01' slot='0x00' function='0x0'/>

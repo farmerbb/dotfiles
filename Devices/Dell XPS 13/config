@@ -1,0 +1,42 @@
+Host crosh
+  User chronos
+  HostName 100.115.92.1
+  Port 22
+  IdentityFile ~/.ssh/id_rsa
+  PreferredAuthentications publickey
+  ControlMaster auto
+  ControlPath /tmp/%r@%h:%p
+  ControlPersist 1h
+
+Host nuc
+  User farmerbb
+  HostName 192.168.86.10
+  Port 22
+#  HostName [REDACTED]
+#  Port 34361
+  IdentityFile ~/.ssh/id_rsa
+  PreferredAuthentications publickey
+  ControlMaster auto
+  ControlPath /tmp/%r@%h:%p
+  ControlPersist 1h
+
+Host pc
+  User farmerbb
+#  HostName 192.168.86.5
+  HostName 192.168.86.23
+  Port 22
+  IdentityFile ~/.ssh/id_rsa
+  PreferredAuthentications publickey
+  ControlMaster auto
+  ControlPath /tmp/%r@%h:%p
+  ControlPersist 1h
+
+Host pi2
+  User pi
+  HostName 192.168.86.29
+  Port 22
+  IdentityFile ~/.ssh/id_rsa
+  PreferredAuthentications publickey
+  ControlMaster auto
+  ControlPath /tmp/%r@%h:%p
+  ControlPersist 1h

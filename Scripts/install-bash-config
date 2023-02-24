@@ -21,6 +21,10 @@ case $(sudo dmidecode -s system-product-name 2>/dev/null) in
   "NUC8i5BEK")
     bashrc-additions nuc
   ;;
+
+  "B85M-D3V")
+    bashrc-additions pc
+  ;;
 esac
 
 unset -f bashrc-additions

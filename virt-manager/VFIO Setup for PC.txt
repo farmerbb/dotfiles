@@ -1,4 +1,4 @@
-NOTE: These instructions are tested on Ubuntu 21.10 (desktop, without proprietary drivers)
+NOTE: These instructions are tested on Ubuntu 22.10 (desktop, without proprietary drivers)
 
 -------------------------------- VFIO Setup --------------------------------
 
@@ -16,11 +16,6 @@ Blacklist Nouveau driver (add to /etc/modprobe.d/blacklist.conf):
 
   blacklist nouveau
   options nouveau modeset-0
-
-
-Allow passthrough of SCSI devices (add to /etc/apparmor.d/abstractions/libvirt-qemu):
-
-  /dev/sg* rwk,
 
 
 Create bridged network connection for virt-manager:
@@ -70,11 +65,35 @@ Check list of allowed CPUs (for host):
 
   cat /proc/$$/status | grep Cpus_allowed_list
 
+-------------------------------- SCSI Passthrough (old) --------------------------------
+
+Allow passthrough of SCSI devices (add to /etc/apparmor.d/abstractions/libvirt-qemu):
+
+  /dev/sg* rwk,
+
 
 Check host SCSI devices:
 
   sudo apt install lsscsi
   lsscsi
+
+
+Example of SCSI device passthrough:
+
+  <hostdev mode='subsystem' type='scsi' managed='no' rawio='yes'>
+    <source>
+      <adapter name='scsi_host2'/>
+      <address bus='0' target='0' unit='0'/>
+    </source>
+    <address type='drive' controller='0' bus='0' target='0' unit='1'/>
+  </hostdev>
+  <hostdev mode='subsystem' type='scsi' managed='no' rawio='yes'>
+    <source>
+      <adapter name='scsi_host3'/>
+      <address bus='0' target='0' unit='0'/>
+    </source>
+    <address type='drive' controller='0' bus='0' target='0' unit='2'/>
+  </hostdev>
 
 -------------------------------- Miscellaneous Tips --------------------------------
 
@@ -102,6 +121,8 @@ To start/stop the VM when the host starts/stops:
 
 To auto-mount Z: drive on host when the VM starts:
 
+  * Make sure Z: drive is sharable via Windows Explorer properties
+
   * Install WSL1 inside the VM, and set up the WSL2 startup task in Task Scheduler
 
   * On both host and guest, set up passwordless-sudo, install ssh, and run ssh-keygen
@@ -115,14 +136,14 @@ To auto-mount Z: drive on host when the VM starts:
     @reboot ssh farmerbb@192.168.86.23 "sudo mount -t cifs -o user=Braden,credentials=/home/farmerbb/.sharelogin,uid=farmerbb,gid=farmerbb //192.168.86.24/Z /mnt/files"
 
 
-Commands for resizing a qcow2 disk image (run as root):
+Commands for resizing a disk image (works for both raw and qcow2):
 
-  qemu-img resize /var/lib/libvirt/images/win11-vfio.qcow2 +160G
+  qemu-img resize /home/farmerbb/VMs/win11.img +150G
 
-  modprobe nbd max_part=8
-  qemu-nbd --connect=/dev/nbd0 /var/lib/libvirt/images/win11-vfio.qcow2
+  sudo modprobe nbd max_part=8
+  sudo qemu-nbd --connect=/dev/nbd0 /home/farmerbb/VMs/win11.img
 
-  gparted /dev/nbd0
+  sudo gparted /dev/nbd0
 
-  qemu-nbd --disconnect /dev/nbd0
-  rmmod nbd
+  sudo qemu-nbd --disconnect /dev/nbd0
+  sudo rmmod nbd

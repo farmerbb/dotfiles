@@ -1,7 +1,11 @@
-alias enable-touchscreen="xinput --enable $(xinput --list | grep -i 'Finger touch' | grep -o 'id=[0-9]*' | sed 's/id=//')"
-alias enable-trackpad="xinput --enable $(xinput --list | grep -i 'Touchpad' | grep -o 'id=[0-9]*' | sed 's/id=//')"
-alias disable-touchscreen="xinput --disable $(xinput --list | grep -i 'Finger touch' | grep -o 'id=[0-9]*' | sed 's/id=//')"
-alias disable-trackpad="xinput --disable $(xinput --list | grep -i 'Touchpad' | grep -o 'id=[0-9]*' | sed 's/id=//')"
+if [[ $HOSTNAME != PC ]]; then
+  alias enable-touchscreen="xinput --enable $(xinput --list | grep -i 'Finger touch' | grep -o 'id=[0-9]*' | sed 's/id=//')"
+  alias enable-trackpad="xinput --enable $(xinput --list | grep -i 'Touchpad' | grep -o 'id=[0-9]*' | sed 's/id=//')"
+  alias disable-touchscreen="xinput --disable $(xinput --list | grep -i 'Finger touch' | grep -o 'id=[0-9]*' | sed 's/id=//')"
+  alias disable-trackpad="xinput --disable $(xinput --list | grep -i 'Touchpad' | grep -o 'id=[0-9]*' | sed 's/id=//')"
+fi
+
+alias toggle-vm-maintenance="[[ -f /tmp/vm-maintenance ]] && rm /tmp/vm-maintenance || touch /tmp/vm-maintenance"
 alias virtualhere-client="sudo pkill vhuit64 && sleep 3; sudo daemonize /mnt/files/Other\ Stuff/Utilities/VirtualHere/vhuit64"
 
 allow-all-usb() {
@@ -103,8 +107,11 @@ boot-to-windows() {
 }
 
 install-blackbox() {
-  sudo apt-get update
-  sudo apt-get -y install flatpak
+  if [[ -z $(which flatpak) ]]; then
+    sudo apt-get update
+    sudo apt-get -y install flatpak
+  fi
+
   flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
   flatpak install -y flathub com.raggesilver.BlackBox
   flatpak update -y com.raggesilver.BlackBox
