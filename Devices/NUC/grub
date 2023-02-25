@@ -13,7 +13,7 @@ GRUB_CMDLINE_LINUX=""
 # Uncomment to enable BadRAM filtering, modify to suit your needs
 # This works with Linux (no patch required) and with any kernel that obtains
 # the memory map information from GRUB (GNU Mach, kernel of FreeBSD ...)
-#GRUB_BADRAM="0x01234567,0xfefefefe,0x89abcdef,0xefefefef"
+GRUB_BADRAM="0xa6c384c8,0xffffe6e8,0xb3fe8020,0xfffff0a0,0xb3fe8070,0xffff9970,0xb3fe9020,0xfffff0a0,0xb3fea020,0xffffe2a0,0xb3fea208,0xffffe288,0xb3febb60,0xfffffbe8,0xb3fec8a0,0xffffe8a0,0xb3fed0a0,0xffffd0a0,0xb3fee0a0,0xffffe0a0"
 
 # Uncomment to disable graphical terminal (grub-pc only)
 #GRUB_TERMINAL=console

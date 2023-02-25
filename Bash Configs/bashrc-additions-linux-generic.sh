@@ -14,6 +14,7 @@ if [[ $USER != chronos ]]; then
   alias mv="$(which advmv || which mv)"
 fi
 
+alias badram='sudo cat /proc/iomem | grep "Unusable memory"'
 alias cpu-monitor='watch -n1 "lscpu -e; echo; sensors coretemp-isa-0000 dell_smm-isa-0000"'
 alias current-governor="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
 alias disable-android-tv-launcher="adb shell pm disable-user --user 0 com.google.android.tvlauncher"
