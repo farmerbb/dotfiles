@@ -26,6 +26,7 @@ alias public-ip="dig @resolver4.opendns.com myip.opendns.com +short"
 alias public-ipv6="dig @resolver1.ipv6-sandbox.opendns.com AAAA myip.opendns.com +short -6"
 alias qemu="qemu-system-x86_64 -accel kvm -cpu host -m 1024"
 alias qemu95="qemu-system-i386 -cpu pentium -vga cirrus -nic user,model=pcnet -soundhw sb16,pcspk"
+alias shield-share-menu="adb -s shield shell input keyevent --longpress KEYCODE_HOME"
 alias starwars="telnet towel.blinkenlights.nl"
 alias reboot-device="restart-device"
 alias robomirror-linux-dir='SYNC_DIRS=("Other Stuff/Linux"); robomirror onedrive'
@@ -85,7 +86,9 @@ set-title() {
 
 adb() {
   $(which adb) "$@"
+  RETURNVAL=$?
   [[ $USER != chronos ]] && mount-adbfs >/dev/null 2>&1
+  return $RETURNVAL
 }
 
 adb-shell() {
@@ -126,6 +129,7 @@ list-roms() {
 }
 
 [[ $(type -t change-governor) = alias ]] && unalias change-governor
+
 change-governor() {
   for i in $(seq 0 $(nproc --ignore=1)); do
     echo $1 | sudo tee /sys/devices/system/cpu/cpu$i/cpufreq/scaling_governor > /dev/null
@@ -250,24 +254,24 @@ edit-vm-config() {
 }
 
 edit-hosts() {
-  DIR="$DEVICE_DIR_PREFIX"
+  DIR="$LINUX_DIR_PREFIX/Network Config"
   FILE="$DIR/hosts"
   if [[ -f "$FILE" ]]; then
     MD5=$(md5sum "$FILE")
-    sudo nano /etc/hosts
-    cp /etc/hosts "$FILE"
-    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_DEVICE_DIR_PREFIX/hosts"
+    nano "$FILE"
+    update-hosts "$FILE"
+    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_LINUX_DIR_PREFIX/Network Config/hosts"
   fi
 }
 
 edit-ssh-config() {
-  DIR="$DEVICE_DIR_PREFIX"
+  DIR="$LINUX_DIR_PREFIX/Network Config/ssh"
   FILE="$DIR/config"
   if [[ -f "$FILE" ]]; then
     MD5=$(md5sum "$FILE")
-    nano ~/.ssh/config
-    cp ~/.ssh/config "$FILE"
-    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_DEVICE_DIR_PREFIX/config"
+    nano "$FILE"
+    cp "$FILE" ~/.ssh/config
+    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_LINUX_DIR_PREFIX/Network Config/ssh/config"
   fi
 }
 
@@ -365,8 +369,9 @@ restart-device() {
   adb -s $1 reboot
 
   if [[ $1 == *shield* ]]; then
-    while [[ ! -z $(adb -s $1 shell settings put global hdmi_one_touch_play_enabled 1 2>&1) ]]; do
-      [[ $SECONDS > 300 ]] && return 1
+    until adb -s $1 shell settings put global hdmi_one_touch_play_enabled 1 2>/dev/null; do
+      ((TRIES+=1))
+      [[ $TRIES > 60 ]] && return 1
 
       echo "Waiting for SHIELD to reboot..."
       sleep 5

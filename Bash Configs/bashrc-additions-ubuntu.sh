@@ -29,6 +29,15 @@ make-trackpad-great-again() {
 export-extension-config() {
   DIR="$LINUX_DIR_PREFIX/Ubuntu/extensions"
   FILE="$DIR/$1.txt"
+  CONFIG_DIR="$DIR/$1"
+
+  if [[ -d "$CONFIG_DIR" ]]; then
+    for i in "$LINUX_DIR_PREFIX" "$OD_LINUX_DIR_PREFIX"; do
+      rm -rf "$i/Ubuntu/extensions/$1"
+      cp -r ~/.config/$1 "$i/Ubuntu/extensions/$1"
+    done
+  fi
+
   if [[ -f "$FILE" ]]; then
     MD5=$(md5sum "$FILE")
     dconf dump /org/gnome/shell/extensions/$1/ > "$FILE"
@@ -45,6 +54,13 @@ export-extension-config() {
 import-extension-config() {
   DIR="$LINUX_DIR_PREFIX/Ubuntu/extensions"
   FILE="$DIR/$1.txt"
+  CONFIG_DIR="$DIR/$1"
+
+  if [[ -d "$CONFIG_DIR" ]]; then
+    rm -rf ~/.config/$1
+    cp -r "$CONFIG_DIR" ~/.config
+  fi
+
   if [[ -f "$FILE" ]]; then
     dconf load /org/gnome/shell/extensions/$1/ < "$FILE"
   else
@@ -172,7 +188,7 @@ install-wireguard-server() {
     -e PEERDNS=1.1.1.1 \
     -e LOG_CONFS=true \
     -p 51820:51820/udp \
-    -v /mnt/files/Other\ Stuff/Network\ Config/WireGuard:/config \
+    -v /mnt/files/Other\ Stuff/Linux/Network\ Config/WireGuard:/config \
     --sysctl="net.ipv4.conf.all.src_valid_mark=1" \
     --restart unless-stopped \
     lscr.io/linuxserver/wireguard:latest
@@ -192,6 +208,24 @@ fix-extensions() {
   done
 }
 
+fix-libvirt-permissions() {
+  echo -e '\nuser = "farmerbb"\ngroup = "farmerbb"' | sudo tee -a /etc/libvirt/qemu.conf > /dev/null
+  sudo service libvirtd restart
+}
+
+uninstall-snapd() {
+  while [[ $SNAP_TO_REMOVE != "provided" ]]; do
+    SNAP_TO_REMOVE=$(sudo snap remove $(snap list | awk '!/^Name|^snapd/ {print $1}' | grep -vxF core) 2>&1 | tr ' ' '\n' | tail -n1 | sed 's/\.//g')
+    [[ $SNAP_TO_REMOVE != "removed" && $SNAP_TO_REMOVE != "provided" ]] && sudo snap remove $SNAP_TO_REMOVE
+  done
+
+  sudo snap remove snapd
+  sudo apt remove --purge -y snapd gnome-software-plugin-snap
+  sudo apt-mark hold snapd
+
+  rm -rf ~/snap
+}
+
 export -f allow-all-usb
 export -f make-trackpad-great-again
 export -f export-extension-config
@@ -207,3 +241,5 @@ export -f open-youtube-tv
 export -f install-wireguard-server
 export -f install-input-remapper
 export -f fix-extensions
+export -f fix-libvirt-permissions
+export -f uninstall-snapd

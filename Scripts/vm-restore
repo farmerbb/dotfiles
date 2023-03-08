@@ -7,10 +7,10 @@ print-usage() {
 }
 
 print-available-backups() {
-  ls -1 ~/VMs/$1~*.qcow2 >/dev/null 2>&1
+  ls -1 ~/VMs/$1~*.img >/dev/null 2>&1
   if [[ $? = 0 ]]; then
     echo "Available backups:"
-    ls -1 ~/VMs/$1~*.qcow2 | cut -d'~' -f2 | cut -d'.' -f1
+    ls -1 ~/VMs/$1~*.img | cut -d'~' -f2 | cut -d'.' -f1
     echo
   fi
 
@@ -21,8 +21,8 @@ print-available-backups() {
 [[ $# -ne 2 ]] && print-usage
 
 NAME=$2
-IMAGE_ORIGINAL=~/VMs/$1.qcow2
-IMAGE_BACKUP=~/VMs/$1~$NAME.qcow2
+IMAGE_ORIGINAL=~/VMs/$1.img
+IMAGE_BACKUP=~/VMs/$1~$NAME.img
 
 [[ ! -f "$IMAGE_BACKUP" ]] && print-available-backups $1
 [[ ! -f "$IMAGE_ORIGINAL" ]] && print-usage

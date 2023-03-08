@@ -1,9 +1,12 @@
 [/]
+active-profile='/home/farmerbb/.config/burn-my-windows/profiles/1677775194013450.conf'
 close-preview-effect=''
 destroy-dialogs=true
 fire-close-effect=false
 glide-close-effect=false
 glide-open-effect=false
+last-extension-version=27
+last-prefs-version=27
 open-preview-effect=''
 pixel-wipe-animation-time=500
 pixel-wipe-close-effect=false

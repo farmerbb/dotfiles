@@ -11,8 +11,8 @@ print-usage() {
 NAME=$2
 [[ -z "$NAME" ]] && NAME="$(date +%Y%m%d)"
 
-IMAGE_ORIGINAL=~/VMs/$1.qcow2
-IMAGE_BACKUP=~/VMs/$1~$NAME.qcow2
+IMAGE_ORIGINAL=~/VMs/$1.img
+IMAGE_BACKUP=~/VMs/$1~$NAME.img
 
 [[ ! -f "$IMAGE_ORIGINAL" ]] && print-usage
 

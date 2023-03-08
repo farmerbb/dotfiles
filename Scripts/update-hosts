@@ -1,0 +1,21 @@
+#!/bin/bash
+
+print-usage() {
+  BASENAME=$(basename "$0")
+  echo "Usage: $BASENAME <hosts-file>"
+  exit 1
+}
+
+[[ ! -f "$1" ]] && print-usage
+
+MARKER="######## Custom hosts below this line ########"
+
+if [[ ! $(cat /etc/hosts | grep "$MARKER") ]]; then
+  echo '' | sudo tee -a /etc/hosts > /dev/null
+  echo "$MARKER" | sudo tee -a /etc/hosts > /dev/null
+fi
+
+MARKER_LINE=$(cat /etc/hosts | grep -n "$MARKER" | cut -d':' -f1)
+sudo sed -i "1, $MARKER_LINE ! d" /etc/hosts
+
+cat "$1" | sudo tee -a /etc/hosts > /dev/null

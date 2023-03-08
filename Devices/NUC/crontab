@@ -28,4 +28,4 @@
 
 45 0,8,16 * * * bash -i -c robomirror
 0 10 * * * bash -i -c gog-claim-giveaway
-0 5 * * * bash -i -c restart-device shield
+0 5 * * * bash -i -c "restart-device shield"

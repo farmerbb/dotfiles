@@ -6,9 +6,9 @@
 #
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
 # / was on /dev/nvme0n1p2 during installation
-UUID=df51c45b-bda0-4a5a-8913-0aee2f9aa5ae /               ext4    errors=remount-ro 0       1
+UUID=a0cb59dd-7976-4934-b570-c4d5b998248e /               ext4    errors=remount-ro 0       1
 # /boot/efi was on /dev/nvme0n1p1 during installation
-UUID=D7A8-6BBE  /boot/efi       vfat    umask=0077      0       1
+UUID=3696-9814  /boot/efi       vfat    umask=0077      0       1
 # /swapfile                                 none            swap    sw              0       0
 
 UUID=622AF53E2AF50FB1                       /mnt/files       ntfs3   defaults,noatime,nofail,noauto,x-systemd.automount,uid=1000,gid=1000       0   2

@@ -1,0 +1,23 @@
+#!/bin/bash
+
+print-usage() {
+  BASENAME=$(basename "$0")
+  echo "Usage: $BASENAME <name-of-vm>"
+  exit 1
+}
+
+[[ $# -ne 1 ]] && print-usage
+[[ ! -f /home/farmerbb/VMs/$1.img ]] && print-usage
+
+while sudo virsh list | grep $1 >/dev/null 2>&1; do
+  echo "Not running gparted while VM is running"
+  exit 1
+done
+
+sudo modprobe nbd max_part=8
+sudo qemu-nbd -f raw --connect=/dev/nbd0 /home/farmerbb/VMs/$1.img
+
+sudo gparted /dev/nbd0
+
+sudo qemu-nbd --disconnect /dev/nbd0
+sudo rmmod nbd

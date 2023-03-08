@@ -1,0 +1,16 @@
+[/]
+button-placeholder=''
+divider-string=' - '
+extension-index=1
+extension-place='left'
+first-field='xesam:title'
+last-field='xesam:artist'
+left-padding=0
+mpris-sources-whitelist='rhythmbox'
+remove-remaster-text=true
+remove-text-paused-delay=0
+reposition-on-button-press=false
+right-padding=0
+second-field=''
+show-icon='left'
+use-whitelisted-sources-only=true
