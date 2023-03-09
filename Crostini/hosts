@@ -1,9 +1,0 @@
-127.0.1.1	penguin
-127.0.0.1	localhost
-::1		localhost ip6-localhost ip6-loopback
-ff02::1		ip6-allnodes
-ff02::2		ip6-allrouters
-
-192.168.86.202  pi
-192.168.86.4    shield
-192.168.86.8    shield2
