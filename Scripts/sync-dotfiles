@@ -9,6 +9,7 @@ REDACTED_STRINGS=(
   "[REDACTED]"
   "[REDACTED]"
   "[REDACTED]"
+  "[REDACTED]"
 )
 
 DOTFILE_DIRS=(
@@ -20,6 +21,12 @@ DOTFILE_DIRS=(
   "Other Stuff/Utilities/Command Scripts"
   "Other Stuff/Utilities/Windows 11 Tweaks.txt"
 )
+
+timeout 10 nc -z 192.168.86.10 22 2> /dev/null
+if [[ $? != 0 ]]; then
+  echo "Cannot reach NUC, exiting..."
+  exit 1
+fi
 
 echo "Cloning repo..."
 sudo rm -rf dotfiles

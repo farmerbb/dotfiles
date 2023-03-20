@@ -18,7 +18,7 @@ if [[ $1 == *shield* ]]; then
   adb -s $1 shell settings put global hdmi_one_touch_play_enabled 0
 fi
 
-scrcpy -s $1 "${@:2}"
+scrcpy -s $1 --audio-codec=aac "${@:2}"
 
 if [[ ! -z $DISABLE_ANIMATIONS ]]; then
   adb -s $1 shell settings put global window_animation_scale 1.0

@@ -2,12 +2,12 @@
 
 rm -rf kscript-*.zip kscript-*/
 
-curl -s https://api.github.com/repos/kscripting/kscript/releases/latest \
+URL=$(curl -s https://api.github.com/repos/kscripting/kscript/releases/latest \
 | grep "browser_download_url" \
 | cut -d : -f 2,3 \
-| tr -d \" \
-| wget -qi -
+| tr -d \")
 
+curl $URL -LOs
 unzip -q kscript-*.zip
 
 for i in kscript kscript.jar; do

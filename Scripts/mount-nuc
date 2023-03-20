@@ -17,10 +17,8 @@ if [[ -z $(which dig) ]] ; then
   sudo apt-get install -y dnsutils
 fi
 
-PUBLIC_IP=$(dig @resolver4.opendns.com myip.opendns.com +short)
-[[ -z $PUBLIC_IP ]] && PUBLIC_IP=$(curl https://ipinfo.io/ip)
-
-if [[ $PUBLIC_IP = [REDACTED] ]]; then
+timeout 10 nc -z 192.168.86.10 22 2> /dev/null
+if [[ $? != 0 ]]; then
   do-mount
   [[ $? != 0 ]] && do-unmount && do-mount
 else

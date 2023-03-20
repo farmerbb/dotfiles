@@ -185,7 +185,8 @@ install-wireguard-server() {
     -e SERVERURL=[REDACTED] \
     -e SERVERPORT=[REDACTED] \
     -e PEERS=5 \
-    -e PEERDNS=1.1.1.1 \
+    -e PEERDNS=192.168.86.1 \
+    -e ALLOWEDIPS=10.13.13.0/24,192.168.86.0/24,94.140.14.14/32 \
     -e LOG_CONFS=true \
     -p 51820:51820/udp \
     -v /mnt/files/Other\ Stuff/Linux/Network\ Config/WireGuard:/config \
@@ -213,7 +214,7 @@ fix-libvirt-permissions() {
   sudo service libvirtd restart
 }
 
-uninstall-snapd() {
+remove-all-snaps() {
   while [[ $SNAP_TO_REMOVE != "provided" ]]; do
     SNAP_TO_REMOVE=$(sudo snap remove $(snap list | awk '!/^Name|^snapd/ {print $1}' | grep -vxF core) 2>&1 | tr ' ' '\n' | tail -n1 | sed 's/\.//g')
     [[ $SNAP_TO_REMOVE != "removed" && $SNAP_TO_REMOVE != "provided" ]] && sudo snap remove $SNAP_TO_REMOVE
@@ -224,6 +225,15 @@ uninstall-snapd() {
   sudo apt-mark hold snapd
 
   rm -rf ~/snap
+}
+
+wireguard-server-shell() {
+  if [[ $HOSTNAME = NUC ]]; then
+    docker exec -it wireguard /bin/bash
+    return 0
+  fi
+
+  ssh nuc -o LogLevel=QUIET -t docker exec -it wireguard /bin/bash
 }
 
 export -f allow-all-usb
@@ -242,4 +252,5 @@ export -f install-wireguard-server
 export -f install-input-remapper
 export -f fix-extensions
 export -f fix-libvirt-permissions
-export -f uninstall-snapd
+export -f remove-all-snaps
+export -f wireguard-server-shell

@@ -36,8 +36,8 @@ alias trim="sudo fstrim -av"
 alias turn-off-tv="curl -X POST http://192.168.86.44:8060/keypress/PowerOff"
 alias usb-monitor="clear; sudo udevadm monitor --subsystem-match=usb --property"
 alias usbtop="sudo modprobe usbmon; sudo usbtop"
-alias wireguard-up="sudo wg-quick up wg0 && timeout 10 mount-nuc"
-alias wireguard-down="sudo wg-quick down wg0 && timeout 10 mount-nuc"
+alias wireguard-up="ssh -q -O stop nuc; sudo wg-quick up wg0 && timeout 10 mount-nuc"
+alias wireguard-down="ssh -q -O stop nuc; sudo wg-quick down wg0 && timeout 10 mount-nuc"
 
 alias am="adb shell am"
 alias pm="adb shell pm"
@@ -505,7 +505,7 @@ robomirror() {
     if [[ $HOSTNAME = NUC ]]; then
       SOURCE=onedrive
     else
-      nc -z 192.168.86.10 22 2> /dev/null
+      timeout 10 nc -z 192.168.86.10 22 2> /dev/null
       if [[ $? = 0 ]]; then
         SOURCE=nuc
       else
@@ -578,7 +578,7 @@ install-wireguard-client() {
 
   sudo apt-get update
   sudo apt-get -y install wireguard resolvconf
-  sudo cp ~/Other\ Stuff/Network\ Config/WireGuard/$1/$1.conf /etc/wireguard/wg0.conf
+  sudo cp "$LINUX_DIR_PREFIX/Network Config/WireGuard/$1/$1.conf" /etc/wireguard/wg0.conf
 }
 
 wireguard-run() {
@@ -586,6 +586,25 @@ wireguard-run() {
   ${@:1}
   sudo wg-quick down wg0 2>/dev/null
 }
+
+organize-camera-roll() (
+  organize-camera-roll-internal() {
+    mkdir -p $1/Media/Unsorted\ Pictures/$YEAR/$MONTH
+    mkdir -p $1/Media/Unsorted\ Videos/$YEAR/$MONTH
+    mkdir -p $1/Media/Unsorted\ Pictures/Screenshots
+
+    mv -v $1/Media/Camera\ Roll/$YEAR/$MONTH/*.jpg $1/Media/Unsorted\ Pictures/$YEAR/$MONTH/ 2>/dev/null
+    mv -v $1/Media/Camera\ Roll/$YEAR/$MONTH/*.mp4 $1/Media/Unsorted\ Videos/$YEAR/$MONTH/ 2>/dev/null
+    mv -v $1/Media/Camera\ Roll/$YEAR/$MONTH/*.png $1/Media/Unsorted\ Pictures/Screenshots/ 2>/dev/null
+    mv -v $1/Media/Camera\ Roll/Pictures/Screenshots/*.png $1/Media/Unsorted\ Pictures/Screenshots/ 2>/dev/null
+  }
+
+  YEAR=$(date +%Y)
+  MONTH=$(date +%m)
+
+  [[ -d ~/OneDrive/Media/Camera\ Roll ]] && organize-camera-roll-internal ~/OneDrive
+  [[ -d ~/Media/Camera\ Roll ]] && organize-camera-roll-internal ~
+)
 
 export -f btrfs-dedupe
 export -f btrfs-defrag
@@ -635,3 +654,4 @@ export -f install-samba
 export -f iommu-groups
 export -f install-wireguard-client
 export -f wireguard-run
+export -f organize-camera-roll
