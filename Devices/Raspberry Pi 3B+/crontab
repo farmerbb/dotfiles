@@ -24,3 +24,4 @@
 
 @reboot /home/ubuntu/wireguard-connect.sh
 0 * * * * /home/ubuntu/wireguard-connect.sh
+0 5 * * * sudo reboot

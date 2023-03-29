@@ -7,18 +7,14 @@ do-mount() {
 
 do-unmount() {
 # [[ "$PWD" == $(realpath ~/NUC) ]] && cd
+  ssh -q -O stop nuc
   sudo umount ~/NUC 2> /dev/null || \
   sudo umount -f ~/NUC 2> /dev/null || \
   sudo umount -l ~/NUC 2> /dev/null
 }
 
-if [[ -z $(which dig) ]] ; then
-  sudo apt-get update
-  sudo apt-get install -y dnsutils
-fi
-
 timeout 10 nc -z 192.168.86.10 22 2> /dev/null
-if [[ $? != 0 ]]; then
+if [[ $? = 0 ]]; then
   do-mount
   [[ $? != 0 ]] && do-unmount && do-mount
 else

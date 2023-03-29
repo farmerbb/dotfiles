@@ -1,0 +1,9 @@
+[/]
+allow-minimize-window=false
+default-overview=false
+default-session-workspace=false
+enable-alttab-gesture=false
+enable-forward-back-gesture=true
+enable-window-manipulation-gesture=true
+forward-back-application-keyboard-shortcuts={'firefox.desktop': (1, false), 'org.chromium.Chromium.desktop': (1, false), 'org.gnome.gThumb.desktop': (2, false), 'org.gnome.Photos.desktop': (3, false), 'com.spotify.Client.desktop': (4, false), 'code.desktop': (5, false), 'code-insiders.desktop': (5, false), 'com.gexperts.Tilix.desktop': (5, false), 'org.gnome.TextEditor.desktop': (5, false), 'google-chrome.desktop': (1, false)}
+pinch-4-finger-gesture='SHOW_DESKTOP'

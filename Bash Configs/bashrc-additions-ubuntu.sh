@@ -1,11 +1,10 @@
-if [[ $HOSTNAME != PC ]]; then
+if [[ $XDG_SESSION_TYPE = x11 ]]; then
   alias enable-touchscreen="xinput --enable $(xinput --list | grep -i 'Finger touch' | grep -o 'id=[0-9]*' | sed 's/id=//')"
   alias enable-trackpad="xinput --enable $(xinput --list | grep -i 'Touchpad' | grep -o 'id=[0-9]*' | sed 's/id=//')"
   alias disable-touchscreen="xinput --disable $(xinput --list | grep -i 'Finger touch' | grep -o 'id=[0-9]*' | sed 's/id=//')"
   alias disable-trackpad="xinput --disable $(xinput --list | grep -i 'Touchpad' | grep -o 'id=[0-9]*' | sed 's/id=//')"
 fi
 
-alias toggle-vm-maintenance="[[ -f /tmp/vm-maintenance ]] && rm /tmp/vm-maintenance || touch /tmp/vm-maintenance"
 alias virtualhere-client="sudo pkill vhuit64 && sleep 3; sudo daemonize /mnt/files/Other\ Stuff/Utilities/VirtualHere/vhuit64"
 
 allow-all-usb() {
@@ -31,17 +30,17 @@ export-extension-config() {
   FILE="$DIR/$1.txt"
   CONFIG_DIR="$DIR/$1"
 
-  if [[ -d "$CONFIG_DIR" ]]; then
-    for i in "$LINUX_DIR_PREFIX" "$OD_LINUX_DIR_PREFIX"; do
-      rm -rf "$i/Ubuntu/extensions/$1"
-      cp -r ~/.config/$1 "$i/Ubuntu/extensions/$1"
-    done
-  fi
-
   if [[ -f "$FILE" ]]; then
     MD5=$(md5sum "$FILE")
     dconf dump /org/gnome/shell/extensions/$1/ > "$FILE"
     [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_LINUX_DIR_PREFIX/Ubuntu/extensions/$1.txt"
+
+    if [[ -d "$CONFIG_DIR" ]]; then
+      for i in "$LINUX_DIR_PREFIX" "$OD_LINUX_DIR_PREFIX"; do
+        rm -rf "$i/Ubuntu/extensions/$1"
+        cp -r ~/.config/$1 "$i/Ubuntu/extensions/$1"
+      done
+    fi
   else
     echo -e "\033[1m$(echo $DIR | sed "s#$LINUX_DIR_PREFIX/Ubuntu/##g"):\033[0m"
     ls "$DIR"/*.txt | sed -e "s#$DIR/##g" -e "s/\.txt//g" -e "s/:/:\n/g" | column
@@ -56,13 +55,13 @@ import-extension-config() {
   FILE="$DIR/$1.txt"
   CONFIG_DIR="$DIR/$1"
 
-  if [[ -d "$CONFIG_DIR" ]]; then
-    rm -rf ~/.config/$1
-    cp -r "$CONFIG_DIR" ~/.config
-  fi
-
   if [[ -f "$FILE" ]]; then
     dconf load /org/gnome/shell/extensions/$1/ < "$FILE"
+
+    if [[ -d "$CONFIG_DIR" ]]; then
+      rm -rf ~/.config/$1
+      cp -r "$CONFIG_DIR" ~/.config
+    fi
   else
     echo -e "\033[1m$(echo $DIR | sed "s#$LINUX_DIR_PREFIX/Ubuntu/##g"):\033[0m"
     ls "$DIR"/*.txt | sed -e "s#$DIR/##g" -e "s/\.txt//g" -e "s/:/:\n/g" | column
@@ -202,9 +201,12 @@ install-input-remapper() {
 }
 
 fix-extensions() {
+  dconf write /org/gnome/shell/disable-user-extensions false
+
   for i in $(gnome-extensions list); do
     EXT_PATH=$(gnome-extensions info $i | grep "Path:" | cut -d' ' -f4)
-    [[ "$EXT_PATH" = /home/$USER/* ]] && EXT_COMMAND=enable || EXT_COMMAND=disable
+    EXT_COMMAND=enable
+#   [[ "$EXT_PATH" = /home/$USER/* ]] && EXT_COMMAND=enable || EXT_COMMAND=disable
     gnome-extensions $EXT_COMMAND $i
   done
 }
@@ -236,6 +238,54 @@ wireguard-server-shell() {
   ssh nuc -o LogLevel=QUIET -t docker exec -it wireguard /bin/bash
 }
 
+install-plex-server() {
+  echo deb https://downloads.plex.tv/repo/deb public main | sudo tee /etc/apt/sources.list.d/plexmediaserver.list > /dev/null
+  curl https://downloads.plex.tv/plex-keys/PlexSign.key | sudo apt-key add -
+  sudo apt-get update
+  sudo apt-get -y install plexmediaserver
+}
+
+install-waydroid() {
+  sudo apt-get update
+  sudo apt-get -y install curl ca-certificates daemonize sqlite3 gir1.2-vte-2.91 gir1.2-webkit2-4.0
+
+  curl https://repo.waydro.id | sudo bash
+  sudo apt-get -y install waydroid
+
+  sudo waydroid init -s GAPPS -f
+  daemonize /usr/bin/waydroid session start
+
+  wget -O - https://raw.githubusercontent.com/axel358/Waydroid-Settings/main/install.sh | bash
+
+  while [[ true != $(waydroid prop get persist.waydroid.multi_windows) ]]; do
+    sleep 1
+    waydroid prop set persist.waydroid.multi_windows true
+  done
+
+  while [[ -z $GSF_ID ]]; do
+    sleep 1
+    GSF_ID=$(sudo sqlite3 ~/.local/share/waydroid/data/data/com.google.android.gsf/databases/gservices.db \
+      "select * from main where name = \"android_id\";" | cut -d'|' -f2)
+  done
+
+  echo
+  echo "  https://www.google.com/android/uncertified/"
+  echo "  GSF ID: $GSF_ID"
+  echo
+
+  sudo systemctl restart waydroid-container
+}
+
+toggle-vm-maintenance() {
+  if [[ -f /tmp/vm-maintenance ]]; then
+    rm /tmp/vm-maintenance
+    echo "VM maintenance off"
+  else
+    touch /tmp/vm-maintenance
+    echo "VM maintenance on"
+  fi
+}
+
 export -f allow-all-usb
 export -f make-trackpad-great-again
 export -f export-extension-config
@@ -254,3 +304,6 @@ export -f fix-extensions
 export -f fix-libvirt-permissions
 export -f remove-all-snaps
 export -f wireguard-server-shell
+export -f install-plex-server
+export -f install-waydroid
+export -f toggle-vm-maintenance
