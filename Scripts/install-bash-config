@@ -25,6 +25,10 @@ case $(sudo dmidecode -s system-product-name 2>/dev/null) in
   "B85M-D3V")
     bashrc-additions pc
   ;;
+
+  "Standard PC (Q35 + ICH9, 2009)")
+    bashrc-additions vm
+  ;;
 esac
 
 unset -f bashrc-additions

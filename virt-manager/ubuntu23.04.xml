@@ -1,5 +1,5 @@
 <domain type='kvm'>
-  <name>ubuntu22.10</name>
+  <name>ubuntu23.04</name>
   <uuid>805ba55f-633b-4da5-8a4f-8315678955f5</uuid>
   <metadata>
     <libosinfo:libosinfo xmlns:libosinfo="http://libosinfo.org/xmlns/libvirt/domain/1.0">

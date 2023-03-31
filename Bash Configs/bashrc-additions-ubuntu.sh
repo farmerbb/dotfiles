@@ -175,6 +175,10 @@ open-youtube-tv() {
 install-wireguard-server() {
   [[ -z $(which docker) ]] && install-docker
 
+  docker pull lscr.io/linuxserver/wireguard:latest
+  docker stop wireguard 2&>/dev/null
+  docker rm wireguard 2&>/dev/null
+
   docker run -d \
     --name=wireguard \
     --cap-add=NET_ADMIN \
@@ -277,6 +281,11 @@ install-waydroid() {
 }
 
 toggle-vm-maintenance() {
+  if [[ $HOSTNAME != PC ]]; then
+    ssh pc -o LogLevel=QUIET -t bash -i -c toggle-vm-maintenance
+    return 0
+  fi
+
   if [[ -f /tmp/vm-maintenance ]]; then
     rm /tmp/vm-maintenance
     echo "VM maintenance off"
@@ -284,6 +293,24 @@ toggle-vm-maintenance() {
     touch /tmp/vm-maintenance
     echo "VM maintenance on"
   fi
+}
+
+install-home-assistant() {
+  [[ -z $(which docker) ]] && install-docker
+  mkdir -p ~/Home\ Assistant
+
+  docker pull ghcr.io/home-assistant/home-assistant:stable
+  docker stop homeassistant 2&>/dev/null
+  docker rm homeassistant 2&>/dev/null
+
+  docker run -d \
+    --name homeassistant \
+    --privileged \
+    --restart=unless-stopped \
+    -e TZ=America/Denver \
+    -v /home/farmerbb/Home\ Assistant:/config \
+    --network=host \
+    ghcr.io/home-assistant/home-assistant:stable
 }
 
 export -f allow-all-usb
@@ -307,3 +334,4 @@ export -f wireguard-server-shell
 export -f install-plex-server
 export -f install-waydroid
 export -f toggle-vm-maintenance
+export -f install-home-assistant

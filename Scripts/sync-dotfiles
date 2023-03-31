@@ -37,7 +37,11 @@ echo "Syncing files..."
 for i in ${!DOTFILE_DIRS[@]}; do
   DIR="${DOTFILE_DIRS[$i]}"
   mkdir -p "$DIR"
-  rsync -a --delete --inplace --exclude 'Source Code' --exclude 'Network Config' "farmerbb@nuc:/mnt/files/$DIR" .
+  rsync -a --delete --inplace \
+    --exclude 'Source Code' \
+    --exclude 'Network Config' \
+    --exclude 'Home Assistant' \
+    "farmerbb@nuc:/mnt/files/$DIR" .
 done
 
 echo "Redacting strings..."
