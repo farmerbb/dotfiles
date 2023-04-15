@@ -28,7 +28,7 @@ make-trackpad-great-again() {
 export-extension-config() {
   DIR="$LINUX_DIR_PREFIX/Ubuntu/extensions"
   FILE="$DIR/$1.txt"
-  CONFIG_DIR="$DIR/$1"
+  CONFIG_DIR=~/.config/$1
 
   if [[ -f "$FILE" ]]; then
     MD5=$(md5sum "$FILE")
@@ -38,7 +38,7 @@ export-extension-config() {
     if [[ -d "$CONFIG_DIR" ]]; then
       for i in "$LINUX_DIR_PREFIX" "$OD_LINUX_DIR_PREFIX"; do
         rm -rf "$i/Ubuntu/extensions/$1"
-        cp -r ~/.config/$1 "$i/Ubuntu/extensions/$1"
+        cp -r "$CONFIG_DIR" "$i/Ubuntu/extensions/$1"
       done
     fi
   else
@@ -158,46 +158,6 @@ install-ssh-server() {
   sudo ufw allow ssh
 }
 
-open-youtube-tv() {
-  [[ ! -z $(pgrep chrome) ]] && return 1
-
-  x-www-browser youtube.com/tv &
-  sleep 5
-
-  xdotool key ctrl+r
-  xdotool key F11
-  sleep 1
-
-  xdotool mousemove 2970 165
-  xdotool click 1
-}
-
-install-wireguard-server() {
-  [[ -z $(which docker) ]] && install-docker
-
-  docker pull lscr.io/linuxserver/wireguard:latest
-  docker stop wireguard 2&>/dev/null
-  docker rm wireguard 2&>/dev/null
-
-  docker run -d \
-    --name=wireguard \
-    --cap-add=NET_ADMIN \
-    -e PUID=1000 \
-    -e PGID=1000 \
-    -e TZ=America/Denver \
-    -e SERVERURL=[REDACTED] \
-    -e SERVERPORT=[REDACTED] \
-    -e PEERS=5 \
-    -e PEERDNS=192.168.86.1 \
-    -e ALLOWEDIPS=10.13.13.0/24,192.168.86.0/24,94.140.14.14/32 \
-    -e LOG_CONFS=true \
-    -p 51820:51820/udp \
-    -v /mnt/files/Other\ Stuff/Linux/Network\ Config/WireGuard:/config \
-    --sysctl="net.ipv4.conf.all.src_valid_mark=1" \
-    --restart unless-stopped \
-    lscr.io/linuxserver/wireguard:latest
-}
-
 install-input-remapper() {
   sudo apt-get update
   sudo apt-get -y install input-remapper
@@ -231,15 +191,6 @@ remove-all-snaps() {
   sudo apt-mark hold snapd
 
   rm -rf ~/snap
-}
-
-wireguard-server-shell() {
-  if [[ $HOSTNAME = NUC ]]; then
-    docker exec -it wireguard /bin/bash
-    return 0
-  fi
-
-  ssh nuc -o LogLevel=QUIET -t docker exec -it wireguard /bin/bash
 }
 
 install-plex-server() {
@@ -280,37 +231,36 @@ install-waydroid() {
   sudo systemctl restart waydroid-container
 }
 
-toggle-vm-maintenance() {
-  if [[ $HOSTNAME != PC ]]; then
-    ssh pc -o LogLevel=QUIET -t bash -i -c toggle-vm-maintenance
-    return 0
-  fi
-
-  if [[ -f /tmp/vm-maintenance ]]; then
-    rm /tmp/vm-maintenance
-    echo "VM maintenance off"
-  else
-    touch /tmp/vm-maintenance
-    echo "VM maintenance on"
-  fi
+install-rhythmbox() {
+  sudo apt-get update
+  sudo apt-get -y install rhythmbox ubuntu-restricted-extras ttf-mscorefonts-installer-
+  dconf load /org/gnome/rhythmbox/ < "$LINUX_DIR_PREFIX/Ubuntu/rhythmbox.txt"
 }
 
-install-home-assistant() {
-  [[ -z $(which docker) ]] && install-docker
-  mkdir -p ~/Home\ Assistant
+toggle-border-width-fix() {
+  [[ $(dconf read /org/gnome/mutter/draggable-border-width) = 0 ]] && \
+    dconf reset /org/gnome/mutter/draggable-border-width || \
+    dconf write /org/gnome/mutter/draggable-border-width 0
 
-  docker pull ghcr.io/home-assistant/home-assistant:stable
-  docker stop homeassistant 2&>/dev/null
-  docker rm homeassistant 2&>/dev/null
+  [[ $(dconf read /org/gnome/shell/extensions/tiling-assistant/screen-left-gap) = 1 ]] && \
+    dconf reset /org/gnome/shell/extensions/tiling-assistant/screen-left-gap || \
+    dconf write /org/gnome/shell/extensions/tiling-assistant/screen-left-gap 1
+}
 
-  docker run -d \
-    --name homeassistant \
-    --privileged \
-    --restart=unless-stopped \
-    -e TZ=America/Denver \
-    -v /home/farmerbb/Home\ Assistant:/config \
-    --network=host \
-    ghcr.io/home-assistant/home-assistant:stable
+install-eupnea-utils() {
+  [[ $(sudo dmidecode -s system-manufacturer) != Google ]] && \
+    echo "Not a Chromebook; exiting" && \
+    return 1
+
+  sudo mkdir -p /usr/local/share/keyrings
+  sudo wget -O /usr/local/share/keyrings/eupnea.key https://eupnea-linux.github.io/apt-repo/public.key
+  echo 'deb [signed-by=/usr/local/share/keyrings/eupnea.key] https://eupnea-linux.github.io/apt-repo/debian_ubuntu kinetic main' | sudo tee /etc/apt/sources.list.d/eupnea.list
+
+  sudo apt-get update
+  sudo apt-get -y install eupnea-utils keyd
+
+  /usr/lib/eupnea/set-keymap --automatic
+  setup-audio
 }
 
 export -f allow-all-usb
@@ -324,14 +274,11 @@ export -f boot-to-windows
 export -f install-blackbox
 export -f install-tlp
 export -f install-ssh-server
-export -f open-youtube-tv
-export -f install-wireguard-server
 export -f install-input-remapper
 export -f fix-extensions
 export -f fix-libvirt-permissions
 export -f remove-all-snaps
-export -f wireguard-server-shell
 export -f install-plex-server
 export -f install-waydroid
-export -f toggle-vm-maintenance
-export -f install-home-assistant
+export -f install-rhythmbox
+export -f install-eupnea-utils

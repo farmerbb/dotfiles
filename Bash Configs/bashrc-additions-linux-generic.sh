@@ -22,11 +22,11 @@ alias docker-run="sudo docker build -t temp-container . && sudo docker run -it t
 alias docker-clean="sudo docker system prune --volumes -a -f"
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
 alias mount-all="sudo mount -a && mount-adbfs"
+alias pi="wireguard-server-shell ssh ubuntu@10.13.13.4"
 alias public-ip="dig @resolver4.opendns.com myip.opendns.com +short"
 alias public-ipv6="dig @resolver1.ipv6-sandbox.opendns.com AAAA myip.opendns.com +short -6"
 alias qemu="qemu-system-x86_64 -accel kvm -cpu host -m 1024"
 alias qemu95="qemu-system-i386 -cpu pentium -vga cirrus -nic user,model=pcnet -soundhw sb16,pcspk"
-alias shield-share-menu="adb -s shield shell input keyevent --longpress KEYCODE_HOME"
 alias starwars="telnet towel.blinkenlights.nl"
 alias reboot-device="restart-device"
 alias robomirror-linux-dir='SYNC_DIRS=("Other Stuff/Linux"); robomirror onedrive'
@@ -606,6 +606,63 @@ organize-camera-roll() (
   [[ -d ~/Media/Camera\ Roll ]] && organize-camera-roll-internal ~
 )
 
+shield-share-menu() {
+  for i in shield 0323118103330; do
+    adb devices | grep -q $i && adb -s $i shell input keyevent --longpress KEYCODE_HOME
+  done
+}
+
+wireguard-server-shell() {
+  [[ ! -z "$@" ]] && ARGS="$@" || ARGS="/bin/bash"
+
+  if [[ $HOSTNAME = NUC ]]; then
+    docker exec -it wireguard $ARGS
+    return 0
+  fi
+
+  ssh nuc -o LogLevel=QUIET -t docker exec -it wireguard $ARGS
+}
+
+toggle-vm-maintenance() {
+  if [[ $HOSTNAME != PC ]]; then
+    ssh pc -o LogLevel=QUIET -t bash -i -c toggle-vm-maintenance
+    return 0
+  fi
+
+  if [[ -f /tmp/vm-maintenance ]]; then
+    rm /tmp/vm-maintenance
+    echo "VM maintenance off"
+  else
+    touch /tmp/vm-maintenance
+    echo "VM maintenance on"
+  fi
+}
+
+install-makemkv() {
+  [[ -z $1 ]] && \
+    echo "Usage: install-makemkv <version>" && \
+    return 1
+
+  sudo apt-get update
+  sudo apt-get -y install wget build-essential pkg-config libc6-dev libssl-dev libexpat1-dev libavcodec-dev libgl1-mesa-dev qtbase5-dev zlib1g-dev
+
+  for i in oss bin; do
+    FILENAME=makemkv-$i-$1
+
+    wget https://www.makemkv.com/download/$FILENAME.tar.gz
+    tar xzfv $FILENAME.tar.gz
+
+    cd $FILENAME
+    [[ -f configure ]] && ./configure
+    make -j$(nproc)
+    sudo make install
+
+    cd -
+    sudo rm -r $FILENAME
+    rm $FILENAME.tar.gz
+  done
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -655,3 +712,7 @@ export -f iommu-groups
 export -f install-wireguard-client
 export -f wireguard-run
 export -f organize-camera-roll
+export -f shield-share-menu
+export -f wireguard-server-shell
+export -f toggle-vm-maintenance
+export -f install-makemkv

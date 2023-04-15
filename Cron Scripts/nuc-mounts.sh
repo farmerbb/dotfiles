@@ -10,7 +10,7 @@ touch /tmp/nuc-mounts.running
 
 # Before installing this in crontab, run the following commands:
 #   sudo apt install cifs-utils
-#   echo [REDACTED] | base64 -d > ~/.sharelogin
+#   echo password=$(echo [REDACTED] | base64 -d) > ~/.sharelogin
 
 # To allow pings on Windows PCs:
 #   netsh advfirewall firewall add rule name="Allow pings" protocol=icmpv4:8,any dir=in action=allow

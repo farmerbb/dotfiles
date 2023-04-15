@@ -22,8 +22,7 @@
 # 
 # m h  dom mon dow   command
 
-@reboot docker start wireguard
-@reboot docker start homeassistant
+@reboot bash -i ~/Other\ Stuff/Linux/Scripts/docker-util start all
 @reboot bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/nuc-mounts.sh
 * * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/nuc-mounts.sh
 

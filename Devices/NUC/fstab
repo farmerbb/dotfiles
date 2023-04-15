@@ -11,4 +11,5 @@ UUID=a0cb59dd-7976-4934-b570-c4d5b998248e /               ext4    errors=remount
 UUID=3696-9814  /boot/efi       vfat    umask=0077      0       1
 # /swapfile                                 none            swap    sw              0       0
 
-UUID=622AF53E2AF50FB1                       /mnt/files       ntfs3   defaults,noatime,nofail,noauto,x-systemd.automount,uid=1000,gid=1000       0   2
+# UUID=622AF53E2AF50FB1                       /mnt/files       ntfs3   defaults,noatime,nofail,noauto,x-systemd.automount,uid=1000,gid=1000       0   2
+UUID=3c46f86f-9135-48d4-a126-a8346b2bb0b2   /mnt/files       btrfs   defaults,noatime,compress-force=zstd:1,autodefrag

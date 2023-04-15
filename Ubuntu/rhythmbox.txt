@@ -1,0 +1,62 @@
+[/]
+display-page-tree-visible=false
+maximized=true
+position=(0, 0)
+size=(1920, 1122)
+time-display=false
+
+[library]
+layout-filename='%tN - %tt'
+layout-path='%aa/%at'
+
+[library/encoding]
+media-type='audio/x-vorbis'
+media-type-presets={'audio/x-vorbis': 'Ubuntu', 'audio/mpeg': 'rhythmbox-custom-settings-cbr'}
+
+[library/source]
+show-browser=false
+sorting=('Album', true)
+
+[player]
+play-order='linear'
+use-xfade-backend=true
+volume=1.0
+
+[plugins]
+active-plugins=['ipod', 'mpris', 'power-manager', 'iradio', 'dbus-media-server', 'rb', 'daap', 'android', 'generic-player', 'audiocd', 'artsearch', 'audioscrobbler', 'mtpdevice', 'mmkeys']
+seen-plugins=['ipod', 'mpris', 'rblirc', 'pythonconsole', 'dbus-media-server', 'rb', 'alternative-toolbar', 'webremote', 'listenbrainz', 'soundcloud', 'daap', 'im-status', 'artsearch', 'audioscrobbler', 'mtpdevice', 'fmradio', 'replaygain', 'lyrics', 'magnatune', 'notification', 'grilo']
+
+[plugins/alternative_toolbar]
+show-source-toolbar=true
+
+[plugins/android/source]
+show-browser=true
+
+[plugins/audioscrobbler/Last.fm]
+scrobbling-enabled=true
+
+[plugins/audioscrobbler/Libre.fm]
+scrobbling-enabled=true
+
+[plugins/iradio]
+initial-stations-loaded=true
+
+[plugins/iradio/source]
+show-browser=true
+
+[plugins/mtpdevice/source]
+show-browser=true
+
+[podcast]
+download-location='file:///home/farmerbb/Music'
+
+[podcast/source]
+paned-position=71
+show-browser=true
+
+[rhythmdb]
+locations=["file:///home/farmerbb/Media/Braden's%20Music"]
+monitor-library=true
+
+[sources]
+visible-columns=['post-time', 'duration', 'track-number', 'album', 'artist', 'date']

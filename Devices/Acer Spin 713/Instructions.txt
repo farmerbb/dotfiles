@@ -10,7 +10,7 @@ Enable audio support:
   ./setup-audio
 
 
-Enable Chromebook function key bindings:
+Enable Chromebook function key bindings (xkb method - old):
 
   sudo cp /usr/share/X11/xkb/symbols/pc /usr/share/X11/xkb/symbols/pc.default
   sudo cp xkb.chromebook /usr/share/X11/xkb/symbols/pc

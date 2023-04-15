@@ -1,0 +1,132 @@
+#!/bin/bash
+
+CONTAINERS=(
+  homeassistant
+  letsencrypt
+  wireguard
+  wyze-bridge
+)
+
+install-container() {
+  case $1 in
+    homeassistant)
+      mkdir -p ~/Home\ Assistant
+
+      docker pull ghcr.io/home-assistant/home-assistant:stable
+      docker stop homeassistant 2&>/dev/null
+      docker rm homeassistant 2&>/dev/null
+
+      docker run -d \
+        --name homeassistant \
+        --privileged \
+        --restart=unless-stopped \
+        -e TZ=America/Denver \
+        -v /home/farmerbb/Home\ Assistant:/config \
+        -v /home/farmerbb/certs:/etc/letsencrypt \
+        --network=host \
+        ghcr.io/home-assistant/home-assistant:stable
+    ;;
+
+    letsencrypt)
+      mkdir -p ~/certs
+
+      docker pull maksimstojkovic/letsencrypt:latest
+      docker stop letsencrypt 2&>/dev/null
+      docker rm letsencrypt 2&>/dev/null
+
+      docker run -d \
+        --name=letsencrypt \
+        -e DUCKDNS_TOKEN=[REDACTED] \
+        -e DUCKDNS_DOMAIN=[REDACTED] \
+        -e LETSENCRYPT_EMAIL=[REDACTED] \
+        -v /home/farmerbb/certs:/etc/letsencrypt \
+        --restart unless-stopped \
+        maksimstojkovic/letsencrypt:latest
+    ;;
+
+    wireguard)
+      docker pull lscr.io/linuxserver/wireguard:latest
+      docker stop wireguard 2&>/dev/null
+      docker rm wireguard 2&>/dev/null
+
+      docker run -d \
+        --name=wireguard \
+        --cap-add=NET_ADMIN \
+        -e PUID=1000 \
+        -e PGID=1000 \
+        -e TZ=America/Denver \
+        -e SERVERURL=[REDACTED] \
+        -e SERVERPORT=[REDACTED] \
+        -e PEERS=5 \
+        -e PEERDNS=192.168.86.1 \
+        -e ALLOWEDIPS=10.13.13.0/24,192.168.86.0/24,94.140.14.14/32 \
+        -e LOG_CONFS=true \
+        -p 51820:51820/udp \
+        -v /mnt/files/Other\ Stuff/Linux/Network\ Config/WireGuard:/config \
+        -v /mnt/files/Other\ Stuff/Linux/Network\ Config/ssh:/ssh \
+        --sysctl="net.ipv4.conf.all.src_valid_mark=1" \
+        --restart unless-stopped \
+        lscr.io/linuxserver/wireguard:latest
+
+      docker exec -it wireguard /bin/bash -i -c \
+        'apt update && apt install -y ssh && cp -r /ssh /root/.ssh && chown -R root:root /root/.ssh && chmod 600 ~/.ssh/*'
+    ;;
+
+    wyze-bridge)
+      docker pull mrlt8/wyze-bridge:latest
+      docker stop wyze-bridge 2&>/dev/null
+      docker rm wyze-bridge 2&>/dev/null
+
+      docker run -d \
+        --name=wyze-bridge \
+        -e WYZE_EMAIL=[REDACTED] \
+        -e WYZE_PASSWORD=$(echo [REDACTED] | base64 -d) \
+        -e TOTP_KEY=[REDACTED] \
+        -p 1935:1935 -p 8554:8554 -p 8888:8888 -p 5000:5000 \
+        mrlt8/wyze-bridge:latest
+    ;;
+  esac
+}
+
+print-usage() {
+  BASENAME=$(basename "$0")
+  echo -e "\033[1mContainers:\033[0m"
+  for i in "${CONTAINERS[@]}"; do echo $i; done
+  echo
+  echo -e "\033[1mUsage:\033[0m $BASENAME  <install | start>  <container-name | all>"
+  exit 1
+}
+
+[[ -z $(which docker) ]] && \
+  echo "Please run install-docker before running this script." && \
+  exit 1
+
+[[ $# -ne 2 ]] && print-usage
+
+if [[ "${CONTAINERS[@]}" =~ $2 || $2 = all ]]; then
+  case $1 in
+    start)
+      if [[ $2 = all ]]; then
+        for i in "${CONTAINERS[@]}"; do docker start $i; done
+      else
+        docker start $2
+      fi
+      exit 0
+    ;;
+
+    install)
+      if [[ $2 = all ]]; then
+        for i in "${CONTAINERS[@]}"; do install-container $i; done
+      else
+        install-container $2
+      fi
+      exit 0
+    ;;
+
+    *)
+      print-usage
+    ;;
+  esac
+fi
+
+print-usage
