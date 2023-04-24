@@ -20,6 +20,7 @@ alias current-governor="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governo
 alias disable-android-tv-launcher="adb shell pm disable-user --user 0 com.google.android.tvlauncher"
 alias docker-run="sudo docker build -t temp-container . && sudo docker run -it temp-container:latest"
 alias docker-clean="sudo docker system prune --volumes -a -f"
+alias firmware-util="curl -LOk mrchromebox.tech/firmware-util.sh && sudo bash firmware-util.sh; rm firmware-util.sh"
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
 alias mount-all="sudo mount -a && mount-adbfs"
 alias pi="wireguard-server-shell ssh ubuntu@10.13.13.4"
@@ -631,9 +632,11 @@ toggle-vm-maintenance() {
 
   if [[ -f /tmp/vm-maintenance ]]; then
     rm /tmp/vm-maintenance
+    sudo virsh start win11-vfio >/dev/null 2>&1
     echo "VM maintenance off"
   else
     touch /tmp/vm-maintenance
+    sudo virsh shutdown win11-vfio >/dev/null 2>&1
     echo "VM maintenance on"
   fi
 }
@@ -661,6 +664,13 @@ install-makemkv() {
     sudo rm -r $FILENAME
     rm $FILENAME.tar.gz
   done
+
+  x-www-browser https://forum.makemkv.com/forum/viewtopic.php?t=1053
+}
+
+apt-install-held-pkgs() {
+  # From https://askubuntu.com/a/1449756
+  sudo apt-get install --only-upgrade `sudo apt-get upgrade | awk 'BEGIN{flag=0} /The following packages have been kept back:/ { flag=1} /^ /{if (flag) print}'`
 }
 
 export -f btrfs-dedupe
@@ -716,3 +726,4 @@ export -f shield-share-menu
 export -f wireguard-server-shell
 export -f toggle-vm-maintenance
 export -f install-makemkv
+export -f apt-install-held-pkgs

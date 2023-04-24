@@ -1,0 +1,18 @@
+MacOS libvirt config based on:
+https://github.com/NapoleonWils0n/cerberus/blob/master/libvirt/mac-kvm/macOS.xml
+
+Installation method:
+https://github.com/kholia/OSX-KVM
+
+Commands for speeding up MacOS VM performance:
+https://github.com/sickcodes/osx-optimizer
+
+For installing MacOS within virt-manager / libvirt,
+temporarily add this to the <devices> section of the xml:
+
+    <disk type="file" device="disk">
+      <driver name="qemu" type="raw" cache="writeback"/>
+      <source file="/home/farmerbb/VMs/OSX-KVM/BaseSystem.img"/>
+      <target dev="vdc" bus="virtio"/>
+      <address type="pci" domain="0x0000" bus="0x08" slot="0x00" function="0x0"/>
+    </disk>

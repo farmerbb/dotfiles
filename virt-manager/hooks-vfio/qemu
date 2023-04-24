@@ -6,6 +6,8 @@ case $2 in
   release)
     if [[ -f /tmp/vm-maintenance ]]; then
       timeout 1 sudo umount -a -t cifs -l
+    elif [[ $(cat /proc/uptime | cut -d'.' -f1) < 30 ]]; then
+      touch /tmp/vm-maintenance
     else
       sudo poweroff
     fi

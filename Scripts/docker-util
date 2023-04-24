@@ -82,7 +82,9 @@ install-container() {
         -e WYZE_EMAIL=[REDACTED] \
         -e WYZE_PASSWORD=$(echo [REDACTED] | base64 -d) \
         -e TOTP_KEY=[REDACTED] \
+        -e ENABLE_AUDIO=true \
         -p 1935:1935 -p 8554:8554 -p 8888:8888 -p 5000:5000 \
+        --restart unless-stopped \
         mrlt8/wyze-bridge:latest
     ;;
   esac

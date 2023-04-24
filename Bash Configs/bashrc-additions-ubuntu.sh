@@ -237,7 +237,7 @@ install-rhythmbox() {
   dconf load /org/gnome/rhythmbox/ < "$LINUX_DIR_PREFIX/Ubuntu/rhythmbox.txt"
 }
 
-toggle-border-width-fix() {
+toggle-ultrawide-fixes() {
   [[ $(dconf read /org/gnome/mutter/draggable-border-width) = 0 ]] && \
     dconf reset /org/gnome/mutter/draggable-border-width || \
     dconf write /org/gnome/mutter/draggable-border-width 0
@@ -245,6 +245,10 @@ toggle-border-width-fix() {
   [[ $(dconf read /org/gnome/shell/extensions/tiling-assistant/screen-left-gap) = 1 ]] && \
     dconf reset /org/gnome/shell/extensions/tiling-assistant/screen-left-gap || \
     dconf write /org/gnome/shell/extensions/tiling-assistant/screen-left-gap 1
+
+  [[ $(dconf read /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout) = true ]] && \
+    dconf reset /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout || \
+    dconf write /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout true
 }
 
 install-eupnea-utils() {
@@ -261,6 +265,25 @@ install-eupnea-utils() {
 
   /usr/lib/eupnea/set-keymap --automatic
   setup-audio
+}
+
+install-displaylink-driver() {
+  if [[ ! -z $(which displaylink-installer) ]]; then
+    sudo displaylink-installer uninstall
+    sleep 1
+  fi
+
+  if [[ -z $(which wget) ]]; then
+    sudo apt-get update
+    sudo apt-get -y install wget
+  fi
+
+  wget https://www.synaptics.com/sites/default/files/Ubuntu/pool/stable/main/all/synaptics-repository-keyring.deb
+  install-deb synaptics-repository-keyring.deb
+  rm synaptics-repository-keyring.deb
+
+  sudo apt-get update
+  sudo apt-get -y install displaylink-driver
 }
 
 export -f allow-all-usb
@@ -281,4 +304,6 @@ export -f remove-all-snaps
 export -f install-plex-server
 export -f install-waydroid
 export -f install-rhythmbox
+export -f toggle-ultrawide-fixes
 export -f install-eupnea-utils
+export -f install-displaylink-driver
