@@ -6,8 +6,8 @@
 
 export PATH="/usr/NX/bin:$PATH"
 export WINEDEBUG="-all"
-export XAUTHORITY=$HOME/.Xauthority
-xhost + > /dev/null 2>&1
+# export XAUTHORITY=$HOME/.Xauthority
+# xhost + > /dev/null 2>&1
 
 if [[ $USER != chronos ]]; then
   alias cp="$(which advcp || which cp) --reflink=auto --sparse=auto"
@@ -22,6 +22,7 @@ alias docker-run="sudo docker build -t temp-container . && sudo docker run -it t
 alias docker-clean="sudo docker system prune --volumes -a -f"
 alias firmware-util="curl -LOk mrchromebox.tech/firmware-util.sh && sudo bash firmware-util.sh; rm firmware-util.sh"
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
+alias make-it-mine="sudo chown $USER:$USER"
 alias mount-all="sudo mount -a && mount-adbfs"
 alias pi="wireguard-server-shell ssh ubuntu@10.13.13.4"
 alias public-ip="dig @resolver4.opendns.com myip.opendns.com +short"
@@ -39,6 +40,7 @@ alias usb-monitor="clear; sudo udevadm monitor --subsystem-match=usb --property"
 alias usbtop="sudo modprobe usbmon; sudo usbtop"
 alias wireguard-up="ssh -q -O stop nuc; sudo wg-quick up wg0 && timeout 10 mount-nuc"
 alias wireguard-down="ssh -q -O stop nuc; sudo wg-quick down wg0 && timeout 10 mount-nuc"
+alias youtube-dl="python3 ~/Other\ Stuff/Audio\ \&\ Video\ Tools/youtube-dl"
 
 alias am="adb shell am"
 alias pm="adb shell pm"
@@ -506,7 +508,7 @@ robomirror() {
     if [[ $HOSTNAME = NUC ]]; then
       SOURCE=onedrive
     else
-      timeout 10 nc -z 192.168.86.10 22 2> /dev/null
+      timeout 1 nc -z 192.168.86.10 22 2> /dev/null
       if [[ $? = 0 ]]; then
         SOURCE=nuc
       else
@@ -647,7 +649,7 @@ install-makemkv() {
     return 1
 
   sudo apt-get update
-  sudo apt-get -y install wget build-essential pkg-config libc6-dev libssl-dev libexpat1-dev libavcodec-dev libgl1-mesa-dev qtbase5-dev zlib1g-dev
+  sudo apt-get -y install wget build-essential pkg-config libc6-dev libssl-dev libexpat1-dev libavcodec-dev libgl1-mesa-dev qtbase5-dev zlib1g-dev html-xml-utils
 
   for i in oss bin; do
     FILENAME=makemkv-$i-$1
@@ -665,12 +667,21 @@ install-makemkv() {
     rm $FILENAME.tar.gz
   done
 
-  x-www-browser https://forum.makemkv.com/forum/viewtopic.php?t=1053
+  echo ""
+  echo "  MakeMKV Beta Key:"
+  echo "  $(curl -s https://forum.makemkv.com/forum/viewtopic.php?t=1053 | hxclean | hxselect -c code)"
+  echo ""
 }
 
 apt-install-held-pkgs() {
   # From https://askubuntu.com/a/1449756
   sudo apt-get install --only-upgrade `sudo apt-get upgrade | awk 'BEGIN{flag=0} /The following packages have been kept back:/ { flag=1} /^ /{if (flag) print}'`
+}
+
+folder2iso() {
+  [[ ! -d "$1" ]] && return 1
+  FILENAME=$(basename "$1")
+  mkisofs -J -V "$FILENAME" -o "$FILENAME.iso" "$1"
 }
 
 export -f btrfs-dedupe
@@ -727,3 +738,4 @@ export -f wireguard-server-shell
 export -f toggle-vm-maintenance
 export -f install-makemkv
 export -f apt-install-held-pkgs
+export -f folder2iso

@@ -144,14 +144,6 @@ install-blackbox() {
   gsettings set org.cinnamon.desktop.default-applications.terminal exec blackbox
 }
 
-install-tlp() {
-  sudo apt-get update
-  sudo apt-get -y install tlp tlp-rdw
-  sudo systemctl enable tlp.service
-  sudo tlp start
-  tlp-stat -s
-}
-
 install-ssh-server() {
   sudo apt-get update
   sudo apt-get -y install openssh-server
@@ -212,10 +204,10 @@ install-waydroid() {
 
   wget -O - https://raw.githubusercontent.com/axel358/Waydroid-Settings/main/install.sh | bash
 
-  while [[ true != $(waydroid prop get persist.waydroid.multi_windows) ]]; do
-    sleep 1
-    waydroid prop set persist.waydroid.multi_windows true
-  done
+# while [[ true != $(waydroid prop get persist.waydroid.multi_windows) ]]; do
+#   sleep 1
+#   waydroid prop set persist.waydroid.multi_windows true
+# done
 
   while [[ -z $GSF_ID ]]; do
     sleep 1
@@ -228,7 +220,7 @@ install-waydroid() {
   echo "  GSF ID: $GSF_ID"
   echo
 
-  sudo systemctl restart waydroid-container
+# sudo systemctl restart waydroid-container
 }
 
 install-rhythmbox() {
@@ -238,13 +230,13 @@ install-rhythmbox() {
 }
 
 toggle-ultrawide-fixes() {
-  [[ $(dconf read /org/gnome/mutter/draggable-border-width) = 0 ]] && \
-    dconf reset /org/gnome/mutter/draggable-border-width || \
-    dconf write /org/gnome/mutter/draggable-border-width 0
+# [[ $(dconf read /org/gnome/mutter/draggable-border-width) = 0 ]] && \
+#   dconf reset /org/gnome/mutter/draggable-border-width || \
+#   dconf write /org/gnome/mutter/draggable-border-width 0
 
-  [[ $(dconf read /org/gnome/shell/extensions/tiling-assistant/screen-left-gap) = 1 ]] && \
-    dconf reset /org/gnome/shell/extensions/tiling-assistant/screen-left-gap || \
-    dconf write /org/gnome/shell/extensions/tiling-assistant/screen-left-gap 1
+# [[ $(dconf read /org/gnome/shell/extensions/tiling-assistant/screen-left-gap) = 1 ]] && \
+#   dconf reset /org/gnome/shell/extensions/tiling-assistant/screen-left-gap || \
+#   dconf write /org/gnome/shell/extensions/tiling-assistant/screen-left-gap 1
 
   [[ $(dconf read /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout) = true ]] && \
     dconf reset /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout || \
@@ -284,6 +276,19 @@ install-displaylink-driver() {
 
   sudo apt-get update
   sudo apt-get -y install displaylink-driver
+
+  systemctl start displaylink-driver
+}
+
+install-pysol() {
+  if [[ -z $(which flatpak) ]]; then
+    sudo apt-get update
+    sudo apt-get -y install flatpak
+  fi
+
+  flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+  flatpak install -y flathub io.sourceforge.pysolfc.PySolFC
+  flatpak update -y io.sourceforge.pysolfc.PySolFC
 }
 
 export -f allow-all-usb
@@ -295,7 +300,6 @@ export -f edit-fstab
 export -f edit-synaptics
 export -f boot-to-windows
 export -f install-blackbox
-export -f install-tlp
 export -f install-ssh-server
 export -f install-input-remapper
 export -f fix-extensions
@@ -307,3 +311,4 @@ export -f install-rhythmbox
 export -f toggle-ultrawide-fixes
 export -f install-eupnea-utils
 export -f install-displaylink-driver
+export -f install-pysol

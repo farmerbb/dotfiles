@@ -69,7 +69,7 @@ install-container() {
         lscr.io/linuxserver/wireguard:latest
 
       docker exec -it wireguard /bin/bash -i -c \
-        'apt update && apt install -y ssh && cp -r /ssh /root/.ssh && chown -R root:root /root/.ssh && chmod 600 ~/.ssh/*'
+        'apk add --update --no-cache openssh && cp -r /ssh /root/.ssh && chown -R root:root /root/.ssh && chmod 600 ~/.ssh/*'
     ;;
 
     wyze-bridge)
