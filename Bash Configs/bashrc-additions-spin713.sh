@@ -11,3 +11,7 @@ export SYNC_DIRS=(
 )
 
 chmod +x "$LINUX_DIR_PREFIX/Scripts/"* >/dev/null 2>&1
+
+# Remove once installed kernel is >= 6.2.13
+UUID=$(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5)
+echo 1000 | sudo tee /sys/fs/btrfs/$UUID/discard/iops_limit > /dev/null

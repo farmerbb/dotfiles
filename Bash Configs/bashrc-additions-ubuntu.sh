@@ -5,7 +5,11 @@ if [[ $XDG_SESSION_TYPE = x11 ]]; then
   alias disable-trackpad="xinput --disable $(xinput --list | grep -i 'Touchpad' | grep -o 'id=[0-9]*' | sed 's/id=//')"
 fi
 
-alias virtualhere-client="sudo pkill vhuit64 && sleep 3; sudo daemonize /mnt/files/Other\ Stuff/Utilities/VirtualHere/vhuit64"
+virtualhere-client() {
+  chmod +x /mnt/files/Other\ Stuff/Utilities/VirtualHere/vhuit64
+  sudo pkill vhuit64 && sleep 3
+  sudo daemonize /mnt/files/Other\ Stuff/Utilities/VirtualHere/vhuit64
+}
 
 allow-all-usb() {
   echo 'SUBSYSTEM=="usb", MODE="0660", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/00-usb-permissions.rules >/dev/null
@@ -112,6 +116,19 @@ edit-synaptics() {
   bash /etc/X11/Xsession.d/80synaptics
 }
 
+edit-bluez-config() {
+  DIR="$DEVICE_DIR_PREFIX"
+  FILE="$DIR/50-bluez-config.lua"
+  if [[ -f "$FILE" ]]; then
+    MD5=$(md5sum "$FILE")
+    sudo nano /usr/share/wireplumber/bluetooth.lua.d/50-bluez-config.lua
+    cp /usr/share/wireplumber/bluetooth.lua.d/50-bluez-config.lua "$FILE"
+    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_DEVICE_DIR_PREFIX/50-bluez-config.lua"
+  fi
+
+  systemctl --user restart wireplumber
+}
+
 boot-to-windows() {
   timedatectl set-local-rtc 1
 
@@ -122,14 +139,9 @@ boot-to-windows() {
 }
 
 install-blackbox() {
-  if [[ -z $(which flatpak) ]]; then
-    sudo apt-get update
-    sudo apt-get -y install flatpak
-  fi
+  install-flatpak
+  flatpak-util install blackbox
 
-  flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-  flatpak install -y flathub com.raggesilver.BlackBox
-  flatpak update -y com.raggesilver.BlackBox
   sudo flatpak override com.raggesilver.BlackBox --filesystem=host
   sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /var/lib/flatpak/exports/bin/com.raggesilver.BlackBox 100
 
@@ -280,17 +292,28 @@ install-displaylink-driver() {
   systemctl start displaylink-driver
 }
 
-install-pysol() {
+install-flatpak() {
   if [[ -z $(which flatpak) ]]; then
     sudo apt-get update
     sudo apt-get -y install flatpak
   fi
 
   flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-  flatpak install -y flathub io.sourceforge.pysolfc.PySolFC
-  flatpak update -y io.sourceforge.pysolfc.PySolFC
 }
 
+update-firmware() {
+  CHARGING=$(cat /sys/class/power_supply/AC/online)
+  if [[ $CHARGING = 0 ]]; then
+    echo "Device must be charging to update firmware"
+    return 1
+  fi
+
+  sudo fwupdmgr refresh && \
+    sudo fwupdmgr get-updates && \
+    sudo fwupdmgr update
+}
+
+export -f virtualhere-client
 export -f allow-all-usb
 export -f make-trackpad-great-again
 export -f export-extension-config
@@ -298,6 +321,7 @@ export -f import-extension-config
 export -f edit-grub-config
 export -f edit-fstab
 export -f edit-synaptics
+export -f edit-bluez-config
 export -f boot-to-windows
 export -f install-blackbox
 export -f install-ssh-server
@@ -311,4 +335,5 @@ export -f install-rhythmbox
 export -f toggle-ultrawide-fixes
 export -f install-eupnea-utils
 export -f install-displaylink-driver
-export -f install-pysol
+export -f install-flatpak
+export -f update-firmware

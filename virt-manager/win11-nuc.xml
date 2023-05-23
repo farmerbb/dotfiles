@@ -191,6 +191,13 @@
       </source>
       <address type='usb' bus='0' port='2'/>
     </hostdev>
+    <hostdev mode='subsystem' type='usb' managed='yes'>
+      <source>
+        <vendor id='0x1058'/>
+        <product id='0x0827'/>
+      </source>
+      <address type='usb' bus='0' port='3'/>
+    </hostdev>
     <memballoon model='none'/>
   </devices>
 </domain>

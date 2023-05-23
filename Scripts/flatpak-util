@@ -1,0 +1,79 @@
+#!/bin/bash
+
+PACKAGES=(
+  86box:net._86box._86Box
+  blackbox:com.raggesilver.BlackBox
+  dolphin:org.DolphinEmu.dolphin-emu
+  dosbox-x:com.dosbox_x.DOSBox-X
+  gzdoom:org.zdoom.GZDoom
+  imhex:net.werwolv.ImHex
+  pegasus:org.pegasus_frontend.Pegasus
+  pysol:io.sourceforge.pysolfc.PySolFC
+  retroarch:org.libretro.RetroArch
+  sonic3air:org.sonic3air.Sonic3AIR
+  srb2:org.srb2.SRB2
+  yuzu:org.yuzu_emu.yuzu
+)
+
+install-package() {
+  PACKAGE_ID=$(echo $1 | cut -d':' -f2)
+  flatpak install -y flathub $PACKAGE_ID
+  flatpak update -y $PACKAGE_ID
+}
+
+remove-package() {
+  PACKAGE_ID=$(echo $1 | cut -d':' -f2)
+  flatpak remove -y $PACKAGE_ID
+}
+
+print-usage() {
+  BASENAME=$(basename "$0")
+  echo -e "\033[1mPackages:\033[0m"
+  for i in "${PACKAGES[@]}"; do echo $i | cut -d':' -f1; done
+  echo
+  echo -e "\033[1mUsage:\033[0m $BASENAME  <install | remove>  <package-name | all>"
+  exit 1
+}
+
+[[ -z $(which flatpak) ]] && \
+  echo "Please run install-flatpak before running this script." && \
+  exit 1
+
+[[ $# -ne 2 ]] && print-usage
+
+if [[ "${PACKAGES[@]}" =~ "$2:" || $2 = all ]]; then
+  case $1 in
+    install)
+      for i in "${PACKAGES[@]}"; do
+        if [[ $2 = all ]]; then
+          install-package $i
+        elif [[ $i =~ "$2:" ]]; then
+          install-package $i
+        fi
+      done
+      exit 0
+    ;;
+
+    remove)
+      if [[ $2 = all ]]; then
+        printf "Press Enter if you really want to remove all packages, or CTRL+C to abort..."
+        read _
+      fi
+
+      for i in "${PACKAGES[@]}"; do
+        if [[ $2 = all ]]; then
+          remove-package $i
+        elif [[ $i =~ "$2:" ]]; then
+          remove-package $i
+        fi
+      done
+      exit 0
+    ;;
+
+    *)
+      print-usage
+    ;;
+  esac
+fi
+
+print-usage

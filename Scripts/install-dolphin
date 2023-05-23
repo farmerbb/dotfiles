@@ -3,6 +3,12 @@
 MANIFEST=~/.dolphin-install-manifest
 [[ -f $MANIFEST ]] && cat $MANIFEST | gunzip | sudo xargs -d '\n' rm
 
+if [[ ! -z $(which flatpak) ]]; then
+  rm -f $MANIFEST
+  flatpak-util install dolphin
+  exit 1
+fi
+
 sudo apt-get update
 sudo apt-get install -y curl git devscripts build-essential software-properties-common cmake pkg-config libao-dev \
                         libasound2-dev libavcodec-dev libavformat-dev libbluetooth-dev libcurl4-openssl-dev \

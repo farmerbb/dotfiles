@@ -16,7 +16,7 @@ start-bees() {
 CHARGING=$(cat /sys/class/power_supply/AC/online)
 BATTERY=$(cat /sys/class/power_supply/BAT0/capacity)
 
-if [[ $CHARGING = 1 && $BATTERY > 90 || $BATTERY = 100 ]]; then
+if [[ $CHARGING != 0 && $BATTERY > 90 || $BATTERY = 100 ]]; then
   start-bees
 else
   sudo pkill bees

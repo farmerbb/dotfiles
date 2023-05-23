@@ -1,1 +1,1 @@
-[{"_name":"60% / 40%","_items":[{"rect":{"x":0,"y":0,"width":0.6,"height":1},"appId":null,"loopType":null},{"rect":{"x":0.6,"y":0,"width":0.4,"height":1},"appId":null,"loopType":null}]}]
+[{"_name":"60% / 40% Horizontal","_items":[{"rect":{"x":0,"y":0,"width":0.6,"height":1},"appId":null,"loopType":null},{"rect":{"x":0.6,"y":0,"width":0.4,"height":1},"appId":null,"loopType":null}]},{"_name":"75% / 25% Vertical","_items":[{"rect":{"x":0,"y":0,"width":1,"height":0.75},"appId":null,"loopType":null},{"rect":{"x":0,"y":0.75,"width":1,"height":0.25},"appId":null,"loopType":null}]}]
