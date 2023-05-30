@@ -239,6 +239,9 @@ install-rhythmbox() {
   sudo apt-get update
   sudo apt-get -y install rhythmbox ubuntu-restricted-extras ttf-mscorefonts-installer-
   dconf load /org/gnome/rhythmbox/ < "$LINUX_DIR_PREFIX/Ubuntu/rhythmbox.txt"
+
+  mkdir -p ~/.local/share/rhythmbox/profiles
+  echo "Braden's Music" > ~/.local/share/rhythmbox/profiles/current.txt
 }
 
 toggle-ultrawide-fixes() {
@@ -308,7 +311,7 @@ update-firmware() {
     return 1
   fi
 
-  sudo fwupdmgr refresh && \
+  sudo fwupdmgr refresh --force && \
     sudo fwupdmgr get-updates && \
     sudo fwupdmgr update
 }

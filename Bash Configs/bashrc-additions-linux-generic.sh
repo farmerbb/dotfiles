@@ -684,6 +684,13 @@ folder2iso() {
   mkisofs -J -V "$FILENAME" -o "$FILENAME.iso" "$1"
 }
 
+video-capture() {
+  arecord -D sysdefault:CARD=MS2109 -f cd - | aplay - &
+  disown
+  guvcview --device=$(v4l2-ctl --list-devices | grep -A1 "USB Video" | tail -n1 | xargs) > /dev/null 2>&1
+  sudo pkill arecord
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -739,3 +746,4 @@ export -f toggle-vm-maintenance
 export -f install-makemkv
 export -f apt-install-held-pkgs
 export -f folder2iso
+export -f video-capture

@@ -8,6 +8,7 @@ export PATH="$PATH:$LINUX_DIR_PREFIX/Scripts"
 export SYNC_DIRS=(
   "Games"
   "Media/Braden's Music"
+  "Media/Other Audio"
   "Other Stuff"
 )
 

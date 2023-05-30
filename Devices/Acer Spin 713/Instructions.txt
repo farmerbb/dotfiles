@@ -5,8 +5,8 @@ Disable broken X11 screen auto-rotation:
 
 Enable audio support:
 
-  git clone https://github.com/eupnea-linux/audio-scripts
-  cd audio-scripts
+  git clone https://github.com/WeirdTreeThing/chromebook-linux-audio
+  cd chromebook-linux-audio
   ./setup-audio
 
 

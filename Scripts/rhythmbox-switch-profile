@@ -1,0 +1,41 @@
+#!/bin/bash
+
+RHYTHMBOX_DIR=$(realpath ~/.local/share/rhythmbox)
+
+perform-switch() {
+  [[ ! -z $(pidof rhythmbox) ]] && \
+    sudo kill $(pidof rhythmbox)
+
+  mkdir -p $RHYTHMBOX_DIR/profiles
+
+  [[ -f $RHYTHMBOX_DIR/profiles/current.txt ]] && \
+    CURRENT=$(cat $RHYTHMBOX_DIR/profiles/current.txt)
+
+  [[ ! -z $CURRENT ]] && \
+    [[ -f $RHYTHMBOX_DIR/rhythmdb.xml ]] && \
+    mv $RHYTHMBOX_DIR/rhythmdb.xml "$RHYTHMBOX_DIR/profiles/$CURRENT.xml"
+
+  echo $1 > $RHYTHMBOX_DIR/profiles/current.txt
+  [[ -f "$RHYTHMBOX_DIR/profiles/$1.xml" ]] && \
+    mv "$RHYTHMBOX_DIR/profiles/$1.xml" $RHYTHMBOX_DIR/rhythmdb.xml
+
+  dconf write /org/gnome/rhythmbox/rhythmdb/locations [\"file:///home/farmerbb/Media/$(echo $1 | sed 's/ /%20/g')\"]
+}
+
+[[ -z $1 ]] && \
+  echo -e "\033[1mCurrent profile:\033[0m" && \
+  cat $RHYTHMBOX_DIR/profiles/current.txt && \
+  echo && \
+  echo -e "\033[1mAll profiles:\033[0m" && \
+  ls -1 ~/Media | grep -E 'Music|Audio' && \
+  echo && \
+  echo -e "\033[1mUsage:\033[0m rhythmbox-switch-profile \"<profile-name>\"" && \
+  exit 1
+
+[[ ! -z $(echo $1 | grep -E 'Music|Audio') ]] && \
+  [[ -d ~/Media/$1 ]] && \
+  perform-switch "$1" && \
+  exit 0
+
+echo "Unable to switch to profile \"$1\""
+exit 1
