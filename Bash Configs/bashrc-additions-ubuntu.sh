@@ -316,6 +316,11 @@ update-firmware() {
     sudo fwupdmgr update
 }
 
+adb-waydroid() {
+  get_ip="ip addr show eth0 | grep 'inet ' | cut -d ' ' -f 6 | cut -d / -f 1"
+  adb connect $(echo $get_ip | sudo waydroid shell):5555
+}
+
 export -f virtualhere-client
 export -f allow-all-usb
 export -f make-trackpad-great-again
@@ -340,3 +345,4 @@ export -f install-eupnea-utils
 export -f install-displaylink-driver
 export -f install-flatpak
 export -f update-firmware
+export -f adb-waydroid

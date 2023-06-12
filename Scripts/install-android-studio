@@ -57,3 +57,6 @@ fi
 
 sudo rm -f /usr/local/bin/java
 sudo ln -s /opt/android-studio/jbr/bin/java /usr/local/bin/java
+
+echo 'function check_type() { type -t "$1"; }' | sudo tee /etc/bash_completion.d/adb.bash > /dev/null
+curl https://android.googlesource.com/platform/packages/modules/adb/+/refs/heads/master/adb.bash?format=TEXT | base64 -d | sudo tee -a /etc/bash_completion.d/adb.bash > /dev/null
