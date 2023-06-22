@@ -75,6 +75,33 @@ gradle-idle-stop() (
   done
 )
 
+init-android-dev-environment() {
+  mkdir -p ~/AndroidStudioProjects ~/.gradle
+
+  cp ~/OneDrive/Android/Development/*.sh ~/AndroidStudioProjects/
+  cp ~/OneDrive/Android/Development/gradle.properties ~/.gradle/
+
+  cd ~/AndroidStudioProjects
+  chmod +x *.sh
+  for i in Notepad SecondScreen Taskbar AppNotifier; do git-clone $i; done
+  cd -
+}
+
+project-root() {
+  while [[ $SEARCH_DIR != '/' ]]; do
+    if [[ -f build.gradle.kts || -f build.gradle ]]; then
+      GRADLE_ROOT=$(realpath .)
+    fi
+
+    SEARCH_DIR=$(realpath ..)
+    cd $SEARCH_DIR
+  done
+
+  cd $GRADLE_ROOT
+}
+
 export -f gradle-deep-clean
 export -f emulator
 export -f gradle-idle-stop
+export -f init-android-dev-environment
+export -f project-root

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 CONTAINERS=(
+  adguardhome
   homeassistant
   letsencrypt
   wireguard
@@ -9,8 +10,39 @@ CONTAINERS=(
 
 install-container() {
   case $1 in
+    adguardhome)
+      if [[ ! -f /etc/resolv.conf.backup ]]; then
+        sudo mkdir -p /etc/systemd/resolved.conf.d
+        echo -e "[Resolve]\nDNS=127.0.0.1\nDNSStubListener=no" | sudo tee /etc/systemd/resolved.conf.d/adguardhome.conf > /dev/null
+
+        sudo mv /etc/resolv.conf /etc/resolv.conf.backup
+        sudo ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+
+        sudo systemctl reload-or-restart systemd-resolved
+      fi
+
+      mkdir -p ~/adguardhome/work
+      mkdir -p ~/adguardhome/conf
+      mkdir -p ~/certs
+
+      docker pull adguard/adguardhome:latest
+      docker stop adguardhome 2&>/dev/null
+      docker rm adguardhome 2&>/dev/null
+
+      docker run --name adguardhome \
+        --restart unless-stopped \
+        -v /home/farmerbb/adguardhome/work:/opt/adguardhome/work \
+        -v /home/farmerbb/adguardhome/conf:/opt/adguardhome/conf \
+        -v /home/farmerbb/certs:/etc/letsencrypt \
+        -p 53:53/tcp -p 53:53/udp \
+        -p 80:80/tcp -p 443:443/tcp -p 443:443/udp -p 3000:3000/tcp \
+        -p 853:853/tcp \
+        -d adguard/adguardhome:latest || libvirt-dnsmasq-error
+    ;;
+
     homeassistant)
       mkdir -p ~/Home\ Assistant
+      mkdir -p ~/certs
 
       docker pull ghcr.io/home-assistant/home-assistant:stable
       docker stop homeassistant 2&>/dev/null
@@ -88,6 +120,18 @@ install-container() {
         mrlt8/wyze-bridge:latest
     ;;
   esac
+}
+
+libvirt-dnsmasq-error() {
+  echo
+  echo "To fix dnsmasq conflicts with libvirt, run:"
+  echo
+  echo "    sudo virsh net-edit default"
+  echo
+  echo "and disable DNS with:"
+  echo
+  echo '    <dns enable="no" />'
+  echo
 }
 
 print-usage() {

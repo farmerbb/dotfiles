@@ -25,6 +25,7 @@
 @reboot bash -i ~/Other\ Stuff/Linux/Scripts/docker-util start all
 @reboot bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/nuc-mounts.sh
 * * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/nuc-mounts.sh
+* * * * * bash -i ~/Other\ Stuff/Linux/Scripts/adguard-settings-lock
 
 45 0,8,16 * * * bash -i -c robomirror
 0 10 * * * bash -i -c gog-claim-giveaway

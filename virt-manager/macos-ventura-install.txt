@@ -7,6 +7,9 @@ https://github.com/kholia/OSX-KVM
 Commands for speeding up MacOS VM performance:
 https://github.com/sickcodes/osx-optimizer
 
+VoodooHDA installation (audio):
+https://github.com/MobCode100/Dastux/blob/main/VoodooHDA-QEMU-KVM.md
+
 For installing MacOS within virt-manager / libvirt,
 temporarily add this to the <devices> section of the xml:
 
