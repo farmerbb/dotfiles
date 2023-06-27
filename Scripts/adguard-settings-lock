@@ -25,7 +25,4 @@ for i in "${KEYS[@]}"; do
   fi
 done
 
-if [[ $RESTART_CONTAINER = true ]]; then
-  docker stop adguardhome
-  docker start adguardhome
-fi
+[[ $RESTART_CONTAINER = true ]] && docker restart adguardhome

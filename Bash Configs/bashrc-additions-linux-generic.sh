@@ -693,6 +693,12 @@ video-capture() {
   sudo pkill arecord
 }
 
+terminal-size() {
+  while true; do
+    printf "\r\033[K$(tput cols)x$(tput lines) "
+  done
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -749,3 +755,4 @@ export -f install-makemkv
 export -f apt-install-held-pkgs
 export -f folder2iso
 export -f video-capture
+export -f terminal-size
