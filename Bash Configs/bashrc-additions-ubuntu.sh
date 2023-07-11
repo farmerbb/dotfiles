@@ -1,9 +1,12 @@
 if [[ $XDG_SESSION_TYPE = x11 ]]; then
   alias enable-touchscreen="xinput --enable $(xinput --list | grep -i 'Finger touch' | grep -o 'id=[0-9]*' | sed 's/id=//')"
-  alias enable-trackpad="xinput --enable $(xinput --list | grep -i 'Touchpad' | grep -o 'id=[0-9]*' | sed 's/id=//')"
+# alias enable-trackpad="xinput --enable $(xinput --list | grep -i 'Touchpad' | grep -o 'id=[0-9]*' | sed 's/id=//')"
   alias disable-touchscreen="xinput --disable $(xinput --list | grep -i 'Finger touch' | grep -o 'id=[0-9]*' | sed 's/id=//')"
-  alias disable-trackpad="xinput --disable $(xinput --list | grep -i 'Touchpad' | grep -o 'id=[0-9]*' | sed 's/id=//')"
+# alias disable-trackpad="xinput --disable $(xinput --list | grep -i 'Touchpad' | grep -o 'id=[0-9]*' | sed 's/id=//')"
 fi
+
+alias enable-trackpad="gsettings set org.gnome.desktop.peripherals.touchpad send-events enabled"
+alias disable-trackpad="gsettings set org.gnome.desktop.peripherals.touchpad send-events disabled"
 
 virtualhere-client() {
   chmod +x /mnt/files/Other\ Stuff/Utilities/VirtualHere/vhuit64
@@ -127,6 +130,20 @@ edit-bluez-config() {
   fi
 
   systemctl --user restart wireplumber
+}
+
+edit-resolved-config() {
+  DIR="$DEVICE_DIR_PREFIX"
+  FILE="$DIR/resolved.conf"
+  if [[ -f "$FILE" ]]; then
+    MD5=$(md5sum "$FILE")
+    sudo nano /etc/systemd/resolved.conf
+    cp /etc/systemd/resolved.conf "$FILE"
+    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_DEVICE_DIR_PREFIX/resolved.conf"
+  fi
+
+  sudo service systemd-resolved restart
+  resolvectl status
 }
 
 boot-to-windows() {
@@ -330,6 +347,7 @@ export -f edit-grub-config
 export -f edit-fstab
 export -f edit-synaptics
 export -f edit-bluez-config
+export -f edit-resolved-config
 export -f boot-to-windows
 export -f install-blackbox
 export -f install-ssh-server

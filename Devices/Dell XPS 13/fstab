@@ -8,7 +8,7 @@
 # / was on /dev/nvme0n1p3 during installation
 
 UUID=58b9d63d-21b1-4016-b205-5628fdb29170 /               ext4    errors=remount-ro 0       1
-# UUID=1a5e50b4-6277-4ca2-b9e0-36bf9e1d0c0e /               ext4    errors=remount-ro 0       1
+# UUID=44e9ad30-452b-477f-871a-8f54861101bf /               ext4    errors=remount-ro 0       1
 
 # /boot/efi was on /dev/nvme0n1p1 during installation
 UUID=68D6-0E5F  /boot/efi       vfat    umask=0077      0       1

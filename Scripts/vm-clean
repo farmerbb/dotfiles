@@ -1,9 +1,15 @@
 #!/bin/bash
 
-for i in $(sudo ls -1 /var/lib/libvirt/images); do
+touch /tmp/.btrfs-maintenance
+sudo pkill bees
+
+for i in $(sudo ls -1 --ignore=OSX-KVM ~/VMs); do
+  echo "Optimizing $i..."
   [[ -z $(pgrep -a qemu | grep $i) ]] && \
-  sudo virt-sparsify --in-place /var/lib/libvirt/images/$i
-  sudo btrfs fi defrag -rf /var/lib/libvirt/images/$i
+  sudo virt-sparsify --in-place ~/VMs/$i
+  sudo btrfs fi defrag -rf -czstd ~/VMs/$i
+  echo
 done
 
+rm /tmp/.btrfs-maintenance
 sudo rm -rf /var/tmp/.guestfs-0

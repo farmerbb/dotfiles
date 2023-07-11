@@ -1,4 +1,10 @@
 #!/bin/bash
+unset HISTFILE
+
+[[ -f /tmp/adguard-settings-lock.running ]] && exit 1
+touch /tmp/adguard-settings-lock.running
+
+##################################################
 
 if [[ -z $(which yq) ]]; then
   sudo add-apt-repository -y ppa:rmescandon/yq
@@ -26,3 +32,8 @@ for i in "${KEYS[@]}"; do
 done
 
 [[ $RESTART_CONTAINER = true ]] && docker restart adguardhome
+
+##################################################
+
+[[ $? -eq 0 ]] && touch ~/.lastrun/adguard-settings-lock.lastrun
+rm -f /tmp/adguard-settings-lock.running

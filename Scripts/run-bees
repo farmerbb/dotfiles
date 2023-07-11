@@ -2,6 +2,7 @@
 
 start-bees() {
   [[ ! -z $(pidof bees) ]] && exit 1
+  [[ -f /tmp/.btrfs-maintenance ]] && exit 1
 
   sudo umount /run/bees/mnt/* >/dev/null 2>&1
   sudo daemonize /usr/sbin/beesd $(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5)

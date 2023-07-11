@@ -54,22 +54,24 @@ echo '"\eOA": history-search-backward' >> ~/.inputrc
 echo '"\eOB": history-search-forward' >> ~/.inputrc
 
 btrfs-dedupe() {
-  if [[ -z $(pidof bees) ]]; then
-    sudo jdupes -r1BQ $BTRFS_MNT
-    gunzip ~/.hashfile
-    sudo duperemove -drh --hashfile=/home/$USER/.hashfile $BTRFS_MNT
-    gzip ~/.hashfile
-  else
-    echo "Not starting dedupe while bees is running"
-  fi
+  touch /tmp/.btrfs-maintenance
+  sudo pkill bees
+
+  sudo jdupes -r1BQ $BTRFS_MNT
+  gunzip ~/.hashfile
+  sudo duperemove -drh --hashfile=/home/$USER/.hashfile $BTRFS_MNT
+  gzip ~/.hashfile
+
+  rm /tmp/.btrfs-maintenance
 }
 
 btrfs-defrag() {
-  if [[ -z $(pidof bees) ]]; then
-    sudo btrfs filesystem defrag -rfv -czstd $BTRFS_MNT || true
-  else
-    echo "Not starting defrag while bees is running"
-  fi
+  touch /tmp/.btrfs-maintenance
+  sudo pkill bees
+
+  sudo btrfs filesystem defrag -rfv -czstd $BTRFS_MNT || true
+
+  rm /tmp/.btrfs-maintenance
 }
 
 btrfs-stats() {
@@ -699,6 +701,34 @@ terminal-size() {
   done
 }
 
+process-death() {
+  [[ -z $2 ]] && \
+    echo "Usage: process-death <device> <package-name>" && \
+    adb devices && \
+    return 1
+
+  adb -s $1 shell input keyevent 3
+  sleep 1
+
+  adb -s $1 shell am kill $2
+  adb -s $1 shell am start $2
+}
+
+aot-compile() {
+  [[ -z $2 ]] && \
+    echo "Usage: aot-compile <device> <package-name | -a>" && \
+    adb devices && \
+    return 1
+
+  adb -s $1 shell cmd package compile -m speed -f $2
+
+  if [[ $2 = "-a" ]]; then
+    adb -s $1 shell am kill-all
+  else
+    adb -s $1 shell am kill $2
+  fi
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -756,3 +786,5 @@ export -f apt-install-held-pkgs
 export -f folder2iso
 export -f video-capture
 export -f terminal-size
+export -f process-death
+export -f aot-compile
