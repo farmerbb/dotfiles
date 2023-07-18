@@ -31,6 +31,9 @@ for i in "${KEYS[@]}"; do
   fi
 done
 
+CPU_USAGE=$(docker stats --no-stream --format "{{.CPUPerc}}" adguardhome | cut -d'.' -f1)
+[[ -z $CPU_USAGE || $CPU_USAGE == 100 || $CPU_USAGE > 100 ]] && RESTART_CONTAINER=true
+
 [[ $RESTART_CONTAINER = true ]] && docker restart adguardhome
 
 ##################################################

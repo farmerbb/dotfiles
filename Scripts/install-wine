@@ -9,12 +9,13 @@ wget -nc https://dl.winehq.org/wine-builds/winehq.key
 sudo apt-key add winehq.key
 rm winehq.key
 
-wget -nc https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/Debian_11/Release.key
+wget -nc https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_22.04/Release.key
 sudo apt-key add Release.key
 rm Release.key
 
-sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/debian/ bullseye main'
-sudo apt-add-repository 'deb https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/Debian_11/ ./'
+RELEASE=$(lsb_release -cs)
+sudo apt-add-repository -y 'deb https://dl.winehq.org/wine-builds/ubuntu/ $RELEASE main'
+sudo apt-add-repository -y 'deb https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_22.04/ ./'
 
 sudo apt-get update
 

@@ -25,7 +25,7 @@ alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | so
 alias mine="sudo chown -R $USER:$USER"
 alias mount-all="sudo mount -a && mount-adbfs"
 alias pi="wireguard-server-shell ssh ubuntu@10.13.13.4"
-alias ports-in-use="sudo lsof -i -P -n | grep LISTEN"
+alias port-monitor='watch -n1 "sudo lsof -i -P -n | grep LISTEN"'
 alias public-ip="dig @resolver4.opendns.com myip.opendns.com +short"
 alias public-ipv6="dig @resolver1.ipv6-sandbox.opendns.com AAAA myip.opendns.com +short -6"
 alias qemu="qemu-system-x86_64 -accel kvm -cpu host -m 1024"
@@ -689,9 +689,19 @@ folder2iso() {
 }
 
 video-capture() {
+  if [[ -z $(which v4l2-ctl) || -z $(which guvcview) ]]; then
+    sudo apt-get update
+    sudo apt-get install -y v4l-utils guvcview
+  fi
+
   arecord -D sysdefault:CARD=MS2109 -f cd - | aplay - &
   disown
-  guvcview --device=$(v4l2-ctl --list-devices | grep -A1 "USB Video" | tail -n1 | xargs) > /dev/null 2>&1
+
+  guvcview \
+    --profile=~/Other\ Stuff/Linux/Ubuntu/default.gpfl \
+    --device=$(v4l2-ctl --list-devices | grep -A1 "USB Video" | tail -n1 | xargs) \
+    > /dev/null 2>&1
+
   sudo pkill arecord
 }
 
@@ -727,6 +737,12 @@ aot-compile() {
   else
     adb -s $1 shell am kill $2
   fi
+}
+
+install-steam() {
+  sudo dpkg --add-architecture i386
+  sudo apt-get update
+  sudo apt-get -y install steam
 }
 
 export -f btrfs-dedupe
@@ -788,3 +804,4 @@ export -f video-capture
 export -f terminal-size
 export -f process-death
 export -f aot-compile
+export -f install-steam

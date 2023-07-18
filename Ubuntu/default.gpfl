@@ -1,0 +1,11 @@
+#V4L2/CTRL/0.0.2
+APP{"guvcview 2.0.8"}
+# control data
+#Brightness
+ID{0x00980900};CHK{-128:127:1:-11}=VAL{0}
+#Contrast
+ID{0x00980901};CHK{0:255:1:148}=VAL{128}
+#Saturation
+ID{0x00980902};CHK{0:255:1:180}=VAL{128}
+#Hue
+ID{0x00980903};CHK{-128:127:1:0}=VAL{0}
