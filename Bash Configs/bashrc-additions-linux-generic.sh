@@ -14,12 +14,14 @@ if [[ $USER != chronos ]]; then
   alias mv="$(which advmv || which mv)"
 fi
 
+alias 7z='~/Other\ Stuff/Utilities/7-Zip/Linux/7zz'
 alias badram='sudo cat /proc/iomem | grep "Unusable memory"'
 alias cpu-monitor='watch -n1 "lscpu -e; echo; sensors coretemp-isa-0000 dell_smm-isa-0000"'
 alias current-governor="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
 alias disable-android-tv-launcher="adb shell pm disable-user --user 0 com.google.android.tvlauncher"
 alias docker-run="sudo docker build -t temp-container . && sudo docker run -it temp-container:latest"
 alias docker-clean="sudo docker system prune --volumes -a -f"
+alias download-chromeosflex="wget --trust-server-names https://dl.google.com/chromeos-flex/images/latest.bin.zip"
 alias firmware-util="curl -LOk mrchromebox.tech/firmware-util.sh && sudo bash firmware-util.sh; rm firmware-util.sh"
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
 alias mine="sudo chown -R $USER:$USER"
@@ -28,8 +30,8 @@ alias pi="wireguard-server-shell ssh ubuntu@10.13.13.4"
 alias port-monitor='watch -n1 "sudo lsof -i -P -n | grep LISTEN"'
 alias public-ip="dig @resolver4.opendns.com myip.opendns.com +short"
 alias public-ipv6="dig @resolver1.ipv6-sandbox.opendns.com AAAA myip.opendns.com +short -6"
-alias qemu="qemu-system-x86_64 -accel kvm -cpu host -m 1024"
-alias qemu95="qemu-system-i386 -cpu pentium -vga cirrus -nic user,model=pcnet -soundhw sb16,pcspk"
+alias qemu="qemu-system-x86_64 -accel kvm -cpu host -m 2048"
+alias qemu95="qemu-system-i386 -cpu pentium -vga cirrus -nic user,model=pcnet -device sb16 -m 256"
 alias starwars="telnet towel.blinkenlights.nl"
 alias reboot-device="restart-device"
 alias robomirror-linux-dir='SYNC_DIRS=("Other Stuff/Linux"); robomirror onedrive'
@@ -69,7 +71,9 @@ btrfs-defrag() {
   touch /tmp/.btrfs-maintenance
   sudo pkill bees
 
-  sudo btrfs filesystem defrag -rfv -czstd $BTRFS_MNT || true
+  for i in $BTRFS_MNT $BTRFS_HOME_MNT; do
+    [[ ! -z $i ]] && sudo btrfs filesystem defrag -rfv -czstd $i || true
+  done
 
   rm /tmp/.btrfs-maintenance
 }
@@ -703,6 +707,7 @@ video-capture() {
     > /dev/null 2>&1
 
   sudo pkill arecord
+  echo
 }
 
 terminal-size() {

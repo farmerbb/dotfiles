@@ -6,6 +6,8 @@ sudo apt-get -y install golang-go scdoc build-essential
 rm -rf darkman
 git clone https://gitlab.com/WhyNotHugo/darkman.git
 cd darkman
+git checkout 8bbd5a63
+
 make
 sudo make install
 cd ..

@@ -157,9 +157,11 @@ boot-to-windows() {
 
 install-blackbox() {
   install-flatpak
-  flatpak-util install blackbox
+  flatpak install flathub -y com.raggesilver.BlackBox
+  sudo flatpak update -y --commit=1a3b7c86da1c662d5e793b03b83e9b02a4c151aea33fb03f07caaca1e576708a com.raggesilver.BlackBox
 
   sudo flatpak override com.raggesilver.BlackBox --filesystem=host
+  sudo flatpak override com.raggesilver.BlackBox --device=all
   sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /var/lib/flatpak/exports/bin/com.raggesilver.BlackBox 100
 
   mkdir -p ~/.var/app
@@ -280,12 +282,9 @@ install-eupnea-utils() {
     echo "Not a Chromebook; exiting" && \
     return 1
 
-  sudo mkdir -p /usr/local/share/keyrings
-  sudo wget -O /usr/local/share/keyrings/eupnea.key https://eupnea-linux.github.io/apt-repo/public.key
-  echo 'deb [signed-by=/usr/local/share/keyrings/eupnea.key] https://eupnea-linux.github.io/apt-repo/debian_ubuntu kinetic main' | sudo tee /etc/apt/sources.list.d/eupnea.list
-
-  sudo apt-get update
-  sudo apt-get -y install eupnea-utils keyd
+  for i in ~/Other\ Stuff/Chrome\ OS/Eupnea/*.deb; do
+    install-deb "$i"
+  done
 
   /usr/lib/eupnea/set-keymap --automatic
   setup-audio

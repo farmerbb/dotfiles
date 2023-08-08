@@ -1,8 +1,8 @@
 #!/bin/bash
 unset HISTFILE
 
-[[ -f /tmp/adguard-settings-lock.running ]] && exit 1
-touch /tmp/adguard-settings-lock.running
+[[ -f /tmp/adguard-watchdog.running ]] && exit 1
+touch /tmp/adguard-watchdog.running
 
 ##################################################
 
@@ -31,12 +31,23 @@ for i in "${KEYS[@]}"; do
   fi
 done
 
-CPU_USAGE=$(docker stats --no-stream --format "{{.CPUPerc}}" adguardhome | cut -d'.' -f1)
-[[ -z $CPU_USAGE || $CPU_USAGE == 100 || $CPU_USAGE > 100 ]] && RESTART_CONTAINER=true
+detect-abnormal-cpu-usage() {
+  CPU_USAGE=$(docker stats --no-stream --format "{{.CPUPerc}}" adguardhome | cut -d'.' -f1)
+  [[ -z $CPU_USAGE ]] && return 0
+  [[ $CPU_USAGE == 100 ]] && return 0
+  [[ $CPU_USAGE > 100 ]] && return 0
+
+  return 1
+}
+
+detect-abnormal-cpu-usage && \
+  sleep 5 && \
+  detect-abnormal-cpu-usage && \
+  RESTART_CONTAINER=true
 
 [[ $RESTART_CONTAINER = true ]] && docker restart adguardhome
 
 ##################################################
 
-[[ $? -eq 0 ]] && touch ~/.lastrun/adguard-settings-lock.lastrun
-rm -f /tmp/adguard-settings-lock.running
+[[ $? -eq 0 ]] && touch ~/.lastrun/adguard-watchdog.lastrun
+rm -f /tmp/adguard-watchdog.running

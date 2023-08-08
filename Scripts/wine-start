@@ -29,6 +29,11 @@ fi
 LOCAL_PATH=$(lnkinfo "$LNK_PATH" | grep "Local path")
 LOCAL_PATH=$(echo $LOCAL_PATH | sed "s/Local path : //g")
 
+if [[ -z $LOCAL_PATH ]]; then
+  LOCAL_PATH=$(lnkinfo "$LNK_PATH" | grep "Network path")
+  LOCAL_PATH=$(echo $LOCAL_PATH | sed 's/Network path : \\\\192.168.122.1\\Files/Z:/g')
+fi
+
 WORKING_DIR=$(lnkinfo "$LNK_PATH" | grep "Working directory")
 WORKING_DIR=$(echo $WORKING_DIR | sed "s/Working directory : //g")
 

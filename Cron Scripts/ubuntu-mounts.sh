@@ -15,7 +15,7 @@ sudo bindfs --force-user=farmerbb --force-group=farmerbb ~/.local/share/waydroid
 timeout 10 mount-nuc
 timeout 10 mount-adbfs
 
-run-bees
+# run-bees
 
 ##################################################
 

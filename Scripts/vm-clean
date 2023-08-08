@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ -z $(which virt-sparsify) ]]; then
+  sudo apt-get update
+  sudo apt-get install -y guestfs-tools
+fi
+
 touch /tmp/.btrfs-maintenance
 sudo pkill bees
 

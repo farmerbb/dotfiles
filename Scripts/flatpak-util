@@ -2,16 +2,21 @@
 
 PACKAGES=(
   86box:net._86box._86Box
-  blackbox:com.raggesilver.BlackBox
+# blackbox:com.raggesilver.BlackBox
   dolphin:org.DolphinEmu.dolphin-emu
   dosbox-x:com.dosbox_x.DOSBox-X
+  eduke32:com.eduke32.EDuke32
+  ezquake:io.github.ezQuake
+  flatseal:com.github.tchx84.Flatseal
   gzdoom:org.zdoom.GZDoom
   imhex:net.werwolv.ImHex
   pegasus:org.pegasus_frontend.Pegasus
   pysol:io.sourceforge.pysolfc.PySolFC
   retroarch:org.libretro.RetroArch
+  rigelengine:io.github.lethal_guitar.RigelEngine
   sonic3air:org.sonic3air.Sonic3AIR
   srb2:org.srb2.SRB2
+  yamagi:org.yamagi.YamagiQ2
   yuzu:org.yuzu_emu.yuzu
 )
 
@@ -19,6 +24,11 @@ install-package() {
   PACKAGE_ID=$(echo $1 | cut -d':' -f2)
   flatpak install -y flathub $PACKAGE_ID
   flatpak update -y $PACKAGE_ID
+}
+
+start-package() {
+  PACKAGE_ID=$(echo $1 | cut -d':' -f2)
+  flatpak run $PACKAGE_ID "${@:2}"
 }
 
 remove-package() {
@@ -31,7 +41,7 @@ print-usage() {
   echo -e "\033[1mPackages:\033[0m"
   for i in "${PACKAGES[@]}"; do echo $i | cut -d':' -f1; done
   echo
-  echo -e "\033[1mUsage:\033[0m $BASENAME  <install | remove>  <package-name | all>"
+  echo -e "\033[1mUsage:\033[0m $BASENAME  <install | start | remove>  <package-name | all>"
   exit 1
 }
 
@@ -39,7 +49,7 @@ print-usage() {
   echo "Please run install-flatpak before running this script." && \
   exit 1
 
-[[ $# -ne 2 ]] && print-usage
+[[ $# -lt 2 ]] && print-usage
 
 if [[ "${PACKAGES[@]}" =~ "$2:" || $2 = all ]]; then
   case $1 in
@@ -49,6 +59,20 @@ if [[ "${PACKAGES[@]}" =~ "$2:" || $2 = all ]]; then
           install-package $i
         elif [[ $i =~ "$2:" ]]; then
           install-package $i
+        fi
+      done
+      exit 0
+    ;;
+
+    start)
+      if [[ $2 = all ]]; then
+        echo "Refusing to start all packages, aborting..."
+        exit 1
+      fi
+
+      for i in "${PACKAGES[@]}"; do
+        if [[ $i =~ "$2:" ]]; then
+          start-package $i "${@:3}"
         fi
       done
       exit 0

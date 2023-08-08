@@ -75,7 +75,7 @@ StopWhenUnneeded=yes
 EOF
 
 cat > /etc/self-poweroff.conf <<'EOF'
-MY_SUSPEND_TIMEOUT=1 hour
+MY_SUSPEND_TIMEOUT=1 day
 EOF
 
 systemctl enable schedule-self-poweroff.service cancel-self-poweroff.service

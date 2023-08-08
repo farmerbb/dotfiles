@@ -95,12 +95,17 @@ install-container() {
   esac
 }
 
+remove-container() {
+  docker stop $1 2&>/dev/null
+  docker rm $1 2&>/dev/null
+}
+
 print-usage() {
   BASENAME=$(basename "$0")
   echo -e "\033[1mContainers:\033[0m"
   for i in "${CONTAINERS[@]}"; do echo $i; done
   echo
-  echo -e "\033[1mUsage:\033[0m $BASENAME  <install | start>  <container-name | all>"
+  echo -e "\033[1mUsage:\033[0m $BASENAME  <install | start | remove>  <container-name | all>"
   exit 1
 }
 
@@ -112,6 +117,15 @@ print-usage() {
 
 if [[ "${CONTAINERS[@]}" =~ $2 || $2 = all ]]; then
   case $1 in
+    install)
+      if [[ $2 = all ]]; then
+        for i in "${CONTAINERS[@]}"; do install-container $i; done
+      else
+        install-container $2
+      fi
+      exit 0
+    ;;
+
     start)
       if [[ $2 = all ]]; then
         for i in "${CONTAINERS[@]}"; do docker start $i; done
@@ -121,12 +135,17 @@ if [[ "${CONTAINERS[@]}" =~ $2 || $2 = all ]]; then
       exit 0
     ;;
 
-    install)
+    remove)
       if [[ $2 = all ]]; then
-        for i in "${CONTAINERS[@]}"; do install-container $i; done
+        printf "Press Enter if you really want to remove all containers, or CTRL+C to abort..."
+        read _
+
+        for i in "${CONTAINERS[@]}"; do remove-container $i; done
       else
-        install-container $2
+        remove-container $2
       fi
+
+      sudo docker system prune --volumes -a -f
       exit 0
     ;;
 
