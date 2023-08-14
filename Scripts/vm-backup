@@ -12,7 +12,8 @@ NAME=$2
 [[ -z "$NAME" ]] && NAME="$(date +%Y%m%d)"
 
 IMAGE_ORIGINAL=~/VMs/$1.img
-IMAGE_BACKUP=~/VMs/$1~$NAME.img
+IMAGE_BACKUP=~/VMs/backups/$1~$NAME.img
+XML_BACKUP=~/VMs/backups/$1~$NAME.xml
 
 [[ ! -f "$IMAGE_ORIGINAL" ]] && print-usage
 
@@ -29,6 +30,8 @@ done
 #   chattr +C "$IMAGE_BACKUP"
 # fi
 
+mkdir -p ~/VMs/backups
 cp --reflink=auto --sparse=auto "$IMAGE_ORIGINAL" "$IMAGE_BACKUP"
+sudo virsh dumpxml $1 > "$XML_BACKUP" 2>/dev/null || rm "$XML_BACKUP"
 
-[[ $1 = macos* ]] && cp -r --reflink=auto --sparse=auto ~/VMs/OSX-KVM ~/VMs/OSX-KVM~$NAME
+[[ $1 = macos* ]] && cp -r --reflink=auto --sparse=auto ~/VMs/OSX-KVM ~/VMs/backups/OSX-KVM~$NAME

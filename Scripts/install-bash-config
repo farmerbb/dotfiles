@@ -31,6 +31,12 @@ case $(sudo dmidecode -s system-product-name 2>/dev/null) in
   ;;
 esac
 
+case $(tr -d '\0' 2>/dev/null < /proc/device-tree/model) in
+  "Raspberry Pi 3 Model B Plus Rev 1.3")
+    bashrc-additions pi
+  ;;
+esac
+
 unset -f bashrc-additions
 return 0 2>/dev/null
 

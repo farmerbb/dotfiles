@@ -22,7 +22,7 @@
 # 
 # m h  dom mon dow   command
 
-@reboot bash -i ~/Other\ Stuff/Linux/Scripts/docker-util start all
+@reboot bash ~/Other\ Stuff/Linux/Scripts/docker-util start all
 @reboot bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/nuc-mounts.sh
 * * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/nuc-mounts.sh
 * * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/adguard-watchdog.sh
@@ -30,5 +30,4 @@
 
 45 0,8,16 * * * bash -i -c robomirror
 0 10 * * * bash -i -c gog-claim-giveaway
-# 0 5 * * * bash -i -c "restart-device shield"
 59 23 * * * bash -i -c organize-camera-roll

@@ -4,12 +4,7 @@ NOTE: These instructions are tested on Ubuntu 22.10 (desktop, without proprietar
 
 Kernel parameters (add to /etc/default/grub, GRUB_CMDLINE_LINUX_DEFAULT. Apply with `sudo update-grub`):
 
-  quiet intel_iommu=on iommu=pt video=efifb:off vfio-pci.ids=10de:2504,10de:228e default_hugepagesz=1G hugepagesz=1G hugepages=13 isolcpus=1-3,5-7 nohz_full=1-3,5-7 rcu_nocbs=1-3,5-7
-
-
-Additional kernel parameters (disables Spectre / Meltdown mitigations):
-
-  noibrs noibpb nopti nospectre_v2 nospectre_v1 l1tf=off nospec_store_bypass_disable no_stf_barrier mds=off tsx=on tsx_async_abort=off mitigations=off
+  quiet intel_iommu=on iommu=pt mitigations=off video=efifb:off vfio-pci.ids=10de:2504,10de:228e default_hugepagesz=1G hugepagesz=1G hugepages=13 isolcpus=1-3,5-7 nohz_full=1-3,5-7 rcu_nocbs=1-3,5-7
 
 
 Blacklist Nouveau driver (add to /etc/modprobe.d/blacklist.conf):

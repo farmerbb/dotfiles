@@ -26,11 +26,11 @@ alias firmware-util="curl -LOk mrchromebox.tech/firmware-util.sh && sudo bash fi
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
 alias mine="sudo chown -R $USER:$USER"
 alias mount-all="sudo mount -a && mount-adbfs"
-alias pi="wireguard-server-shell ssh ubuntu@10.13.13.4"
 alias port-monitor='watch -n1 "sudo lsof -i -P -n | grep LISTEN"'
 alias public-ip="dig @resolver4.opendns.com myip.opendns.com +short"
 alias public-ipv6="dig @resolver1.ipv6-sandbox.opendns.com AAAA myip.opendns.com +short -6"
-alias qemu="qemu-system-x86_64 -accel kvm -cpu host -m 2048"
+alias qemu="qemu-system-x86_64 -accel kvm -cpu host -m 4G -smp cores=6"
+alias qemu-gl="qemu -display gtk,gl=on -device virtio-vga-gl"
 alias qemu95="qemu-system-i386 -cpu pentium -vga cirrus -nic user,model=pcnet -device sb16 -m 256"
 alias starwars="telnet towel.blinkenlights.nl"
 alias reboot-device="restart-device"
@@ -542,13 +542,13 @@ robomirror() {
     if [[ $SOURCE = nuc ]]; then
       echo "Mirroring $DIR from NUC using rsync..."
       echo
-      rsync -avuz --no-perms --delete --inplace --compress-choice=zstd --compress-level=1 "farmerbb@nuc:/mnt/files/$DIR/" "/home/farmerbb/$DIR"
+      rsync -avuz --no-perms --delete --inplace --compress-choice=zstd --compress-level=1 "farmerbb@nuc:/mnt/files/$DIR/" "/home/$USER/$DIR"
     fi
 
     if [[ $SOURCE = onedrive ]]; then
       echo "Mirroring $DIR from OneDrive using rclone..."
       echo
-      rclone sync -v "OneDrive:$DIR" "/home/farmerbb/$DIR"
+      rclone sync -v "OneDrive:$DIR" "/home/$USER/$DIR"
     fi
 
     echo
@@ -623,15 +623,15 @@ shield-share-menu() {
   done
 }
 
-wireguard-server-shell() {
-  [[ ! -z "$@" ]] && ARGS="$@" || ARGS="/bin/bash"
+wireguard-server-wg() {
+  [[ ! -z "$@" ]] && ARGS="$@"
 
   if [[ $HOSTNAME = NUC ]]; then
-    docker exec -it wireguard $ARGS
+    docker exec -it wireguard wg $ARGS
     return 0
   fi
 
-  ssh nuc -o LogLevel=QUIET -t docker exec -it wireguard $ARGS
+  ssh nuc -o LogLevel=QUIET -t docker exec -it wireguard wg $ARGS
 }
 
 toggle-vm-maintenance() {
@@ -750,6 +750,27 @@ install-steam() {
   sudo apt-get -y install steam
 }
 
+install-tvheadend() {
+  curl -1sLf 'https://dl.cloudsmith.io/public/tvheadend/tvheadend/setup.deb.sh' | sudo -E bash
+  sudo apt-get -y install tvheadend
+}
+
+apt-upgrade-all() {
+  sudo apt-get update
+  sudo apt-get upgrade -y
+  apt-install-held-pkgs
+  sudo apt-get autoremove -y
+}
+
+pi() {
+  if [[ $HOSTNAME = NUC ]]; then
+    ssh pi
+    return 0
+  fi
+
+  ssh nuc -o LogLevel=QUIET -t ssh pi
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -800,7 +821,7 @@ export -f install-wireguard-client
 export -f wireguard-run
 export -f organize-camera-roll
 export -f shield-share-menu
-export -f wireguard-server-shell
+export -f wireguard-server-wg
 export -f toggle-vm-maintenance
 export -f install-makemkv
 export -f apt-install-held-pkgs
@@ -810,3 +831,6 @@ export -f terminal-size
 export -f process-death
 export -f aot-compile
 export -f install-steam
+export -f install-tvheadend
+export -f apt-upgrade-all
+export -f pi
