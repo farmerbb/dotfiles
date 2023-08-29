@@ -34,6 +34,7 @@ alias qemu-gl="qemu -display gtk,gl=on -device virtio-vga-gl"
 alias qemu95="qemu-system-i386 -cpu pentium -vga cirrus -nic user,model=pcnet -device sb16 -m 256"
 alias starwars="telnet towel.blinkenlights.nl"
 alias reboot-device="restart-device"
+alias reset-webcam="usbreset 046d:082c"
 alias robomirror-linux-dir='SYNC_DIRS=("Other Stuff/Linux"); robomirror onedrive'
 alias running-vms="sudo lsof 2>&1 | grep /dev/kvm | awk '!seen[\$2]++'"
 alias running-vms-fast="sudo lsof /dev/kvm 2>&1 | grep /dev/kvm | awk '!seen[\$2]++'"
@@ -623,22 +624,18 @@ shield-share-menu() {
   done
 }
 
-wireguard-server-wg() {
-  [[ ! -z "$@" ]] && ARGS="$@"
-
+wireguard-monitor() {
   if [[ $HOSTNAME = NUC ]]; then
-    docker exec -it wireguard wg $ARGS
-    return 0
+    COMMAND='docker exec -it wireguard wg'
+  else
+    COMMAND='ssh nuc -o LogLevel=QUIET -t docker exec -it wireguard wg'
   fi
 
-  ssh nuc -o LogLevel=QUIET -t docker exec -it wireguard wg $ARGS
+  watch --color -n1 $COMMAND
 }
 
 toggle-vm-maintenance() {
-  if [[ $HOSTNAME != PC ]]; then
-    ssh pc -o LogLevel=QUIET -t bash -i -c toggle-vm-maintenance
-    return 0
-  fi
+  [[ $HOSTNAME != PC ]] && return 1
 
   if [[ -f /tmp/vm-maintenance ]]; then
     rm /tmp/vm-maintenance
@@ -683,7 +680,7 @@ install-makemkv() {
 
 apt-install-held-pkgs() {
   # From https://askubuntu.com/a/1449756
-  sudo apt-get install --only-upgrade `sudo apt-get upgrade | awk 'BEGIN{flag=0} /The following packages have been kept back:/ { flag=1} /^ /{if (flag) print}'`
+  sudo apt-get install -y --only-upgrade `sudo apt-get upgrade | awk 'BEGIN{flag=0} /The following packages have been kept back:/ { flag=1} /^ /{if (flag) print}'`
 }
 
 folder2iso() {
@@ -821,7 +818,7 @@ export -f install-wireguard-client
 export -f wireguard-run
 export -f organize-camera-roll
 export -f shield-share-menu
-export -f wireguard-server-wg
+export -f wireguard-monitor
 export -f toggle-vm-maintenance
 export -f install-makemkv
 export -f apt-install-held-pkgs
