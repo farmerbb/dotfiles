@@ -6,7 +6,7 @@
 #
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
 # / was on /dev/nvme0n1p4 during curtin installation
-/dev/disk/by-uuid/2eda5b12-9656-463a-a3b3-b33932ca45a6 / ext4 defaults 0 1
+/dev/disk/by-uuid/2eda5b12-9656-463a-a3b3-b33932ca45a6 / ext4 defaults,noatime,discard 0 1
 # /boot/efi was on /dev/nvme0n1p1 during curtin installation
 /dev/disk/by-uuid/68D6-0E5F /boot/efi vfat defaults 0 1
 # /swap.img	none	swap	sw	0	0

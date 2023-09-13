@@ -6,7 +6,7 @@
 #
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
 # / was on /dev/sda2 during installation
-UUID=4be356f0-845a-4a07-8027-8f7ee283bc74 /               ext4    errors=remount-ro 0       1
+UUID=4be356f0-845a-4a07-8027-8f7ee283bc74 /               ext4    errors=remount-ro,noatime,discard 0       1
 # /boot/efi was on /dev/sda1 during installation
 UUID=D756-FEAD  /boot/efi       vfat    umask=0077      0       1
 # /swapfile                                 none            swap    sw              0       0
