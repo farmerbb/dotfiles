@@ -168,8 +168,7 @@ install-blackbox() {
   cp -r "$LINUX_DIR_PREFIX/Ubuntu/com.raggesilver.BlackBox" ~/.var/app
 
   echo '#!/bin/bash' | sudo tee /usr/local/bin/blackbox > /dev/null
-  echo 'REALPATH=$(realpath "$1")' | sudo tee -a /usr/local/bin/blackbox > /dev/null
-  echo 'flatpak run com.raggesilver.BlackBox --working-directory="$REALPATH"' | sudo tee -a /usr/local/bin/blackbox > /dev/null
+  echo 'flatpak run com.raggesilver.BlackBox --working-directory="$PWD"' | sudo tee -a /usr/local/bin/blackbox > /dev/null
   sudo chmod +x /usr/local/bin/blackbox
 
   gsettings set org.cinnamon.desktop.default-applications.terminal exec blackbox
@@ -337,6 +336,20 @@ adb-waydroid() {
   adb connect $(echo $get_ip | sudo waydroid shell):5555
 }
 
+install-wezterm() {
+  curl -LO https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu22.04.deb
+  install-deb ./wezterm-nightly.Ubuntu22.04.deb
+  rm ./wezterm-nightly.Ubuntu22.04.deb
+  cp ~/Other\ Stuff/Linux/Ubuntu/wezterm.lua ~/.wezterm.lua
+
+  echo '#!/bin/bash' | sudo tee /usr/local/bin/wezterm-start > /dev/null
+  echo 'wezterm start --cwd "$PWD"' | sudo tee -a /usr/local/bin/wezterm-start > /dev/null
+  sudo chmod +x /usr/local/bin/wezterm-start
+
+  sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/wezterm 101
+  gsettings set org.cinnamon.desktop.default-applications.terminal exec wezterm-start
+}
+
 export -f virtualhere-client
 export -f allow-all-usb
 export -f make-trackpad-great-again
@@ -363,3 +376,4 @@ export -f install-displaylink-driver
 export -f install-flatpak
 export -f update-firmware
 export -f adb-waydroid
+export -f install-wezterm
