@@ -288,7 +288,8 @@ edit-ssh-config() {
 }
 
 install-apks-recursive() {
-  for i in . */; do install-apks $i $1; done
+# for i in . */; do install-apks $i $1; done
+  find . -type d -exec install-apks {} $1 \;
 }
 
 max-cpu() {
