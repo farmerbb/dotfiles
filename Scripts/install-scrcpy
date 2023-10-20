@@ -3,7 +3,7 @@
 CURRENT_DIR=$(pwd)
 rm -rf scrcpy
 
-sudo mv /etc/apt/preferences.d/cros.pref /etc/apt/preferences.d/cros.pref.bak
+# sudo mv /etc/apt/preferences.d/cros.pref /etc/apt/preferences.d/cros.pref.bak
 sudo apt-get update
 sudo apt-get install -y ffmpeg libsdl2-2.0-0 gcc git pkg-config meson ninja-build wget libusb-1.0-0-dev \
                         libavcodec-dev libavformat-dev libavutil-dev libsdl2-dev libavdevice-dev

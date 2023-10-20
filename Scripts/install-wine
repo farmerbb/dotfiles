@@ -14,8 +14,8 @@ sudo apt-key add Release.key
 rm Release.key
 
 RELEASE=$(lsb_release -cs)
-sudo apt-add-repository -y 'deb https://dl.winehq.org/wine-builds/ubuntu/ $RELEASE main'
-sudo apt-add-repository -y 'deb https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_22.04/ ./'
+sudo apt-add-repository -y "deb https://dl.winehq.org/wine-builds/ubuntu/ $RELEASE main"
+sudo apt-add-repository -y "deb https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_22.04/ ./"
 
 sudo apt-get update
 
@@ -23,7 +23,7 @@ sudo apt-get update
 # sudo apt-get -y install --install-recommends libasound2-plugins:i386 winehq-stable wine-stable-amd64-
 
 # Install devel (32-bit and 64-bit)
-# sudo apt-get -y install --install-recommends libasound2-plugins libasound2-plugins:i386 winehq-devel
+sudo apt-get -y install --install-recommends libasound2-plugins libasound2-plugins:i386 winehq-devel
 
 # Install stable (32-bit and 64-bit)
-sudo apt-get -y install --install-recommends libasound2-plugins libasound2-plugins:i386 winehq-stable
+# sudo apt-get -y install --install-recommends libasound2-plugins libasound2-plugins:i386 winehq-stable

@@ -191,14 +191,13 @@ fix-extensions() {
 
   for i in $(gnome-extensions list); do
     EXT_PATH=$(gnome-extensions info $i | grep "Path:" | cut -d' ' -f4)
-    EXT_COMMAND=enable
-#   [[ "$EXT_PATH" = /home/$USER/* ]] && EXT_COMMAND=enable || EXT_COMMAND=disable
+    [[ $i = "ubuntu-dock@ubuntu.com" ]] && EXT_COMMAND=disable || EXT_COMMAND=enable
     gnome-extensions $EXT_COMMAND $i
   done
 }
 
 fix-libvirt-permissions() {
-  echo -e '\nuser = "farmerbb"\ngroup = "farmerbb"' | sudo tee -a /etc/libvirt/qemu.conf > /dev/null
+  echo -e '\nuser = "farmerbb"\ngroup = "farmerbb"\nsecurity_driver = "none"' | sudo tee -a /etc/libvirt/qemu.conf > /dev/null
   sudo service libvirtd restart
 }
 
@@ -340,7 +339,10 @@ install-wezterm() {
   curl -LO https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu22.04.deb
   install-deb ./wezterm-nightly.Ubuntu22.04.deb
   rm ./wezterm-nightly.Ubuntu22.04.deb
-  cp ~/Other\ Stuff/Linux/Ubuntu/wezterm.lua ~/.wezterm.lua
+
+  rm -rf ~/.config/wezterm
+  cp -r ~/Other\ Stuff/Linux/WezTerm ~/.config/wezterm
+  ln -sf ~/.config/wezterm/wezterm-linux.lua .wezterm.lua
 
   echo '#!/bin/bash' | sudo tee /usr/local/bin/wezterm-start > /dev/null
   echo 'wezterm start --cwd "$PWD"' | sudo tee -a /usr/local/bin/wezterm-start > /dev/null

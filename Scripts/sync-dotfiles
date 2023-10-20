@@ -44,6 +44,8 @@ for i in ${!DOTFILE_DIRS[@]}; do
   rsync -a --delete --inplace \
     --exclude 'Source Code' \
     --exclude 'Network Config' \
+    --exclude 'Gnome Extensions' \
+    --exclude 'Dev Tools' \
     "farmerbb@nuc:/mnt/files/$DIR" .
 done
 

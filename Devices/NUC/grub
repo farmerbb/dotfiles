@@ -32,3 +32,4 @@ GRUB_GFXMODE=3840x2160,auto
 # Uncomment to get a beep at grub start
 #GRUB_INIT_TUNE="480 440 1"
 GRUB_THEME="/usr/share/grub/themes/tela/theme.txt"
+GRUB_BACKGROUND="/usr/share/grub/themes/tela/background.jpg"

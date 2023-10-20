@@ -2,7 +2,6 @@
 
 PACKAGES=(
   86box:net._86box._86Box
-# blackbox:com.raggesilver.BlackBox
   dolphin:org.DolphinEmu.dolphin-emu
   dosbox-x:com.dosbox_x.DOSBox-X
   eduke32:com.eduke32.EDuke32

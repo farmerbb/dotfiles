@@ -22,7 +22,7 @@
   <os>
     <type arch='x86_64' machine='pc-q35-6.0'>hvm</type>
     <loader readonly='yes' type='pflash'>/home/farmerbb/VMs/OSX-KVM/OVMF_CODE.fd</loader>
-    <nvram>/home/farmerbb/VMs/OSX-KVM/macos-ventura_VARS.fd</nvram>
+    <nvram>/home/farmerbb/VMs/OSX-KVM/OVMF_VARS.fd</nvram>
   </os>
   <features>
     <acpi/>
@@ -152,6 +152,7 @@
       </model>
       <address type='pci' domain='0x0000' bus='0x06' slot='0x00' function='0x0'/>
     </video>
+    <watchdog model='itco' action='reset'/>
     <memballoon model='none'/>
   </devices>
   <qemu:commandline>
