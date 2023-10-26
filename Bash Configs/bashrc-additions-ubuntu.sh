@@ -32,52 +32,6 @@ make-trackpad-great-again() {
   echo 'Please log out, and log back in using the "Ubuntu on Xorg" session.'
 }
 
-export-extension-config() {
-  DIR="$LINUX_DIR_PREFIX/Ubuntu/extensions"
-  FILE="$DIR/$1.txt"
-  CONFIG_DIR=~/.config/$1
-
-  if [[ -f "$FILE" ]]; then
-    MD5=$(md5sum "$FILE")
-    dconf dump /org/gnome/shell/extensions/$1/ > "$FILE"
-    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_LINUX_DIR_PREFIX/Ubuntu/extensions/$1.txt"
-
-    if [[ -d "$CONFIG_DIR" ]]; then
-      for i in "$LINUX_DIR_PREFIX" "$OD_LINUX_DIR_PREFIX"; do
-        rm -rf "$i/Ubuntu/extensions/$1"
-        cp -r "$CONFIG_DIR" "$i/Ubuntu/extensions/$1"
-      done
-    fi
-  else
-    echo -e "\033[1m$(echo $DIR | sed "s#$LINUX_DIR_PREFIX/Ubuntu/##g"):\033[0m"
-    ls "$DIR"/*.txt | sed -e "s#$DIR/##g" -e "s/\.txt//g" -e "s/:/:\n/g" | column
-    echo
-
-    echo -e "\033[1mUsage:\033[0m export-extension-config <name of extension>"
-  fi
-}
-
-import-extension-config() {
-  DIR="$LINUX_DIR_PREFIX/Ubuntu/extensions"
-  FILE="$DIR/$1.txt"
-  CONFIG_DIR="$DIR/$1"
-
-  if [[ -f "$FILE" ]]; then
-    dconf load /org/gnome/shell/extensions/$1/ < "$FILE"
-
-    if [[ -d "$CONFIG_DIR" ]]; then
-      rm -rf ~/.config/$1
-      cp -r "$CONFIG_DIR" ~/.config
-    fi
-  else
-    echo -e "\033[1m$(echo $DIR | sed "s#$LINUX_DIR_PREFIX/Ubuntu/##g"):\033[0m"
-    ls "$DIR"/*.txt | sed -e "s#$DIR/##g" -e "s/\.txt//g" -e "s/:/:\n/g" | column
-    echo
-
-    echo -e "\033[1mUsage:\033[0m import-extension-config <name of extension>"
-  fi
-}
-
 edit-grub-config() {
   DIR="$DEVICE_DIR_PREFIX"
   FILE="$DIR/grub"
@@ -186,16 +140,6 @@ install-input-remapper() {
   sudo cp -r "$DEVICE_DIR_PREFIX/input-remapper" ~/.config
 }
 
-fix-extensions() {
-  dconf write /org/gnome/shell/disable-user-extensions false
-
-  for i in $(gnome-extensions list); do
-    EXT_PATH=$(gnome-extensions info $i | grep "Path:" | cut -d' ' -f4)
-    [[ $i = "ubuntu-dock@ubuntu.com" ]] && EXT_COMMAND=disable || EXT_COMMAND=enable
-    gnome-extensions $EXT_COMMAND $i
-  done
-}
-
 fix-libvirt-permissions() {
   echo -e '\nuser = "farmerbb"\ngroup = "farmerbb"\nsecurity_driver = "none"' | sudo tee -a /etc/libvirt/qemu.conf > /dev/null
   sudo service libvirtd restart
@@ -262,14 +206,6 @@ install-rhythmbox() {
 }
 
 toggle-ultrawide-fixes() {
-# [[ $(dconf read /org/gnome/mutter/draggable-border-width) = 0 ]] && \
-#   dconf reset /org/gnome/mutter/draggable-border-width || \
-#   dconf write /org/gnome/mutter/draggable-border-width 0
-
-# [[ $(dconf read /org/gnome/shell/extensions/tiling-assistant/screen-left-gap) = 1 ]] && \
-#   dconf reset /org/gnome/shell/extensions/tiling-assistant/screen-left-gap || \
-#   dconf write /org/gnome/shell/extensions/tiling-assistant/screen-left-gap 1
-
   [[ $(dconf read /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout) = true ]] && \
     dconf reset /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout || \
     dconf write /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout true
@@ -355,8 +291,6 @@ install-wezterm() {
 export -f virtualhere-client
 export -f allow-all-usb
 export -f make-trackpad-great-again
-export -f export-extension-config
-export -f import-extension-config
 export -f edit-grub-config
 export -f edit-fstab
 export -f edit-synaptics
@@ -366,7 +300,6 @@ export -f boot-to-windows
 export -f install-blackbox
 export -f install-ssh-server
 export -f install-input-remapper
-export -f fix-extensions
 export -f fix-libvirt-permissions
 export -f remove-all-snaps
 export -f install-plex-server

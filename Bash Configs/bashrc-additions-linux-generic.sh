@@ -769,6 +769,11 @@ pi() {
   ssh nuc -o LogLevel=QUIET -t ssh pi
 }
 
+install-celestia() {
+  sudo wget -O /usr/local/bin/celestia https://download.opensuse.org/repositories/home:/munix9:/unstable/AppImage/celestia-latest-x86_64.AppImage
+  sudo chmod +x /usr/local/bin/celestia
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -832,3 +837,4 @@ export -f install-steam
 export -f install-tvheadend
 export -f apt-upgrade-all
 export -f pi
+export -f install-celestia

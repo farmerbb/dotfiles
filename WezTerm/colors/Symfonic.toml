@@ -1,8 +1,9 @@
 # Symfonic
 
 # Changes from stock version:
-# - Bright Black is three times as bright (original: #1b1d21)
-# - cursor_bg changed to pure black (original: #dc322f)
+# - Bright Black is now 3x as bright (original: #1b1d21)
+# - cursor_bg changed to pure white (original: #dc322f)
+# - cursor_fg changed to pure black (original: #ffffff)
 
 [colors]
 foreground = "#ffffff"
