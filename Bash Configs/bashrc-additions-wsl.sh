@@ -44,7 +44,7 @@ preexec() {
 
 copy-shortcuts-to-start-menu() {
   cd /mnt/c/Users/Braden/AppData/Roaming/Microsoft/Windows/Start\ Menu && \
-    rm -r ​*
+    rm -r ​ *
 
   for i in /mnt/z/Other\ Stuff/Shortcuts/*; do
     BASENAME=" $(basename "$i")"
