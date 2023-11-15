@@ -1,0 +1,13 @@
+#!/bin/bash
+
+wget https://dl.xanmod.org/check_x86-64_psabi.sh
+chmod +x check_x86-64_psabi.sh
+
+VERSION=$(echo -n $(./check_x86-64_psabi.sh) | tail -c 1)
+rm check_x86-64_psabi.sh
+
+wget -qO - https://dl.xanmod.org/archive.key | sudo gpg --dearmor -o /usr/share/keyrings/xanmod-archive-keyring.gpg
+echo 'deb [signed-by=/usr/share/keyrings/xanmod-archive-keyring.gpg] http://deb.xanmod.org releases main' | sudo tee /etc/apt/sources.list.d/xanmod-release.list > /dev/null
+
+sudo apt-get update
+sudo apt-get install -y linux-xanmod-edge-x64v$VERSION

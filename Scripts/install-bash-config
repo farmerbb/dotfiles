@@ -4,8 +4,17 @@ bashrc-additions() {
   source ~/Other\ Stuff/Linux/Bash\ Configs/bashrc-additions-$1.sh
 }
 
+IDE_DIRS=(
+  "/opt/android-studio"
+  "/home/$USER/.local/share/JetBrains/Toolbox/apps/intellij-idea-ultimate"
+)
+
+for i in ${IDE_DIRS[@]}; do
+  [[ -d $i ]] && export IDE_DIR=$i && break
+done
+
 bashrc-additions linux-generic
-[[ -d /opt/android-studio ]] && bashrc-additions android-dev
+[[ -d "$IDE_DIR" ]] && bashrc-additions android-dev
 [[ $(which gnome-shell) ]] && bashrc-additions gnome
 [[ $(lsb_release -is 2>/dev/null) = Ubuntu ]] && bashrc-additions ubuntu
 $(uname -r | grep "[m|M]icrosoft" > /dev/null) && bashrc-additions wsl

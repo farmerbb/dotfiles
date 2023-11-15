@@ -1,0 +1,26 @@
+#!/bin/bash
+
+sudo apt-get update
+sudo apt-get -y install debhelper
+
+sudo rm -rf .pop-default-settings-temp
+mkdir -p .pop-default-settings-temp
+cd .pop-default-settings-temp
+
+git clone https://github.com/pop-os/default-settings.git
+cd default-settings
+git checkout lru_jammy
+
+rm debian/*.postinst
+rm debian/*.prerm
+sed -i '/plymouth-theme-pop-basic/d' debian/control
+sed -i '/python3-repolib/d' debian/control
+echo bfq >> etc/modules-load.d/pop-modules.conf
+
+dpkg-buildpackage -b -uc -us
+
+cd ..
+sudo dpkg -i *.deb
+
+cd ..
+sudo rm -rf .pop-default-settings-temp

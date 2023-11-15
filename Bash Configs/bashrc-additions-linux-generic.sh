@@ -4,7 +4,10 @@
 [[ -z $DBUS_SESSION_BUS_ADDRESS ]] && export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
 [[ -z $XDG_RUNTIME_DIR ]] && export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 
-export PATH="/usr/NX/bin:$PATH"
+export JAVA_HOME="/usr/lib/jvm/default-java"
+[[ ! -d "$JAVA_HOME" ]] && [[ -d "$IDE_DIR" ]] && export JAVA_HOME="$IDE_DIR/jbr"
+
+export PATH="$JAVA_HOME/bin:/usr/NX/bin:$PATH"
 export WINEDEBUG="-all"
 # export XAUTHORITY=$HOME/.Xauthority
 # xhost + > /dev/null 2>&1
@@ -30,7 +33,7 @@ alias port-monitor='watch -n1 "sudo lsof -i -P -n | grep LISTEN"'
 alias public-ip="dig @resolver4.opendns.com myip.opendns.com +short"
 alias public-ipv6="dig @resolver1.ipv6-sandbox.opendns.com AAAA myip.opendns.com +short -6"
 alias qemu="qemu-system-x86_64 -monitor stdio -accel kvm -cpu host -m 4G -smp cores=6"
-alias qemu-gl="qemu -monitor stdio -display gtk,gl=on -device virtio-vga-gl"
+alias qemu-gl="qemu -display gtk,gl=on -device virtio-vga-gl"
 alias qemu95="qemu-system-i386 -monitor stdio -cpu pentium -vga cirrus -nic user,model=pcnet -device sb16 -m 256"
 alias starwars="telnet towel.blinkenlights.nl"
 alias reboot-device="restart-device"

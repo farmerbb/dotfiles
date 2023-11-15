@@ -22,7 +22,6 @@ EXTENSIONS_WEB=(
   5410 # grand-theft-focus@zalckos.github.com
   3628 # arcmenu@arcmenu.com
   5446 # quick-settings-tweaks@qwreey
-  5575 # power-profile-switcher@eliapasquali.github.io
 )
 
 EXTENSIONS_APT=(

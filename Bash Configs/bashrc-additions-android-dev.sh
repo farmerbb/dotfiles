@@ -4,7 +4,7 @@ ls -d $ANDROID_SDK_ROOT/build-tools/* >/dev/null 2>&1
 
 ls -d ~/.local/share/Google/AndroidStudio*/Kotlin/kotlinc/bin >/dev/null 2>&1
 [[ $? -eq 0 ]] && PLUGINS_DIR="$(ls -d1 ~/.local/share/Google/AndroidStudio*/Kotlin/kotlinc/bin | tail -n 1)"
-[[ -z "$PLUGINS_DIR" ]] && PLUGINS_DIR="/opt/android-studio/plugins/Kotlin/kotlinc/bin"
+[[ -z "$PLUGINS_DIR" ]] && PLUGINS_DIR="$IDE_DIR/plugins/Kotlin/kotlinc/bin"
 
 for f in "$PLUGINS_DIR"/* ; do
   [[ $f == *.bat ]] && continue
@@ -19,8 +19,7 @@ TOOLS_DIR=$ANDROID_SDK_ROOT/tools
 CMDLINE_TOOLS_DIR=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
 TOOLS_BIN_DIR=$ANDROID_SDK_ROOT/tools/bin
 
-export JAVA_HOME="/opt/android-studio/jbr"
-export PATH="$PLUGINS_DIR:$PLATFORM_TOOLS_DIR:$TOOLS_DIR:$CMDLINE_TOOLS_DIR:$TOOLS_BIN_DIR:$BUILD_TOOLS_DIR:$NDK_DIR:$JAVA_HOME/bin:$PATH"
+export PATH="$PLUGINS_DIR:$PLATFORM_TOOLS_DIR:$TOOLS_DIR:$CMDLINE_TOOLS_DIR:$TOOLS_BIN_DIR:$BUILD_TOOLS_DIR:$NDK_DIR:$PATH"
 
 alias clear-emulator-lockfiles="rm ~/.android/avd/*.avd/*.lock"
 alias gradle-stop="pkill -f '.*GradleDaemon.*'"
