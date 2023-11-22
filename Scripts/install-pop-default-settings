@@ -13,6 +13,7 @@ git checkout lru_jammy
 
 rm debian/*.postinst
 rm debian/*.prerm
+sed -i '/Essential: yes/d' debian/control
 sed -i '/plymouth-theme-pop-basic/d' debian/control
 sed -i '/python3-repolib/d' debian/control
 echo bfq >> etc/modules-load.d/pop-modules.conf

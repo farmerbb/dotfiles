@@ -88,6 +88,13 @@ btrfs-stats() {
   sudo compsize $BTRFS_MNT
 }
 
+btrfs-check() {
+  DEVICES=$(sudo btrfs device scan | grep 'registered:' | sed 's/registered: //g')
+  for i in "${DEVICES[@]}"; do
+    sudo btrfs check --force $i
+  done
+}
+
 find-files() {
   find . -exec file -- {} + | grep -i "$*"
 }

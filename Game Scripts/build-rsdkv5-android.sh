@@ -11,7 +11,12 @@ git clone https://github.com/Rubberduckycooly/Sonic-Mania-Decompilation.git --re
 git clone https://github.com/Rubberduckycooly/RSDKv5-Example-Mods.git
 git clone https://github.com/Rubberduckycooly/GameAPI.git
 
-cd Sonic-Mania-Decompilation/dependencies/RSDKv5/dependencies/android
+cd Sonic-Mania-Decompilation/dependencies/RSDKv5
+for i in RSDKv5/main.cpp RSDKv5/RSDK/Graphics/EGL/EGLRenderDevice.cpp; do
+  sed -i 's/SwappyGL_setAutoSwapInterval(false);/SwappyGL_setMaxAutoSwapIntervalNS(SWAPPY_SWAP_60FPS);/g' $i
+done
+
+cd dependencies/android
 curl -L http://downloads.xiph.org/releases/theora/libtheora-1.1.1.zip --output libtheora.zip
 curl -L http://downloads.xiph.org/releases/ogg/libogg-1.3.5.zip --output libogg.zip
 unzip libtheora.zip
