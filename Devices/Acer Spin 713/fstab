@@ -6,10 +6,9 @@
 #
 # <file system> <mount point>   <type>  <options>       <dump>  <pass>
 # / was on /dev/nvme0n1p2 during installation
-UUID=80017380-d0b9-4cca-b671-55a87a1234b9 /               ext4    errors=remount-ro,noatime,discard 0       1
+UUID=3a4fa346-c345-4581-ac82-9416bba4819a /               ext4    errors=remount-ro 0       1
 # /boot/efi was on /dev/nvme0n1p1 during installation
 UUID=BA20-BF6B  /boot/efi       vfat    umask=0077      0       1
-# /swapfile                                 none            swap    sw              0       0
 
 UUID=ac10b390-43e2-4094-8d18-6136409b0568   /mnt/files       btrfs   defaults,noatime,compress-force=zstd:1,discard=async                       0   2
-UUID=ac10b390-43e2-4094-8d18-6136409b0568   /home/farmerbb   btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=/Local/Home    0   2
+# UUID=ac10b390-43e2-4094-8d18-6136409b0568   /home/farmerbb   btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=/Local/Home    0   2

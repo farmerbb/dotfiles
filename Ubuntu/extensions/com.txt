@@ -1,0 +1,9 @@
+[github/hermes83/compiz-windows-effect]
+friction=10.0
+mass=20.0
+maximize-effect=false
+resize-effect=false
+speedup-factor-divider=2.5
+spring-k=10.0
+x-tiles=6.0
+y-tiles=6.0

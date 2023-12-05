@@ -1,0 +1,14 @@
+#!/bin/bash
+
+SAVERAM='H4sICCvAY2UAAyAAMwpjZGCYyAAHjk7ezgGhQQq+jv4KCt4Nigw4ASMYMDMyMFobMEGErJGk/ysa2Ij9/w8AkwQUgWAAAAA='
+
+cd ~/OneDrive/Android/Backup/Emulation/RetroArch
+for i in ~/OneDrive/Games/Emulation/Retail/Neo\ Geo/*.zip; do
+  BASENAME=$(basename "$i" | sed "s/.zip//")
+  [[ $BASENAME = neogeo ]] && continue
+  echo "Initializing $BASENAME..."
+
+  mkdir -p saves/mame/nvram/${BASENAME}_16
+  echo $SAVERAM | base64 -d | (gunzip; dd if=/dev/zero bs=32 count=2045 status=none) > saves/mame/nvram/${BASENAME}_16/saveram
+  echo "bios unibios40" > system/mame/ini/$BASENAME.ini
+done

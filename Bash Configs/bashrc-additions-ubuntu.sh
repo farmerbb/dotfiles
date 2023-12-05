@@ -272,6 +272,11 @@ adb-waydroid() {
 }
 
 install-wezterm() {
+  if [[ -z $(which curl) ]]; then
+    sudo apt-get update
+    sudo apt-get install -y curl
+  fi
+
   curl -LO https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu22.04.deb
   install-deb ./wezterm-nightly.Ubuntu22.04.deb
   rm ./wezterm-nightly.Ubuntu22.04.deb
@@ -283,6 +288,8 @@ install-wezterm() {
   echo '#!/bin/bash' | sudo tee /usr/local/bin/wezterm-start > /dev/null
   echo 'wezterm start --cwd "$PWD"' | sudo tee -a /usr/local/bin/wezterm-start > /dev/null
   sudo chmod +x /usr/local/bin/wezterm-start
+
+  sudo sed -i 's/Icon=org.wezfurlong.wezterm/Icon=utilities-terminal/g' /usr/share/applications/org.wezfurlong.wezterm.desktop
 
   sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/wezterm 101
   gsettings set org.cinnamon.desktop.default-applications.terminal exec wezterm-start

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+if [[ -z $(which wget) ]] ; then
+  sudo apt-get update
+  sudo apt-get install -y wget
+fi
+
+FONT_DIR=/usr/share/fonts/truetype/segoe-ui
+# sudo rm -rf $FONT_DIR
+if [[ ! -d $FONT_DIR ]]; then
+  sudo mkdir -p $FONT_DIR
+
+  for i in segoeui segoeuib segoeuii segoeuiz segoeuil seguili segoeuisl seguisli seguisb seguisbi ; do
+    sudo wget https://github.com/mrbvrz/segoe-ui/raw/master/font/$i.ttf?raw=true -O $FONT_DIR/$i.ttf > /dev/null 2>&1
+  done
+fi
+
+# wget https://aka.ms/SegoeUIVariable
+# sudo unzip SegoeUIVariable -d $FONT_DIR
+# rm SegoeUIVariable
+
+FONT_DIR=/usr/share/fonts/truetype/robotomono
+if [[ ! -d $FONT_DIR ]]; then
+  sudo wget --content-disposition -P $FONT_DIR \
+  https://github.com/google/fonts/blob/10a708073179c32928eb894e53465fca8106772f/apache/robotomono/static/RobotoMono-{Bold,BoldItalic,Italic,Light,LightItalic,Medium,MediumItalic,Regular,Thin,ThinItalic}.ttf?raw=true
+fi
+
+sudo fc-cache -f -v

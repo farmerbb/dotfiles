@@ -1,6 +1,6 @@
 [/]
 alphabetize-all-programs=true
-application-shortcuts-list=[['Software', 'ubuntusoftware', 'ArcMenu_Software'], ['Settings', 'org.gnome.Settings', 'org.gnome.Settings.desktop'], ['Displays', '', 'gnome-display-panel.desktop'], ['Extensions', 'org.gnome.Shell.Extensions', 'com.mattjakeman.ExtensionManager.desktop'], ['Tweaks', 'org.gnome.tweaks-symbolic', 'org.gnome.tweaks.desktop'], ['Terminal', 'utilities-terminal-symbolic', 'org.gnome.Terminal.desktop']]
+application-shortcuts-list=[['Software', 'ubuntusoftware', 'ArcMenu_Software'], ['Settings', 'org.gnome.Settings', 'org.gnome.Settings.desktop'], ['Displays', 'org.gnome.Settings-display-symbolic', 'gnome-display-panel.desktop'], ['Extensions', 'org.gnome.Shell.Extensions', 'com.mattjakeman.ExtensionManager.desktop'], ['Tweaks', 'org.gnome.tweaks-symbolic', 'org.gnome.tweaks.desktop'], ['Terminal', 'utilities-terminal-symbolic', 'org.wezfurlong.wezterm.desktop']]
 arc-menu-icon=70
 arc-menu-placement='DTP'
 arcmenu-extra-categories-links=[(0, false), (1, false), (2, false), (3, false), (4, false)]
@@ -50,7 +50,7 @@ multi-monitor=true
 override-menu-theme=false
 pinned-app-list=@as []
 prefs-visible-page=0
-recently-installed-apps=['org.gnome.gedit.desktop', 'com.gexperts.Tilix.desktop', 'thunderbird.desktop', 'ca.desrt.dconf-editor.desktop', 'org.gnome.TextEditor.desktop', 'touchpad-indicator.desktop', 'network.cycles.wdisplays.desktop', 'waydroid.app.onetracker.android.desktop']
+recently-installed-apps=['org.gnome.gedit.desktop', 'com.gexperts.Tilix.desktop', 'ca.desrt.dconf-editor.desktop', 'org.gnome.TextEditor.desktop', 'touchpad-indicator.desktop', 'network.cycles.wdisplays.desktop', 'waydroid.app.onetracker.android.desktop', 'wine-Programs-Roblox-Roblox Studio.desktop']
 remove-menu-arrow=true
 right-panel-width=200
 search-entry-border-radius=(true, 25)

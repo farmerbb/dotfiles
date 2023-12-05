@@ -12,6 +12,7 @@ ALL_EXTENSIONS=(
   ubuntu-appindicators@ubuntu.com
   gsconnect@andyholmes.github.io
   tiling-assistant@ubuntu.com
+  compiz-windows-effect@hermes83.github.com
 )
 
 EXTENSIONS_WEB=(
@@ -22,6 +23,7 @@ EXTENSIONS_WEB=(
   5410 # grand-theft-focus@zalckos.github.com
   3628 # arcmenu@arcmenu.com
   5446 # quick-settings-tweaks@qwreey
+  3210 # compiz-windows-effect@hermes83.github.com
 )
 
 EXTENSIONS_APT=(

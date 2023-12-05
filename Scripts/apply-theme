@@ -25,22 +25,7 @@ for i in Qogir-theme Qogir-icon-theme Qogir-kde grub2-themes; do
   sudo rm -rf $i
 done
 
-FONT_DIR=/usr/share/fonts/truetype/segoe-ui
-# sudo rm -rf $FONT_DIR
-if [[ ! -d $FONT_DIR ]]; then
-  sudo mkdir -p $FONT_DIR
-
-  for i in segoeui segoeuib segoeuii segoeuiz segoeuil seguili segoeuisl seguisli seguisb seguisbi ; do
-    sudo wget -q https://github.com/mrbvrz/segoe-ui/raw/master/font/$i.ttf?raw=true -O $FONT_DIR/$i.ttf > /dev/null 2>&1
-  done
-fi
-
-# wget https://aka.ms/SegoeUIVariable
-# sudo unzip SegoeUIVariable -d $FONT_DIR
-# rm SegoeUIVariable
-
-install-roboto-mono
-sudo fc-cache -f -v
+install-fonts
 
 echo 'gtk-theme-name = Qogir' > ~/.gtkrc-2.0
 echo 'gtk-icon-theme-name = Qogir' >> ~/.gtkrc-2.0
