@@ -100,7 +100,8 @@ rm -rf ~/.config/gtk-4.0
 ln -s ~/.themes/Qogir/gtk-4.0 ~/.config
 
 mkdir -p ~/.config/environment.d
-echo 'QT_QPA_PLATFORMTHEME=qt5ct' > ~/.config/environment.d/envvars.conf
+echo 'QT_QPA_PLATFORM=xcb' > ~/.config/environment.d/envvars.conf
+echo 'QT_QPA_PLATFORMTHEME=qt5ct' >> ~/.config/environment.d/envvars.conf
 echo 'XCURSOR_THEME=Qogir' >> ~/.config/environment.d/envvars.conf
 
 # set-window-color 282a33 || \

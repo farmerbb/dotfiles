@@ -93,10 +93,14 @@ sync-extensions() {
     gnome-extensions install --force "$i"
   done
 
+  if [[ -z $(which curl) ]]; then
+    sudo apt-get update
+    sudo apt-get install -y curl
+  fi
+
   if [[ -z $(which gnome-shell-extension-installer) ]]; then
-    wget -O gnome-shell-extension-installer "https://github.com/brunelli/gnome-shell-extension-installer/raw/master/gnome-shell-extension-installer"
-    chmod +x gnome-shell-extension-installer
-    sudo mv gnome-shell-extension-installer /usr/local/bin
+    sudo curl -L "https://github.com/brunelli/gnome-shell-extension-installer/raw/master/gnome-shell-extension-installer" -o /usr/local/bin/gnome-shell-extension-installer
+    sudo chmod +x /usr/local/bin/gnome-shell-extension-installer
   fi
 
   gnome-shell-extension-installer ${EXTENSIONS_WEB[@]}
