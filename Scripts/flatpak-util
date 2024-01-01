@@ -2,6 +2,7 @@
 
 PACKAGES=(
   86box:net._86box._86Box
+  am2r:io.github.am2r_community_developers.AM2RLauncher
   dolphin:org.DolphinEmu.dolphin-emu
   dosbox-x:com.dosbox_x.DOSBox-X
   eduke32:com.eduke32.EDuke32

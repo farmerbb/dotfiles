@@ -1,10 +1,11 @@
 #!/bin/bash
-if [[ $# -eq 0 || $# -eq 1 ]]; then
+
+print-usage() {
   BASENAME=$(basename "$0")
   echo "Usage: $BASENAME ARCBrowser-export-yyyymmdd-hhmmss.tar <from-device>"
   echo "(where <from-device> is one of: spin713, pixel5, shield, or retroid)"
   exit 1
-fi
+}
 
 convert() {
   BASENAME=$(basename $1)
@@ -249,13 +250,15 @@ convert() {
 
   #################################################################################
 
+  [[ $3 = retroid ]] && sed -i "s/%saf_uri%/%rom_uri%/g" emulators.xml
+
   tar cf "$FINAL_FILENAME" *
 
   cd "$DIRNAME"
   rm -rf "$WORKING_DIR"
 }
 
-if [[ $# -eq 2 ]]; then
+batch-convert() {
   rm -rfv "ARC Browser"
 
   SHIELD_NAME="SHIELD"
@@ -263,7 +266,14 @@ if [[ $# -eq 2 ]]; then
   PIXEL5_NAME="Pixel 5"
   RETROID_NAME="Retroid Pocket 2+"
 
-  for target in shield spin713 pixel5 retroid ; do
+  TARGETS=(
+    shield
+  # spin713
+  # pixel5
+    retroid
+  )
+
+  for target in ${TARGETS[@]}; do
     [[ $2 != $target ]] && convert $1 $2 $target
 
     TEMP_NAME="${target^^}_NAME"
@@ -283,6 +293,26 @@ if [[ $# -eq 2 ]]; then
   done
 
   rm "$1"
+}
+
+if [[ $# -eq 0 ]]; then
+  mountpoint -q ~/NUC || mountpoint -q /mnt/shield || print-usage
+  mountpoint -q ~/OneDrive || print-usage
+
+  echo "Pulling ARC Browser export from SHIELD..."
+  [[ $HOSTNAME != NUC ]] && PREFIX="/home/$USER/NUC"
+  mv $PREFIX/mnt/shield/Android/data/net.floatingpoint.android.arcturus/files/ARCBrowser-export-*.tar . || exit 1
+
+  echo "Converting exports for other devices..."
+  batch-convert ARCBrowser-export-*.tar shield
+
+  echo "Pushing exports to OneDrive..."
+  rm -r ~/OneDrive/Android/Backup/Settings/ARC\ Browser
+  cp -r ARC\ Browser ~/OneDrive/Android/Backup/Settings
+  rm -r ARC\ Browser
 fi
 
+[[ $1 == "--help" ]] && print-usage
+[[ $# -eq 1 ]] && batch-convert $1 shield
+[[ $# -eq 2 ]] && batch-convert $1 $2
 [[ $# -eq 3 ]] && convert $1 $2 $3

@@ -187,6 +187,13 @@
       <model type='qxl' ram='65536' vram='65536' vgamem='65536' heads='1' primary='yes'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x01' function='0x0'/>
     </video>
+    <hostdev mode='subsystem' type='usb' managed='yes'>
+      <source startupPolicy='optional'>
+        <vendor id='0x0e8d'/>
+        <product id='0x1887'/>
+      </source>
+      <address type='usb' bus='0' port='1'/>
+    </hostdev>
     <watchdog model='itco' action='reset'/>
     <memballoon model='none'/>
   </devices>

@@ -471,15 +471,6 @@ install-pip2() {
   rm get-pip.py
 }
 
-clear-local() {
-  for i in $(cat /etc/mtab | grep $(realpath ~/Local) | cut -d' ' -f2); do
-    sudo umount "$i"
-  done
-
-  sudo rm -rf ~/Local/*
-  sudo rm -rf ~/Local/.* >/dev/null 2>&1
-}
-
 git-deep-clean() {
   [[ -f local.properties ]] && mv local.properties /tmp
 
@@ -784,6 +775,16 @@ install-celestia() {
   sudo chmod +x /usr/local/bin/celestia
 }
 
+sync-arc-browser-images() {
+  [[ $HOSTNAME != NUC ]] && mountpoint -q ~/NUC && NUC_PREFIX="/home/$USER/NUC"
+
+  IMG_DIR="net.floatingpoint.android.arcturus/files/game-images"
+  SRC_DIR="$NUC_PREFIX/mnt/shield/Android/data/$IMG_DIR"
+  DEST_DIR="OneDrive:Android/Backup/Emulation/$IMG_DIR"
+
+  [[ -d $SRC_DIR ]] && rclone sync -v $SRC_DIR $DEST_DIR
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -820,7 +821,6 @@ export -f sync-timestamps
 export -f what-is
 export -f git-clone
 export -f install-pip2
-export -f clear-local
 export -f git-deep-clean
 export -f install-deb
 export -f ext4-reclaim-reserved
@@ -848,3 +848,4 @@ export -f install-tvheadend
 export -f apt-upgrade-all
 export -f pi
 export -f install-celestia
+export -f sync-arc-browser-images

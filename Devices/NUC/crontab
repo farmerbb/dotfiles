@@ -31,3 +31,4 @@
 45 0,8,16 * * * bash -i -c robomirror
 0 10 * * * bash -i -c gog-claim-giveaway
 59 23 * * * bash -i -c organize-camera-roll
+0 1 * * * bash -i -c sync-arc-browser-images
