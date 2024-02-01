@@ -24,6 +24,8 @@
 
 @reboot bash ~/Other\ Stuff/Linux/Scripts/docker-util start all
 @reboot bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/nuc-mounts.sh
+@reboot sudo rsync --daemon
+
 * * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/nuc-mounts.sh
 * * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/adguard-watchdog.sh
 0 3 * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/letsencrypt-autorenew.sh

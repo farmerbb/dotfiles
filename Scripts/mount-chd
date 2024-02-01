@@ -1,0 +1,42 @@
+#!/bin/bash
+
+[[ -z $1 ]] && \
+  echo "Usage: $(basename "$0") <path-to-chd>" && \
+  exit 1
+
+$(uname -r | grep "[m|M]icrosoft" > /dev/null) && IS_WSL=true
+
+if [[ ! -z $IS_WSL ]]; then
+  /mnt/z/Games/Utilities/chdman/chdman.exe extractcd -i "$(wslpath -w "$1")" -o %TEMP%\\temp.cue
+  /mnt/z/Other\ Stuff/Utilities/ImgDrive/imgdrivecmd_x64.exe C:\\Users\\Braden\\AppData\\Local\\Temp\\temp.cue
+
+  sleep 1
+  /mnt/c/Windows/explorer.exe D:\\
+else
+  [[ -z $(which chdman) ]] && INSTALL_DEPENDENCIES=true
+  [[ -z $(which fuseiso) ]] && INSTALL_DEPENDENCIES=true
+
+  if [[ ! -z $INSTALL_DEPENDENCIES ]]; then
+    sudo apt-get update
+    sudo apt-get -y install mame-tools fuseiso
+  fi
+
+  chdman extractcd -i "$(realpath "$1")" -o /tmp/temp.cue
+  fuseiso -p /tmp/temp.bin /tmp/mnt
+
+  open /tmp/mnt > /dev/null 2>&1
+fi
+
+echo
+printf "Press Enter to unmount the disc image..."
+read _
+
+if [[ ! -z $IS_WSL ]]; then
+  /mnt/z/Other\ Stuff/Utilities/ImgDrive/imgdrivecmd_x64.exe -u
+  rm /mnt/c/Users/Braden/AppData/Local/Temp/temp.bin
+  rm /mnt/c/Users/Braden/AppData/Local/Temp/temp.cue
+else
+  sudo umount /tmp/mnt
+  rm /tmp/temp.bin
+  rm /tmp/temp.cue
+fi

@@ -1,0 +1,46 @@
+#!/bin/bash
+
+[[ -z $1 ]] && \
+  echo "Usage: $(basename "$0") <path-to-chd>" && \
+  exit 1
+
+$(uname -r | grep "[m|M]icrosoft" > /dev/null) && IS_WSL=true
+
+if [[ ! -z $IS_WSL ]]; then
+  /mnt/z/Games/Utilities/chdman/chdman.exe extractcd -i "$(wslpath -w "$1")" -o %TEMP%\\temp.cue
+else
+  [[ -z $(which chdman) ]] && INSTALL_DEPENDENCIES=true
+  [[ -z $(which bchunk) ]] && INSTALL_DEPENDENCIES=true
+
+  if [[ ! -z $INSTALL_DEPENDENCIES ]]; then
+    sudo apt-get update
+    sudo apt-get -y install mame-tools bchunk
+  fi
+
+  chdman extractcd -i "$(realpath "$1")" -o /tmp/temp.cue
+fi
+
+DIR_NAME="$(basename "$1" | sed 's/.chd//')"
+mkdir "$DIR_NAME"
+cd "$DIR_NAME"
+
+if [[ ! -z $IS_WSL ]]; then
+  /mnt/z/Other\ Stuff/Utilities/bchunk.exe -w C:\\Users\\Braden\\AppData\\Local\\Temp\\temp.bin C:\\Users\\Braden\\AppData\\Local\\Temp\\temp.cue "Track "
+else
+  bchunk -w /tmp/temp.bin /tmp/temp.cue "Track "
+fi
+
+ls -1 *.wav > /dev/null 2>&1
+if [[ $? -ne 0 ]]; then
+  cd ..
+  mv "$DIR_NAME/Track 01.iso" "$DIR_NAME.iso"
+  rm -r "$DIR_NAME"
+fi
+
+if [[ ! -z $IS_WSL ]]; then
+  rm /mnt/c/Users/Braden/AppData/Local/Temp/temp.bin
+  rm /mnt/c/Users/Braden/AppData/Local/Temp/temp.cue
+else
+  rm /tmp/temp.bin
+  rm /tmp/temp.cue
+fi

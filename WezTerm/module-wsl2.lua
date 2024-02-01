@@ -1,4 +1,4 @@
--- I am module-common.lua and I should live in ~/.config/wezterm/module-common.lua
+-- I am module-wsl2.lua and I should live in ~/.config/wezterm/module-wsl2.lua
 
 local wezterm = require 'wezterm'
 
@@ -12,16 +12,7 @@ local module = {}
 -- the config is for them to export an `apply_to_config`
 -- function that accepts the config object, like this:
 function module.apply_to_config(config)
-  config.color_scheme = 'Symfonic'
-  config.font = wezterm.font 'Roboto Mono'
-  config.font_size = 10.0
-  config.window_decorations = 'INTEGRATED_BUTTONS|RESIZE'
-  config.enable_scroll_bar = true
-  config.detect_password_input = true
-  config.animation_fps = 60
-  config.cursor_thickness = 2
-  config.show_tab_index_in_tab_bar = false
-  config.audible_bell = "Disabled"
+  config.default_domain = 'WSL:Debian'
 end
 
 -- return our module table

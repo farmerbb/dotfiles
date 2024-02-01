@@ -17,16 +17,18 @@ bashrc-additions linux-generic
 [[ -d "$IDE_DIR" ]] && bashrc-additions android-dev
 [[ $(which gnome-shell) ]] && bashrc-additions gnome
 [[ $(lsb_release -is 2>/dev/null) = Ubuntu ]] && bashrc-additions ubuntu
-$(uname -r | grep "[m|M]icrosoft" > /dev/null) && bashrc-additions wsl
+
+$(uname -r | grep "[m|M]icrosoft" > /dev/null) && IS_WSL=true
+[[ ! -z $IS_WSL ]] && bashrc-additions wsl
 
 case $(sudo dmidecode -s system-product-name 2>/dev/null) in
   "XPS 13 9310")
     bashrc-additions xps13
   ;;
 
-  "Kled")
-    bashrc-additions spin713
-  ;;
+# "Kled")
+#   bashrc-additions spin713
+# ;;
 
   "NUC8i5BEK")
     bashrc-additions nuc
@@ -46,6 +48,14 @@ case $(tr -d '\0' 2>/dev/null < /proc/device-tree/model) in
     bashrc-additions pi
   ;;
 esac
+
+if [[ ! -z $IS_WSL ]]; then
+  case $HOSTNAME in
+    "spin713")
+      bashrc-additions spin713
+    ;;
+  esac
+fi
 
 unset -f bashrc-additions
 return 0 2>/dev/null

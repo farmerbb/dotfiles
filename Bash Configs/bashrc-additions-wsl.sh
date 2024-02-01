@@ -29,6 +29,10 @@ export OD_DEVICE_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Linux/WSL2"
 # export LIBGL_ALWAYS_INDIRECT=1
 export PATH="$PATH:$LINUX_DIR_PREFIX/Scripts"
 
+alias sudo="sudo "
+alias poweroff="/mnt/c/Windows/System32/shutdown.exe /s /t 0"
+alias reboot="/mnt/c/Windows/System32/shutdown.exe /r /t 0"
+
 [[ -f ~/.bash-preexec.sh ]] && source ~/.bash-preexec.sh
 
 preexec() {
@@ -55,4 +59,9 @@ copy-shortcuts-to-start-menu() {
   cd - > /dev/null
 }
 
+open() {
+  /mnt/c/Windows/explorer.exe "$(wslpath -w "$1")"
+}
+
 export -f copy-shortcuts-to-start-menu
+export -f open

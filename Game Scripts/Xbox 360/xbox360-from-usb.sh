@@ -15,7 +15,7 @@ for i in Content/**/**/**/*; do
   $WINE ./X360PkgTool.exe "$i" > output.txt
 
   if [[ $? = 0 ]]; then
-    DISPLAY_NAME=$(cat output.txt | dos2unix -f | grep "Display Name:" | sed "s/Display Name://g" | awk '{$1=$1};1' | sed "s/:/ -/g")
+    DISPLAY_NAME=$(cat output.txt | dos2unix -f | grep -a "Display Name:" | sed "s/Display Name://g" | awk '{$1=$1};1' | sed "s/:/ -/g" | tr -cd '\40\41\43-\51\55\60-\73\100-\132\141-\172')
 
     echo "Moving $DISPLAY_NAME..."
 

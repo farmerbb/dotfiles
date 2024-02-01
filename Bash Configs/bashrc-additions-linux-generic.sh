@@ -27,6 +27,7 @@ alias docker-clean="sudo docker system prune --volumes -a -f"
 alias download-chromeosflex="wget --trust-server-names https://dl.google.com/chromeos-flex/images/latest.bin.zip"
 alias firmware-util="curl -LOk mrchromebox.tech/firmware-util.sh && sudo bash firmware-util.sh; rm firmware-util.sh"
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
+alias hypercalc="perl ~/Other\ Stuff/Utilities/hypercalc.txt"
 alias mine="sudo chown -R $USER:$USER"
 alias mount-all="sudo mount -a && mount-adbfs"
 alias port-monitor='watch -n1 "sudo lsof -i -P -n | grep LISTEN"'
@@ -133,7 +134,7 @@ cat() {
   elif [[ ! -z $(sed -n '/\x0/ { s/\x0/<NUL>/g; p}' "$1") ]]; then
     xxd -g1 "$1"
   else
-    $(which cat) "$@"
+    highlight -O ansi --force "$@"
   fi
 }
 
@@ -515,6 +516,31 @@ process-args() {
 }
 
 robomirror() {
+  $(uname -r | grep "[m|M]icrosoft" > /dev/null) && IS_WSL=true
+
+  [[ -z $(which nc) ]] && INSTALL_DEPENDENCIES=true
+  [[ -z $IS_WSL ]] && [[ -z $(which rsync) ]] && INSTALL_DEPENDENCIES=true
+  [[ -z $IS_WSL ]] && [[ -z $(which rclone) ]] && INSTALL_DEPENDENCIES=true
+
+  if [[ ! -z $INSTALL_DEPENDENCIES ]]; then
+    sudo apt-get update
+    sudo apt-get -y install netcat-openbsd rclone rsync
+  fi
+
+  if [[ -z $IS_WSL ]]; then
+    RSYNC=rsync
+    RSYNC_DEST_ROOT=/home/$USER
+
+    RCLONE=rclone
+    RCLONE_DEST_ROOT=/home/$USER
+  else
+    RSYNC=/mnt/z/Other\ Stuff/Utilities/cwRsync/bin/rsync.exe
+    RSYNC_DEST_ROOT=/cygdrive/z
+
+    RCLONE=/mnt/z/Other\ Stuff/Utilities/rclone/rclone.exe
+    RCLONE_DEST_ROOT=Z:
+  fi
+
   if [[ -z $1 ]]; then
     if [[ $HOSTNAME = NUC ]]; then
       SOURCE=onedrive
@@ -545,13 +571,13 @@ robomirror() {
     if [[ $SOURCE = nuc ]]; then
       echo "Mirroring $DIR from NUC using rsync..."
       echo
-      rsync -avuz --no-perms --delete --inplace --compress-choice=zstd --compress-level=1 "farmerbb@nuc:/mnt/files/$DIR/" "/home/$USER/$DIR"
+      "$RSYNC" -avuz --no-perms --delete --inplace --compress-choice=zstd --compress-level=1 "192.168.86.10::Files/$DIR/" "$RSYNC_DEST_ROOT/$DIR"
     fi
 
     if [[ $SOURCE = onedrive ]]; then
       echo "Mirroring $DIR from OneDrive using rclone..."
       echo
-      rclone sync -v "OneDrive:$DIR" "/home/$USER/$DIR"
+      "$RCLONE" sync -v "OneDrive:$DIR" "$RCLONE_DEST_ROOT/$DIR"
     fi
 
     echo
@@ -697,13 +723,16 @@ video-capture() {
     sudo apt-get install -y v4l-utils guvcview
   fi
 
+  DEVICE=$(v4l2-ctl --list-devices | grep -A1 "USB Video" | tail -n1 | xargs)
+  v4l2-ctl -d $DEVICE -c brightness=0
+  v4l2-ctl -d $DEVICE -c contrast=128
+  v4l2-ctl -d $DEVICE -c saturation=128
+  v4l2-ctl -d $DEVICE -c hue=0
+
   arecord -D sysdefault:CARD=MS2109 -f cd - | aplay - &
   disown
 
-  guvcview \
-    --profile=~/Other\ Stuff/Linux/Ubuntu/default.gpfl \
-    --device=$(v4l2-ctl --list-devices | grep -A1 "USB Video" | tail -n1 | xargs) \
-    > /dev/null 2>&1
+  guvcview --device=$DEVICE > /dev/null 2>&1
 
   sudo pkill arecord
   echo
@@ -785,6 +814,14 @@ sync-arc-browser-images() {
   [[ -d $SRC_DIR ]] && rclone sync -v $SRC_DIR $DEST_DIR
 }
 
+install-rsyncd() {
+  echo "[Files]" | sudo tee /etc/rsyncd.conf > /dev/null
+  echo "path = /mnt/files" | sudo tee -a /etc/rsyncd.conf > /dev/null
+
+  sudo ufw allow 873/tcp
+  sudo rsync --daemon
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -849,3 +886,4 @@ export -f apt-upgrade-all
 export -f pi
 export -f install-celestia
 export -f sync-arc-browser-images
+export -f install-rsyncd

@@ -17,8 +17,10 @@ for i in *; do
   if [[ $? = 0 ]]; then
     echo "Moving $i..."
 
-    CONTENT_ID=$(cat output.txt | dos2unix -f | grep "Content Id:" | sed "s/Content Id://g" | awk '{$1=$1};1')
-    INSTALL_DIR=$(cat output.txt | dos2unix -f | grep "Install Dir:" | sed "s/Install Dir://g" | awk '{$1=$1};1' | sed -e "s#\\\#/#g")
+    CONTENT_ID=$(cat output.txt | dos2unix -f | grep -a "Content Id:" | sed "s/Content Id://g" | awk '{$1=$1};1')
+    INSTALL_DIR=$(cat output.txt | dos2unix -f | grep -a "Install Dir:" | sed "s/Install Dir://g" | awk '{$1=$1};1' | sed -e "s#\\\#/#g")
+
+    [[ $(echo $INSTALL_DIR | cut -d'/' -f3) == 00007000 ]] && CONTENT_ID=$(echo $CONTENT_ID | cut -c1-32,41-)
 
     mkdir -p "Content/$INSTALL_DIR"
     mv "$i" "Content/$INSTALL_DIR/$CONTENT_ID"

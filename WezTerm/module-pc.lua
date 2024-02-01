@@ -1,4 +1,4 @@
--- I am module-windows.lua and I should live in ~/.config/wezterm/module-windows.lua
+-- I am module-pc.lua and I should live in ~/.config/wezterm/module-pc.lua
 
 local wezterm = require 'wezterm'
 
@@ -12,10 +12,6 @@ local module = {}
 -- the config is for them to export an `apply_to_config`
 -- function that accepts the config object, like this:
 function module.apply_to_config(config)
-  config.initial_cols = 105
-  config.initial_rows = 30
-  config.window_background_opacity = 0.75
-  config.win32_system_backdrop = 'Acrylic'
   config.default_domain = 'PC'
   config.ssh_domains = {
     {

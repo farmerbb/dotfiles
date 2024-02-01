@@ -1,10 +1,37 @@
 #!/bin/bash
-# From https://unix.stackexchange.com/a/646901
 
 if [[ $(whoami) != root ]]; then
   sudo "$0"
   exit $?
 fi
+
+echo "Creating swapfile..."
+swapoff /swapfile > /dev/null 2>&1
+rm -f /swapfile
+
+dd if=/dev/zero of=/swapfile bs=$(getconf PAGE_SIZE) count=$(getconf _PHYS_PAGES)
+dd if=/dev/zero of=/swapfile ibs=4096 count=1 obs=4096 oflag=append conv=notrunc
+
+chmod 600 /swapfile
+mkswap /swapfile
+
+echo
+echo "Please add the following arguments to GRUB_CMD_LINUX_DEFAULT:"
+echo
+echo "  resume=UUID=$(findmnt -no UUID -T /swapfile) resume_offset=$(sudo filefrag -v /swapfile | awk '$1=="0:" {print substr($4, 1, length($4)-2)}')"
+echo
+
+printf "Press Enter to continue..."
+read _
+
+su farmerbb -c '/bin/bash -i -c edit-grub-config'
+
+
+
+# Begin self-poweroff install script
+# From https://unix.stackexchange.com/a/646901
+
+
 
 sysd=/etc/systemd/system
 
@@ -34,13 +61,14 @@ EOF
 cat > "$sysd/self-poweroff.service" <<'EOF'
 [Unit]
 Description=Actual self-poweroff after suspend
-After=suspend.target 
+After=suspend.target
 Before=system-is-back-after-suspend.target
 RefuseManualStart=true
 
 [Service]
 Type=oneshot
-ExecStart=/bin/systemctl --no-block poweroff
+ExecStart=/usr/sbin/swapon /swapfile
+ExecStart=/bin/systemctl --no-block hibernate
 # Uncomment the following line while commenting out the above line for testing.
 #ExecStart=/bin/echo poweroff
 # Note the echoed string goes to systemd journal log.
@@ -75,8 +103,29 @@ StopWhenUnneeded=yes
 EOF
 
 cat > /etc/self-poweroff.conf <<'EOF'
-MY_SUSPEND_TIMEOUT=1 day
+MY_SUSPEND_TIMEOUT=2 hours
 EOF
 
 systemctl enable schedule-self-poweroff.service cancel-self-poweroff.service
 systemctl daemon-reload
+
+
+
+# End self-poweroff install script
+
+
+
+cat > /lib/systemd/system-sleep/99-disable-swapfile <<'EOF'
+#!/bin/sh
+
+case "$1" in
+  post)
+    /usr/sbin/swapoff /swapfile
+    ;;
+esac
+EOF
+
+chmod +x /lib/systemd/system-sleep/99-disable-swapfile
+
+echo
+echo "Please reboot to apply changes."
