@@ -19,6 +19,7 @@ fi
 
 alias 7z='~/Other\ Stuff/Utilities/7-Zip/Linux/7zz'
 alias badram='sudo cat /proc/iomem | grep "Unusable memory"'
+alias chdman='~/Games/Utilities/chdman/chdman'
 alias cpu-monitor='watch -n1 "lscpu -e; echo; sensors coretemp-isa-0000 dell_smm-isa-0000"'
 alias current-governor="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
 alias disable-android-tv-launcher="adb shell pm disable-user --user 0 com.google.android.tvlauncher"

@@ -277,9 +277,12 @@ install-wezterm() {
     sudo apt-get install -y curl
   fi
 
-  curl -LO https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu22.04.deb
-  install-deb ./wezterm-nightly.Ubuntu22.04.deb
-  rm ./wezterm-nightly.Ubuntu22.04.deb
+  TAG=$(curl --silent "https://api.github.com/repos/wez/wezterm/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+  FILENAME=wezterm-$TAG.Ubuntu22.04.deb
+
+  curl -LO https://github.com/wez/wezterm/releases/download/$TAG/$FILENAME
+  install-deb ./$FILENAME
+  rm ./$FILENAME
 
   rm -rf ~/.config/wezterm
   cp -r ~/Other\ Stuff/Linux/WezTerm ~/.config/wezterm

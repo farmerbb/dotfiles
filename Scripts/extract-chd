@@ -7,17 +7,17 @@
 $(uname -r | grep "[m|M]icrosoft" > /dev/null) && IS_WSL=true
 
 if [[ ! -z $IS_WSL ]]; then
-  /mnt/z/Games/Utilities/chdman/chdman.exe extractcd -i "$(wslpath -w "$1")" -o %TEMP%\\temp.cue
+  /mnt/z/Games/Utilities/chdman/chdman.exe extractcd -i "$(wslpath -w "$1")" -o C:\\Users\\Braden\\AppData\\Local\\Temp\\temp.cue
 else
-  [[ -z $(which chdman) ]] && INSTALL_DEPENDENCIES=true
+# [[ -z $(which chdman) ]] && INSTALL_DEPENDENCIES=true
   [[ -z $(which bchunk) ]] && INSTALL_DEPENDENCIES=true
 
   if [[ ! -z $INSTALL_DEPENDENCIES ]]; then
     sudo apt-get update
-    sudo apt-get -y install mame-tools bchunk
+    sudo apt-get -y install bchunk # mame-tools
   fi
 
-  chdman extractcd -i "$(realpath "$1")" -o /tmp/temp.cue
+  ~/Games/Utilities/chdman/chdman extractcd -i "$(realpath "$1")" -o /tmp/temp.cue
 fi
 
 DIR_NAME="$(basename "$1" | sed 's/.chd//')"
