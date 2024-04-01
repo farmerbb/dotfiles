@@ -1,0 +1,6 @@
+[/]
+always-minimized=0
+anchor-horizontal=1
+anchor-vertical=1
+animation-direction=3
+animation-time=200

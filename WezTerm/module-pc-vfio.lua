@@ -1,4 +1,4 @@
--- I am module-pc.lua and I should live in ~/.config/wezterm/module-pc.lua
+-- I am module-pc-vfio.lua and I should live in ~/.config/wezterm/module-pc-vfio.lua
 
 local wezterm = require 'wezterm'
 

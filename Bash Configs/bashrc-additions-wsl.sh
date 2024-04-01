@@ -29,7 +29,6 @@ export OD_DEVICE_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Linux/WSL2"
 # export LIBGL_ALWAYS_INDIRECT=1
 export PATH="$PATH:$LINUX_DIR_PREFIX/Scripts"
 
-alias sudo="sudo "
 alias poweroff="/mnt/c/Windows/System32/shutdown.exe /s /t 0"
 alias reboot="/mnt/c/Windows/System32/shutdown.exe /r /t 0"
 

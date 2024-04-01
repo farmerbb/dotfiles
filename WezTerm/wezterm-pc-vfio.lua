@@ -1,6 +1,6 @@
 local common = require 'module-common'
 local windows_common = require 'module-windows-common'
-local pc = require 'module-pc'
+local pc_vfio = require 'module-pc-vfio'
 
 -- Pull in the wezterm API
 local wezterm = require 'wezterm'
@@ -18,7 +18,7 @@ end
 
 common.apply_to_config(config)
 windows_common.apply_to_config(config)
-pc.apply_to_config(config)
+pc_vfio.apply_to_config(config)
 
 -- and finally, return the configuration to wezterm
 return config

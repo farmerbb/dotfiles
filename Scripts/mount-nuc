@@ -1,16 +1,16 @@
 #!/bin/bash
 
 do-mount() {
-  mountpoint -q ~/NUC || \
-  sshfs nuc:/ ~/NUC -o follow_symlinks
+  mountpoint -q /mnt/NUC || \
+  sshfs nuc:/ /mnt/NUC -o follow_symlinks
 }
 
 do-unmount() {
 # [[ "$PWD" == $(realpath ~/NUC) ]] && cd
   ssh -q -O stop nuc
-  sudo umount ~/NUC 2> /dev/null || \
-  sudo umount -f ~/NUC 2> /dev/null || \
-  sudo umount -l ~/NUC 2> /dev/null
+  sudo umount /mnt/NUC 2> /dev/null || \
+  sudo umount -f /mnt/NUC 2> /dev/null || \
+  sudo umount -l /mnt/NUC 2> /dev/null
 }
 
 timeout 1 nc -z 192.168.86.10 22 2> /dev/null

@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# DPI=$(xdpyinfo | grep resolution | cut -d' ' -f 7 | cut -d'x' -f 1 | cut -d'.' -f 1)
+DPI=$(xrdb -get Xft.dpi)
+
+[[ $DPI -ne 96 ]] && PREFIX=~/.wine
+[[ $DPI -eq 96 ]] && PREFIX=~/.wine-monitor
+
+WINEPREFIX=$PREFIX "$@"

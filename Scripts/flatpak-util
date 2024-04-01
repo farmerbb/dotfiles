@@ -9,15 +9,15 @@ PACKAGES=(
   ezquake:io.github.ezQuake
   flatseal:com.github.tchx84.Flatseal
   gzdoom:org.zdoom.GZDoom
-  imhex:net.werwolv.ImHex
+  jazz2:tk.deat.Jazz2Resurrection
   pegasus:org.pegasus_frontend.Pegasus
   pysol:io.sourceforge.pysolfc.PySolFC
   retroarch:org.libretro.RetroArch
   rigelengine:io.github.lethal_guitar.RigelEngine
+  ryujinx:org.ryujinx.Ryujinx
   sonic3air:org.sonic3air.Sonic3AIR
   srb2:org.srb2.SRB2
   yamagi:org.yamagi.YamagiQ2
-  yuzu:org.yuzu_emu.yuzu
 )
 
 install-package() {

@@ -87,7 +87,7 @@ install-container() {
         -e PEERDNS=none \
         -e ALLOWEDIPS=10.13.13.0/24,192.168.86.0/24 \
         -e LOG_CONFS=true \
-        -v /mnt/files/Other\ Stuff/Linux/Network\ Config/WireGuard:/config \
+        -v /home/farmerbb/WireGuard:/config \
         --restart unless-stopped \
         lscr.io/linuxserver/wireguard:latest
     ;;

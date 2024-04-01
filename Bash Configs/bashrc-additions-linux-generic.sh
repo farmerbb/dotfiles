@@ -28,9 +28,11 @@ alias docker-clean="sudo docker system prune --volumes -a -f"
 alias download-chromeosflex="wget --trust-server-names https://dl.google.com/chromeos-flex/images/latest.bin.zip"
 alias firmware-util="curl -LOk mrchromebox.tech/firmware-util.sh && sudo bash firmware-util.sh; rm firmware-util.sh"
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
+alias hibernate="sudo swapon /swapfile; sudo systemctl --no-block hibernate || sudo swapoff /swapfile"
 alias hypercalc="perl ~/Other\ Stuff/Utilities/hypercalc.txt"
 alias mine="sudo chown -R $USER:$USER"
 alias mount-all="sudo mount -a && mount-adbfs"
+alias nano='MICRO_TRUECOLOR=1 micro'
 alias port-monitor='watch -n1 "sudo lsof -i -P -n | grep LISTEN"'
 alias public-ip="dig @resolver4.opendns.com myip.opendns.com +short"
 alias public-ipv6="dig @resolver1.ipv6-sandbox.opendns.com AAAA myip.opendns.com +short -6"
@@ -38,6 +40,7 @@ alias qemu="qemu-system-x86_64 -monitor stdio -accel kvm -cpu host -m 4G -smp co
 alias qemu-gl="qemu -display gtk,gl=on -device virtio-vga-gl"
 alias qemu95="qemu-system-i386 -monitor stdio -cpu pentium -vga cirrus -nic user,model=pcnet -device sb16 -m 256"
 alias starwars="telnet towel.blinkenlights.nl"
+alias sudo="sudo "
 alias reboot-device="restart-device"
 alias reset-webcam="usbreset 046d:082c"
 alias robomirror-linux-dir='SYNC_DIRS=("Other Stuff/Linux"); robomirror onedrive'
@@ -48,6 +51,9 @@ alias trim="sudo fstrim -av"
 alias turn-off-tv="curl -X POST http://192.168.86.44:8060/keypress/PowerOff"
 alias usb-monitor="clear; sudo udevadm monitor --subsystem-match=usb --property"
 alias usbtop="sudo modprobe usbmon; sudo usbtop"
+alias wine="winecmd wine"
+alias winecfg="winecmd winecfg"
+alias wineserver="winecmd wineserver"
 alias wireguard-up="ssh -q -O stop nuc; sudo wg-quick up wg0 && timeout 10 mount-nuc"
 alias wireguard-down="ssh -q -O stop nuc; sudo wg-quick down wg0 && timeout 10 mount-nuc"
 alias youtube-dl="python3 ~/Other\ Stuff/Audio\ \&\ Video\ Tools/youtube-dl"
@@ -517,6 +523,7 @@ process-args() {
 }
 
 robomirror() {
+  LOCKFILE=/run/user/$UID/.robomirror
   $(uname -r | grep "[m|M]icrosoft" > /dev/null) && IS_WSL=true
 
   [[ -z $(which nc) ]] && INSTALL_DEPENDENCIES=true
@@ -566,6 +573,12 @@ robomirror() {
     echo 'SYNC_DIRS variable is not defined; exiting' && \
     return 1
 
+  [[ -f $LOCKFILE ]] && \
+    echo "Lockfile $LOCKFILE is present; exiting" && \
+    return 1
+
+  touch $LOCKFILE
+
   for i in ${!SYNC_DIRS[@]}; do
     DIR="${SYNC_DIRS[$i]}"
 
@@ -583,6 +596,8 @@ robomirror() {
 
     echo
   done
+
+  rm $LOCKFILE
 }
 
 docker-stop() {

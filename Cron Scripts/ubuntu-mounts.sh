@@ -6,11 +6,11 @@ touch /tmp/ubuntu-mounts.running
 
 ##################################################
 
-mountpoint -q ~/OneDrive || \
-daemonize $(which rclone) --vfs-cache-mode writes mount OneDrive: ~/OneDrive
+mountpoint -q /mnt/OneDrive || \
+daemonize $(which rclone) --vfs-cache-mode writes mount OneDrive: /mnt/OneDrive
 
-mountpoint -q ~/AndroidData || \
-sudo bindfs --force-user=farmerbb --force-group=farmerbb ~/.local/share/waydroid/data ~/AndroidData
+mountpoint -q /mnt/AndroidData || \
+sudo bindfs --force-user=farmerbb --force-group=farmerbb ~/.local/share/waydroid/data /mnt/AndroidData
 
 timeout 10 mount-nuc
 timeout 10 mount-adbfs

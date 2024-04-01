@@ -34,9 +34,9 @@ case $(sudo dmidecode -s system-product-name 2>/dev/null) in
     bashrc-additions nuc
   ;;
 
-  "B85M-D3V")
-    bashrc-additions pc
-  ;;
+# "B85M-D3V")
+#   bashrc-additions pc
+# ;;
 
   "Standard PC (Q35 + ICH9, 2009)")
     bashrc-additions vm
@@ -53,6 +53,10 @@ if [[ ! -z $IS_WSL ]]; then
   case $HOSTNAME in
     "spin713")
       bashrc-additions spin713
+    ;;
+
+    "PC")
+      bashrc-additions pc
     ;;
   esac
 fi

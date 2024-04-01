@@ -1,5 +1,4 @@
 ALL_EXTENSIONS=(
-  burn-my-windows@schneegans.github.com
   dash-to-panel@jderose9.github.com
   mprisLabel@moon-0xff.github.com
   user-theme@gnome-shell-extensions.gcampax.github.com
@@ -13,10 +12,11 @@ ALL_EXTENSIONS=(
   gsconnect@andyholmes.github.io
   tiling-assistant@ubuntu.com
   compiz-windows-effect@hermes83.github.com
+  notification-banner-reloaded@marcinjakubowski.github.com
+  transparent-window-moving@noobsai.github.com
 )
 
 EXTENSIONS_WEB=(
-  4679 # burn-my-windows@schneegans.github.com
   1160 # dash-to-panel@jderose9.github.com
   4928 # mprisLabel@moon-0xff.github.com
   19   # user-theme@gnome-shell-extensions.gcampax.github.com
@@ -24,6 +24,8 @@ EXTENSIONS_WEB=(
   3628 # arcmenu@arcmenu.com
   5446 # quick-settings-tweaks@qwreey
   3210 # compiz-windows-effect@hermes83.github.com
+  4651 # notification-banner-reloaded@marcinjakubowski.github.com
+  1446 # transparent-window-moving@noobsai.github.com
 )
 
 EXTENSIONS_APT=(

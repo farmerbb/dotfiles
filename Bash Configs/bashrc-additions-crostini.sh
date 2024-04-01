@@ -57,14 +57,6 @@ set-window-color() {
   restart-sommelier
 }
 
-wine() {
-  DPI=$(xdpyinfo | grep resolution | cut -d' ' -f 7 | cut -d'x' -f 1 | cut -d'.' -f 1)
-  [[ $DPI -ne 96 ]] && PREFIX=~/.wine
-  [[ $DPI -eq 96 ]] && PREFIX=~/.wine-monitor
-
-  WINEPREFIX=$PREFIX $(which wine) "$@"
-}
-
 fix() {
   DPI=$(xdpyinfo | grep resolution | cut -d' ' -f 7 | cut -d'x' -f 1 | cut -d'.' -f 1)
   [[ $DPI -ne 96 ]] && SCALE=0.625
@@ -173,7 +165,6 @@ resize-crostini-disk() {
 export -f vm-escape
 export -f restart-sommelier
 export -f set-window-color
-export -f wine
 export -f fix
 export -f fix-gtk3
 export -f fix-qt

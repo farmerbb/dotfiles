@@ -12,7 +12,7 @@ local module = {}
 -- the config is for them to export an `apply_to_config`
 -- function that accepts the config object, like this:
 function module.apply_to_config(config)
-  config.default_domain = 'WSL:Debian'
+  config.default_domain = 'WSL:Ubuntu'
 end
 
 -- return our module table

@@ -103,7 +103,7 @@ convert() {
     UI_SCALE_TO=1.0
   elif [[ $3 = retroid ]] ; then
     STORAGE_DIR_TO=$RETROID_DIR
-    HIDE_GC_TO=false
+    HIDE_GC_TO=true
     HIDE_WII_TO=true
     HIDE_PS1_TO=false
     HIDE_DC_TO=false
@@ -114,8 +114,8 @@ convert() {
     UI_SCALE_TO=1.0
   fi
 
-  BIG_CHUNGUS_FIRST=\</data\>\<data\ key=\"scrapingBackgroundDownloadCount\"\ nullValue=\"false\"\>1\</data\>\<data\ key=\"scrapingScreenshotSubtypeBlacklist\"\ nullValue=\"false\"\>\</data\>\<data\ key=\"hideFromLists\"\ nullValue=\"false\"\>
-  BIG_CHUNGUS_SECOND=\</data\>\\n\ \ \ \ \ \ \ \ \<data\ key=\"scrapingBackgroundDownloadCount\"\ nullValue=\"false\"\>1\</data\>\\n\ \ \ \ \ \ \ \ \<data\ key=\"scrapingScreenshotSubtypeBlacklist\"\ nullValue=\"false\"\>\</data\>\\n\ \ \ \ \ \ \ \ \<data\ key=\"hideFromLists\"\ nullValue=\"false\"\>
+  BIG_CHUNGUS_FIRST=\</data\>\<data\ key=\"launchIntentFlags\"\ nullValue=\"false\"\>268435456\</data\>\<data\ key=\"scrapingBackgroundDownloadCount\"\ nullValue=\"false\"\>1\</data\>\<data\ key=\"scrapingScreenshotSubtypeBlacklist\"\ nullValue=\"false\"\>\</data\>\<data\ key=\"hideFromLists\"\ nullValue=\"false\"\>
+  BIG_CHUNGUS_SECOND=\</data\>\\n\ \ \ \ \ \ \ \ \<data\ key=\"launchIntentFlags\"\ nullValue=\"false\"\>268435456\</data\>\\n\ \ \ \ \ \ \ \ \<data\ key=\"scrapingBackgroundDownloadCount\"\ nullValue=\"false\"\>1\</data\>\\n\ \ \ \ \ \ \ \ \<data\ key=\"scrapingScreenshotSubtypeBlacklist\"\ nullValue=\"false\"\>\</data\>\\n\ \ \ \ \ \ \ \ \<data\ key=\"hideFromLists\"\ nullValue=\"false\"\>
 
   cd "$DIRNAME"
   rm -rf "$WORKING_DIR"
@@ -250,7 +250,10 @@ convert() {
 
   #################################################################################
 
-  [[ $3 = retroid ]] && sed -i "s/%saf_uri%/%rom_uri%/g" emulators.xml
+  if [[ $3 = retroid ]]; then
+    sed -i "s/%saf_uri%/%rom_uri%/g" emulators.xml
+    sed -i "s/96,1,97,2/96,2,97,1/g" settings.xml
+  fi
 
   tar cf "$FINAL_FILENAME" *
 
@@ -264,7 +267,7 @@ batch-convert() {
   SHIELD_NAME="SHIELD"
   SPIN713_NAME="Acer Spin 713"
   PIXEL5_NAME="Pixel 5"
-  RETROID_NAME="Retroid Pocket 2+"
+  RETROID_NAME="RG ARC-D"
 
   TARGETS=(
     shield
@@ -296,8 +299,8 @@ batch-convert() {
 }
 
 if [[ $# -eq 0 ]]; then
-  mountpoint -q ~/NUC || mountpoint -q /mnt/shield || print-usage
-  mountpoint -q ~/OneDrive || print-usage
+  mountpoint -q /mnt/NUC || mountpoint -q /mnt/shield || print-usage
+  mountpoint -q /mnt/OneDrive || print-usage
 
   echo "Pulling ARC Browser export from SHIELD..."
   [[ $HOSTNAME != NUC ]] && PREFIX="/home/$USER/NUC"

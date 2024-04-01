@@ -44,11 +44,11 @@ if [[ -f "$SH_PATH" ]] ; then
   echo Running custom shell script for \"$*\".
   bash "$SH_PATH"
 else
-  if [[ $0 == *winebox* ]] ; then
-    winebox start /d "$WORKING_DIR" "$LOCAL_PATH"
-  else
-    wine start /d "$WORKING_DIR" "$LOCAL_PATH"
-  fi
+# if [[ $0 == *winebox* ]] ; then
+#   winebox start /d "$WORKING_DIR" "$LOCAL_PATH"
+# else
+    winecmd wine start /d "$WORKING_DIR" "$LOCAL_PATH"
+# fi
 
   if [[ $? -eq 0 ]] ; then
     echo Starting app \"$*\".

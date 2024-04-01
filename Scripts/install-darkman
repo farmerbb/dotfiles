@@ -8,6 +8,10 @@ git clone https://gitlab.com/WhyNotHugo/darkman.git
 cd darkman
 git checkout 8bbd5a63
 
+for i in $(cat Makefile | grep '${DESTDIR}${PREFIX}' | sed 's#^.*${DESTDIR}${PREFIX}#/usr#'); do
+  sudo rm -f $i
+done
+
 make
 sudo make install
 cd ..
@@ -28,6 +32,8 @@ echo "sed -i 's/theme=Qogir-dark-solid/theme=Qogir-solid/g' ~/.config/Kvantum/kv
 chmod +x ~/.local/share/light-mode.d/light-theme.sh
 
 systemctl --user enable --now darkman.service
+
+sudo rm -rf ~/go
 
 echo
 echo "Please go to Settings -> Privacy and make sure that Location Services are enabled, then reboot."

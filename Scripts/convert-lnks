@@ -35,9 +35,16 @@ while IFS= read -r lnk; do
   ICON_LOCATION=$(lnkinfo "$lnk" | grep "Icon location")
   if [[ -z $ICON_LOCATION ]] ; then
     ICON_LOCATION=$(lnkinfo "$lnk" | grep "Local path")
-    ICON_LOCATION=$(echo $ICON_LOCATION | sed -e "s/Local path : //g" -e "s#D:#$(echo ~)#g" -e "s#\\\#/#g")
+    ICON_LOCATION=$(echo $ICON_LOCATION | sed "s/Local path : //g")
+
+    if [[ -z $ICON_LOCATION ]]; then
+      ICON_LOCATION=$(lnkinfo "$lnk" | grep "Network path")
+      ICON_LOCATION=$(echo $ICON_LOCATION | sed 's/Network path : \\\\192.168.122.1\\Files/Z:/g')
+    fi
+
+    ICON_LOCATION=$(echo $ICON_LOCATION | sed -e "s#Z:#$(echo ~)#g" -e "s#\\\#/#g")
   else
-    ICON_LOCATION=$(echo $ICON_LOCATION | sed -e "s/Icon location : //g" -e "s#D:#$(echo ~)#g" -e "s#\\\#/#g")
+    ICON_LOCATION=$(echo $ICON_LOCATION | sed -e "s/Icon location : //g" -e "s#Z:#$(echo ~)#g" -e "s#\\\#/#g")
   fi
 
   if [[ "${ICON_LOCATION,,}" != *.ico ]] ; then
@@ -51,8 +58,8 @@ while IFS= read -r lnk; do
 
   ls $CONVERT_DIR/*.png >/dev/null 2>&1
   if [[ $? -ne 0 ]] ; then
-    WIN_PATH=$(echo "$lnk" | sed -e "s#$(echo ~)#D:#g" -e "s#/#\\\#g")
-    WIN_ICON=$(echo "$ICON" | sed -e "s#$(echo ~)#D:#g" -e "s#/#\\\#g")
+    WIN_PATH=$(echo "$lnk" | sed -e "s#$(echo ~)#Z:#g" -e "s#/#\\\#g")
+    WIN_ICON=$(echo "$ICON" | sed -e "s#$(echo ~)#Z:#g" -e "s#/#\\\#g")
     echo "echo Converting icon for $(echo $BASENAME | sed "s/\&/and/g")..." >> $ICON_BAT
     echo "winemenubuilder -t \"${WIN_PATH}\" \"${WIN_ICON}\"" >> $ICON_BAT
   else
@@ -67,8 +74,8 @@ while IFS= read -r lnk; do
   [[ $DESCRIPTION = "duplicate" ]] && DISPLAY_NAME="$DISPLAY_NAME (Wine)"
 
   WINE_CMD=wine
-  [[ $DESCRIPTION = "winebox" ]] && WINE_CMD=winebox
-  [[ $DESCRIPTION = "winebox rotate" ]] && WINE_CMD="SCREEN=640x480@270x16 winebox"
+# [[ $DESCRIPTION = "winebox" ]] && WINE_CMD=winebox
+# [[ $DESCRIPTION = "winebox rotate" ]] && WINE_CMD="SCREEN=640x480@270x16 winebox"
 
   echo '[Desktop Entry]' >> "$OUTPUT"
   echo "Name=$DISPLAY_NAME" >> "$OUTPUT"
@@ -78,7 +85,7 @@ while IFS= read -r lnk; do
 done <<< "$LNK_LIST"
 
 echo "Preparing to convert icons (second pass)..."
-/usr/bin/wine cmd /c $(echo "$ICON_BAT" | sed -e "s#$(echo ~)#D:#g" -e "s#/#\\\#g")
+/usr/bin/wine cmd /c $(echo "$ICON_BAT" | sed -e "s#$(echo ~)#Z:#g" -e "s#/#\\\#g")
 
 echo "Installing desktop files..."
 for file in ${CONVERT_DIR}/*.desktop; do
@@ -86,4 +93,4 @@ for file in ${CONVERT_DIR}/*.desktop; do
 done
 
 rm -rf $CONVERT_DIR
-sudo touch /usr/share/applications/.garcon_trigger
+# sudo touch /usr/share/applications/.garcon_trigger

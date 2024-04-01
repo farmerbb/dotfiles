@@ -298,6 +298,21 @@ install-wezterm() {
   gsettings set org.cinnamon.desktop.default-applications.terminal exec wezterm-start
 }
 
+install-hexwalk() {
+  RELEASE=$(lsb_release -sc)
+	
+  sudo add-apt-repository -y ppa:carmix/ppa
+  sudo sed -i "s/$RELEASE/jammy/" /etc/apt/sources.list.d/carmix-ubuntu-ppa-$RELEASE.sources
+  sudo apt-get update
+  sudo apt-get install -y hexwalk
+}
+
+install-obs-studio() {
+  sudo add-apt-repository -y ppa:obsproject/obs-studio
+  sudo apt-get update
+  sudo apt-get install -y obs-studio
+}
+
 export -f virtualhere-client
 export -f allow-all-usb
 export -f make-trackpad-great-again
@@ -322,3 +337,5 @@ export -f install-flatpak
 export -f update-firmware
 export -f adb-waydroid
 export -f install-wezterm
+export -f install-hexwalk
+export -f install-obs-studio
