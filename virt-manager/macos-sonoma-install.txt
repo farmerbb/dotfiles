@@ -19,3 +19,6 @@ temporarily add this to the <devices> section of the xml:
       <target dev="vdc" bus="virtio"/>
       <address type="pci" domain="0x0000" bus="0x08" slot="0x00" function="0x0"/>
     </disk>
+    <input type="mouse" bus="usb">
+      <address type="usb" bus="0" port="2"/>
+    </input>

@@ -2,7 +2,6 @@
 
 CONTAINERS=(
   adguardhome
-  antennas
   homeassistant
   wireguard
   wyze-bridge
@@ -29,25 +28,6 @@ install-container() {
         -p 80:80/tcp -p 443:443/tcp -p 443:443/udp -p 3000:3000/tcp \
         -p 853:853/tcp \
         adguard/adguardhome:latest
-    ;;
-
-    antennas)
-      docker pull thejf/antennas:latest
-      docker stop antennas 2&>/dev/null
-      docker rm antennas 2&>/dev/null
-
-      mkdir -p /tmp/antennas
-      echo 'FROM thejf/antennas:latest' > /tmp/antennas/Dockerfile
-      echo 'RUN /bin/sed -i "s/timeout: 1500/timeout: 30000/g" /antennas/src/tvheadendApi.js' >> /tmp/antennas/Dockerfile
-      docker build -q -t thejf/antennas-mod /tmp/antennas
-
-      docker run -d \
-        --name=antennas \
-        -e ANTENNAS_URL=http://192.168.86.10:5004 \
-        -e TVHEADEND_URL=http://farmerbb:$(echo [REDACTED] | base64 -d)@10.13.13.4:9981 \
-        -e TUNER_COUNT=2 \
-        -p 5004:5004 \
-        thejf/antennas-mod
     ;;
 
     homeassistant)

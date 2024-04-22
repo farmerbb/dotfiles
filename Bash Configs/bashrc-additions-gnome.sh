@@ -26,6 +26,7 @@ EXTENSIONS_WEB=(
   3210 # compiz-windows-effect@hermes83.github.com
   4651 # notification-banner-reloaded@marcinjakubowski.github.com
   1446 # transparent-window-moving@noobsai.github.com
+  5575 # power-profile-switcher@eliapasquali.github.io
 )
 
 EXTENSIONS_APT=(

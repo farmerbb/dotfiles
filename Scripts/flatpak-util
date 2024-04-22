@@ -22,8 +22,8 @@ PACKAGES=(
 
 install-package() {
   PACKAGE_ID=$(echo $1 | cut -d':' -f2)
-  flatpak install -y flathub $PACKAGE_ID
-  flatpak update -y $PACKAGE_ID
+  flatpak install --system -y flathub $PACKAGE_ID
+  flatpak update --system -y $PACKAGE_ID
 }
 
 start-package() {

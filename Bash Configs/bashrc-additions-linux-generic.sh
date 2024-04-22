@@ -25,8 +25,10 @@ alias current-governor="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governo
 alias disable-android-tv-launcher="adb shell pm disable-user --user 0 com.google.android.tvlauncher"
 alias docker-run="sudo docker build -t temp-container . && sudo docker run -it temp-container:latest"
 alias docker-clean="sudo docker system prune --volumes -a -f"
+alias docker-update-all="docker-util install all; docker-clean"
 alias download-chromeosflex="wget --trust-server-names https://dl.google.com/chromeos-flex/images/latest.bin.zip"
 alias firmware-util="curl -LOk mrchromebox.tech/firmware-util.sh && sudo bash firmware-util.sh; rm firmware-util.sh"
+alias flatpak-update-all="flatpak update -y; flatpak uninstall --unused -y; flatpak uninstall --delete-data -y"
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
 alias hibernate="sudo swapon /swapfile; sudo systemctl --no-block hibernate || sudo swapoff /swapfile"
 alias hypercalc="perl ~/Other\ Stuff/Utilities/hypercalc.txt"
@@ -564,9 +566,10 @@ robomirror() {
 
   [[ $1 = nuc ]] && SOURCE=nuc
   [[ $1 = onedrive ]] && SOURCE=onedrive
+  [[ $1 = verify ]] && SOURCE=verify
 
   [[ -z $SOURCE ]] && \
-    echo 'Usage: robomirror <nuc | onedrive>' && \
+    echo 'Usage: robomirror <nuc | onedrive | verify>' && \
     return 1
 
   [[ ${#SYNC_DIRS[@]} -eq 0 ]] && \
@@ -592,6 +595,12 @@ robomirror() {
       echo "Mirroring $DIR from OneDrive using rclone..."
       echo
       "$RCLONE" sync -v "OneDrive:$DIR" "$RCLONE_DEST_ROOT/$DIR"
+    fi
+
+    if [[ $SOURCE = verify ]]; then
+      echo "Verifying files in $DIR using rclone..."
+      echo
+      "$RCLONE" check -v "OneDrive:$DIR" "$RCLONE_DEST_ROOT/$DIR"
     fi
 
     echo
@@ -804,6 +813,7 @@ apt-upgrade-all() {
   sudo apt-get upgrade -y
   apt-install-held-pkgs
   sudo apt-get autoremove -y
+  sudo apt-get purge -y $(dpkg -l | grep '^rc' | awk '{print $2}')
 }
 
 pi() {
@@ -836,6 +846,14 @@ install-rsyncd() {
 
   sudo ufw allow 873/tcp
   sudo rsync --daemon
+}
+
+pip() {
+  if [[ $1 = install ]]; then
+    $(which pip) "$@" --break-system-packages
+  else
+    $(which pip) "$@"
+  fi
 }
 
 export -f btrfs-dedupe
@@ -903,3 +921,4 @@ export -f pi
 export -f install-celestia
 export -f sync-arc-browser-images
 export -f install-rsyncd
+export -f pip

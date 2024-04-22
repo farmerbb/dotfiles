@@ -60,7 +60,7 @@
       <address type='drive' controller='0' bus='0' target='0' unit='0'/>
     </disk>
     <disk type='file' device='disk'>
-      <driver name='qemu' type='raw' cache='writeback' io='threads' discard='unmap' iothread='1' queues='6'/>
+      <driver name='qemu' type='raw' cache='none' io='threads' discard='unmap' iothread='1' queues='6'/>
       <source file='/home/farmerbb/VMs/ubuntu-dev.img'/>
       <target dev='vda' bus='virtio'/>
       <boot order='2'/>
@@ -143,7 +143,7 @@
     </controller>
     <filesystem type='mount' accessmode='passthrough'>
       <driver type='virtiofs'/>
-      <source dir='/mnt/files'/>
+      <source dir='/home/farmerbb'/>
       <target dir='Files'/>
       <address type='pci' domain='0x0000' bus='0x0a' slot='0x00' function='0x0'/>
     </filesystem>

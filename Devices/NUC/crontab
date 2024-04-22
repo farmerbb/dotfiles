@@ -24,6 +24,7 @@
 
 @reboot bash ~/Other\ Stuff/Linux/Scripts/docker-util start all
 @reboot bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/nuc-mounts.sh
+@reboot bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/tvheadend-expose-ports.sh
 @reboot sudo rsync --daemon
 
 * * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/nuc-mounts.sh

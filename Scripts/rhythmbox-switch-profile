@@ -35,6 +35,7 @@ perform-switch() {
 [[ ! -z $(echo $1 | grep -E 'Music|Audio') ]] && \
   [[ -d ~/Media/$1 ]] && \
   perform-switch "$1" && \
+  daemonize $(which rhythmbox) && \
   exit 0
 
 echo "Unable to switch to profile \"$1\""

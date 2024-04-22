@@ -4,3 +4,5 @@ anchor-horizontal=1
 anchor-vertical=1
 animation-direction=3
 animation-time=200
+padding-horizontal=10
+padding-vertical=10

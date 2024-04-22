@@ -198,7 +198,7 @@ install-waydroid() {
 
 install-rhythmbox() {
   sudo apt-get update
-  sudo apt-get -y install rhythmbox ubuntu-restricted-extras ttf-mscorefonts-installer-
+  sudo apt-get -y install rhythmbox gstreamer1.0-libav
   dconf load /org/gnome/rhythmbox/ < "$LINUX_DIR_PREFIX/Ubuntu/rhythmbox.txt"
 
   mkdir -p ~/.local/share/rhythmbox/profiles
