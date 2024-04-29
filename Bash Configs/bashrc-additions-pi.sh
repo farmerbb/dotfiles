@@ -6,6 +6,7 @@ export PATH="$PATH:$LINUX_DIR_PREFIX/Scripts"
 
 export SYNC_DIRS=(
   "Other Stuff/Linux"
+  "Other Stuff/Raspberry Pi/picons"
 )
 
 chmod +x "$LINUX_DIR_PREFIX/Scripts/"* >/dev/null 2>&1

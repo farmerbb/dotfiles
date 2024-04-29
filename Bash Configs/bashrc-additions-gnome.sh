@@ -10,7 +10,7 @@ ALL_EXTENSIONS=(
   ding@rastersoft.com
   ubuntu-appindicators@ubuntu.com
   gsconnect@andyholmes.github.io
-  tiling-assistant@ubuntu.com
+  tiling-assistant@leleat-on-github
   compiz-windows-effect@hermes83.github.com
   notification-banner-reloaded@marcinjakubowski.github.com
   transparent-window-moving@noobsai.github.com
@@ -22,18 +22,17 @@ EXTENSIONS_WEB=(
   19   # user-theme@gnome-shell-extensions.gcampax.github.com
   5410 # grand-theft-focus@zalckos.github.com
   3628 # arcmenu@arcmenu.com
-  5446 # quick-settings-tweaks@qwreey
   3210 # compiz-windows-effect@hermes83.github.com
   4651 # notification-banner-reloaded@marcinjakubowski.github.com
   1446 # transparent-window-moving@noobsai.github.com
   5575 # power-profile-switcher@eliapasquali.github.io
+  3733 # tiling-assistant@leleat-on-github
 )
 
 EXTENSIONS_APT=(
   gnome-shell-extension-desktop-icons-ng        # ding@rastersoft.com
   gnome-shell-extension-appindicator            # ubuntu-appindicators@ubuntu.com
   gnome-shell-extension-gsconnect               # gsconnect@andyholmes.github.io
-  gnome-shell-extension-ubuntu-tiling-assistant # tiling-assistant@ubuntu.com
 )
 
 export-extension-config() {

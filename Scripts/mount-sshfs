@@ -1,0 +1,33 @@
+#!/bin/bash
+
+print-usage() {
+  BASENAME=$(basename "$0")
+  echo "Usage: $BASENAME <alias> <mountpoint>"
+  exit 1
+}
+
+do-mount() {
+  mountpoint -q "$2" || \
+  sshfs $1:/ "$2" -o follow_symlinks
+}
+
+do-unmount() {
+  ssh -q -O stop $1
+  sudo umount "$2" 2> /dev/null || \
+  sudo umount -f "$2" 2> /dev/null || \
+  sudo umount -l "$2" 2> /dev/null
+}
+
+[[ $# -ne 2 ]] && print-usage
+
+CONFIG=$(ssh -G $1)
+HOSTNAME=$(echo "$CONFIG" | awk '$1 == "hostname" { print $2 }')
+PORT=$(echo "$CONFIG" | awk '$1 == "port" { print $2 }')
+
+timeout 1 nc -z $HOSTNAME $PORT 2> /dev/null
+if [[ $? = 0 ]]; then
+  do-mount "$@"
+  [[ $? != 0 ]] && do-unmount "$@" && do-mount "$@"
+else
+  do-unmount "$@"
+fi

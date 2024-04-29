@@ -1,8 +1,8 @@
 [/]
 always-minimized=0
 anchor-horizontal=1
-anchor-vertical=1
-animation-direction=3
+anchor-vertical=0
+animation-direction=1
 animation-time=200
-padding-horizontal=10
-padding-vertical=10
+padding-horizontal=32
+padding-vertical=32

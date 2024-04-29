@@ -288,11 +288,11 @@ install-wezterm() {
   cp -r ~/Other\ Stuff/Linux/WezTerm ~/.config/wezterm
   ln -sf ~/.config/wezterm/wezterm-linux.lua .wezterm.lua
 
-  echo '#!/bin/bash' | sudo tee /usr/local/bin/wezterm-start > /dev/null
-  echo 'wezterm start --cwd "$PWD"' | sudo tee -a /usr/local/bin/wezterm-start > /dev/null
+  sudo mv ~/.config/wezterm/wezterm-start.sh /usr/local/bin/wezterm-start
   sudo chmod +x /usr/local/bin/wezterm-start
 
   sudo sed -i 's/Icon=org.wezfurlong.wezterm/Icon=utilities-terminal/g' /usr/share/applications/org.wezfurlong.wezterm.desktop
+  sudo sed -i 's/Exec=wezterm start --cwd ./Exec=wezterm-start/g' /usr/share/applications/org.wezfurlong.wezterm.desktop
 
   sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/wezterm 101
   gsettings set org.cinnamon.desktop.default-applications.terminal exec wezterm-start
@@ -311,6 +311,10 @@ install-obs-studio() {
   sudo add-apt-repository -y ppa:obsproject/obs-studio
   sudo apt-get update
   sudo apt-get install -y obs-studio
+}
+
+running-apps() {
+  pgrep -l -P $(pidof gnome-shell) | grep -vwE "(Xwayland|mutter|gjs)"
 }
 
 export -f virtualhere-client
@@ -339,3 +343,4 @@ export -f adb-waydroid
 export -f install-wezterm
 export -f install-hexwalk
 export -f install-obs-studio
+export -f running-apps

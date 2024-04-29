@@ -30,6 +30,8 @@ sudo mount -t cifs -o user=Braden,credentials=/home/farmerbb/.sharelogin,uid=far
 mountpoint -q /mnt/PC/Z || ping -c1 -W1 192.168.86.5 && \
 sudo mount -t cifs -o user=Braden,credentials=/home/farmerbb/.sharelogin,uid=farmerbb,gid=farmerbb //192.168.86.5/Z /mnt/PC/Z || true
 
+timeout 10 mount-sshfs pi /mnt/pi
+
 ##################################################
 
 [[ $? -eq 0 ]] && touch ~/.lastrun/nuc-mounts.lastrun

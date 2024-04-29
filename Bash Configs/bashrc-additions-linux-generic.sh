@@ -4,7 +4,8 @@
 [[ -z $DBUS_SESSION_BUS_ADDRESS ]] && export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u)/bus"
 [[ -z $XDG_RUNTIME_DIR ]] && export XDG_RUNTIME_DIR="/run/user/$(id -u)"
 
-export JAVA_HOME="/usr/lib/jvm/default-java"
+TEMP_JAVA_PATH=$(realpath /etc/alternatives/java)
+export JAVA_HOME="${TEMP_JAVA_PATH%%/bin/java}"
 [[ ! -d "$JAVA_HOME" ]] && [[ -d "$IDE_DIR" ]] && export JAVA_HOME="$IDE_DIR/jbr"
 
 export PATH="$JAVA_HOME/bin:/usr/NX/bin:$PATH"
@@ -23,8 +24,8 @@ alias chdman='~/Games/Utilities/chdman/chdman'
 alias cpu-monitor='watch -n1 "lscpu -e; echo; sensors coretemp-isa-0000 dell_smm-isa-0000"'
 alias current-governor="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
 alias disable-android-tv-launcher="adb shell pm disable-user --user 0 com.google.android.tvlauncher"
-alias docker-run="sudo docker build -t temp-container . && sudo docker run -it temp-container:latest"
-alias docker-clean="sudo docker system prune --volumes -a -f"
+alias docker-run="docker build -t temp-container . && sudo docker run -it temp-container:latest"
+alias docker-clean="docker system prune --volumes -a -f"
 alias docker-update-all="docker-util install all; docker-clean"
 alias download-chromeosflex="wget --trust-server-names https://dl.google.com/chromeos-flex/images/latest.bin.zip"
 alias firmware-util="curl -LOk mrchromebox.tech/firmware-util.sh && sudo bash firmware-util.sh; rm firmware-util.sh"
@@ -34,6 +35,7 @@ alias hibernate="sudo swapon /swapfile; sudo systemctl --no-block hibernate || s
 alias hypercalc="perl ~/Other\ Stuff/Utilities/hypercalc.txt"
 alias mine="sudo chown -R $USER:$USER"
 alias mount-all="sudo mount -a && mount-adbfs"
+alias mount-nuc="mount-sshfs nuc /mnt/NUC"
 alias nano='MICRO_TRUECOLOR=1 micro'
 alias port-monitor='watch -n1 "sudo lsof -i -P -n | grep LISTEN"'
 alias public-ip="dig @resolver4.opendns.com myip.opendns.com +short"

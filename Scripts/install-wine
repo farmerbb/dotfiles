@@ -1,29 +1,10 @@
 #!/bin/bash
 
-sudo apt-get update
-sudo apt-get -y install software-properties-common
-
 sudo dpkg --add-architecture i386
 
-wget -nc https://dl.winehq.org/wine-builds/winehq.key
-sudo apt-key add winehq.key
-rm winehq.key
-
-wget -nc https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_22.04/Release.key
-sudo apt-key add Release.key
-rm Release.key
-
-RELEASE=$(lsb_release -cs)
-sudo apt-add-repository -y "deb https://dl.winehq.org/wine-builds/ubuntu/ $RELEASE main"
-sudo apt-add-repository -y "deb https://download.opensuse.org/repositories/Emulators:/Wine:/Debian/xUbuntu_22.04/ ./"
+sudo mkdir -pm755 /etc/apt/keyrings
+sudo wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+sudo wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/ubuntu/dists/mantic/winehq-mantic.sources
 
 sudo apt-get update
-
-# Install stable (32-bit only)
-# sudo apt-get -y install --install-recommends libasound2-plugins:i386 winehq-stable wine-stable-amd64-
-
-# Install devel (32-bit and 64-bit)
-sudo apt-get -y install --install-recommends libasound2-plugins libasound2-plugins:i386 winehq-devel
-
-# Install stable (32-bit and 64-bit)
-# sudo apt-get -y install --install-recommends libasound2-plugins libasound2-plugins:i386 winehq-stable
+sudo apt-get -y install --install-recommends winehq-devel
