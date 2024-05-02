@@ -294,7 +294,8 @@ install-wezterm() {
   sudo sed -i 's/Icon=org.wezfurlong.wezterm/Icon=utilities-terminal/g' /usr/share/applications/org.wezfurlong.wezterm.desktop
   sudo sed -i 's/Exec=wezterm start --cwd ./Exec=wezterm-start/g' /usr/share/applications/org.wezfurlong.wezterm.desktop
 
-  sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/bin/wezterm 101
+  sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/local/bin/wezterm-start 101
+  sudo update-alternatives --set x-terminal-emulator /usr/local/bin/wezterm-start
   gsettings set org.cinnamon.desktop.default-applications.terminal exec wezterm-start
 }
 
