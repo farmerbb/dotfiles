@@ -1,19 +1,35 @@
 #!/bin/bash
 
 sudo apt-get update
-sudo apt-get install -y git wget libglib2.0-bin gtk2-engines-murrine gtk2-engines-pixbuf qt5-style-kvantum qt5-style-kvantum-themes qt5ct sassc
+sudo apt-get install -y git wget libglib2.0-bin gtk2-engines-murrine gtk2-engines-pixbuf qt5-style-kvantum qt5-style-kvantum-themes qt5ct sassc imagemagick
+
+if [[ -z $(which set-gdm-theme) ]]; then
+  git clone --depth=1 --single-branch https://github.com/realmazharhussain/gdm-tools.git
+  cd gdm-tools
+  ./install.sh
+
+  cd ..
+  sudo rm -r gdm-tools
+fi
 
 rm -rf ~/.themes/Qogir*
 rm -rf ~/.local/share/icons/Qogir*
 
-for i in Qogir-theme Qogir-icon-theme Qogir-kde grub2-themes; do
+REPOS=(
+  Qogir-theme
+  Qogir-icon-theme
+  Qogir-kde
+# grub2-themes
+)
+
+for i in ${REPOS[@]}; do
   sudo rm -rf $i
   git clone https://github.com/vinceliuice/$i.git
   cd $i
 # [[ $i = Qogir-theme ]] && git checkout f70236b
 
   if [[ $i = Qogir-theme ]]; then
-    ./install.sh --tweaks square
+    ./install.sh --tweaks square round
   elif [[ $i = grub2-themes ]]; then
     [[ $HOSTNAME != penguin ]] && \
     sudo ./install.sh -t tela -s 4k
@@ -41,8 +57,10 @@ mkdir -p $XDG_CONFIG_HOME/gtk-3.0
 echo '[Settings]' > $XDG_CONFIG_HOME/gtk-3.0/settings.ini
 cat ~/.gtkrc-2.0 >> $XDG_CONFIG_HOME/gtk-3.0/settings.ini
 
-sudo ln -fs ~/.themes/Qogir /usr/share/themes/Qogir
-sudo ln -fs ~/.local/share/icons/Qogir /usr/share/icons/Qogir
+sudo rm -r /usr/share/themes/Qogir
+sudo rm -r /usr/share/icons/Qogir
+sudo cp -r ~/.themes/Qogir /usr/share/themes/Qogir
+sudo cp -r ~/.local/share/icons/Qogir /usr/share/icons/Qogir
 
 sudo mkdir -p /root/.config/gtk-3.0
 sudo ln -fs ~/.gtkrc-2.0 /root/.gtkrc-2.0
@@ -103,6 +121,10 @@ mkdir -p ~/.config/environment.d
 echo 'QT_QPA_PLATFORM=xcb' > ~/.config/environment.d/envvars.conf
 echo 'QT_QPA_PLATFORMTHEME=qt5ct' >> ~/.config/environment.d/envvars.conf
 echo 'XCURSOR_THEME=Qogir' >> ~/.config/environment.d/envvars.conf
+
+convert "$(gsettings get org.gnome.desktop.background picture-uri | sed -e "s#file://##g" -e "s/%20/ /g" -e "s/'//g")" -scale 10% -blur 0x7.5 -resize 1000% ~/.gdm-background.png
+set-gdm-theme -s Yaru-blue ~/.gdm-background.png
+gnomeconf2gdm
 
 # set-window-color 282a33 || \
 # xfconf-query -c xsettings -p /Net/ThemeName -s "Qogir" && \

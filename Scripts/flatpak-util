@@ -9,6 +9,7 @@ PACKAGES=(
   ezquake:io.github.ezQuake
   flatseal:com.github.tchx84.Flatseal
   gzdoom:org.zdoom.GZDoom
+  imhex:net.werwolv.ImHex
   jazz2:tk.deat.Jazz2Resurrection
   pegasus:org.pegasus_frontend.Pegasus
   pysol:io.sourceforge.pysolfc.PySolFC

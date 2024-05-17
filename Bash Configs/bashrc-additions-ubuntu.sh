@@ -277,12 +277,17 @@ install-wezterm() {
     sudo apt-get install -y curl
   fi
 
-  TAG=$(curl --silent "https://api.github.com/repos/wez/wezterm/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-  FILENAME=wezterm-$TAG.Ubuntu22.04.deb
+# TAG=$(curl --silent "https://api.github.com/repos/wez/wezterm/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+# FILENAME=wezterm-$TAG.Ubuntu22.04.deb
 
-  curl -LO https://github.com/wez/wezterm/releases/download/$TAG/$FILENAME
-  install-deb ./$FILENAME
-  rm ./$FILENAME
+# curl -LO https://github.com/wez/wezterm/releases/download/$TAG/$FILENAME
+# install-deb ./$FILENAME
+# rm ./$FILENAME
+
+  curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
+  echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list
+  sudo apt-get update
+  sudo apt-get -y install wezterm
 
   rm -rf ~/.config/wezterm
   cp -r ~/Other\ Stuff/Linux/WezTerm ~/.config/wezterm
@@ -291,7 +296,7 @@ install-wezterm() {
   sudo mv ~/.config/wezterm/wezterm-start.sh /usr/local/bin/wezterm-start
   sudo chmod +x /usr/local/bin/wezterm-start
 
-  sudo sed -i 's/Icon=org.wezfurlong.wezterm/Icon=utilities-terminal/g' /usr/share/applications/org.wezfurlong.wezterm.desktop
+# sudo sed -i 's/Icon=org.wezfurlong.wezterm/Icon=utilities-terminal/g' /usr/share/applications/org.wezfurlong.wezterm.desktop
   sudo sed -i 's/Exec=wezterm start --cwd ./Exec=wezterm-start/g' /usr/share/applications/org.wezfurlong.wezterm.desktop
 
   sudo update-alternatives --install /usr/bin/x-terminal-emulator x-terminal-emulator /usr/local/bin/wezterm-start 101
@@ -305,7 +310,7 @@ install-hexwalk() {
   sudo add-apt-repository -y ppa:carmix/ppa
   sudo sed -i "s/$RELEASE/jammy/" /etc/apt/sources.list.d/carmix-ubuntu-ppa-$RELEASE.sources
   sudo apt-get update
-  sudo apt-get install -y hexwalk
+  sudo apt-get install -y hexwalk binwalk
 }
 
 install-obs-studio() {

@@ -23,7 +23,6 @@ alias badram='sudo cat /proc/iomem | grep "Unusable memory"'
 alias chdman='~/Games/Utilities/chdman/chdman'
 alias cpu-monitor='watch -n1 "lscpu -e; echo; sensors coretemp-isa-0000 dell_smm-isa-0000"'
 alias current-governor="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
-alias disable-android-tv-launcher="adb shell pm disable-user --user 0 com.google.android.tvlauncher"
 alias docker-run="docker build -t temp-container . && sudo docker run -it temp-container:latest"
 alias docker-clean="docker system prune --volumes -a -f"
 alias docker-update-all="docker-util install all; docker-clean"
@@ -858,6 +857,31 @@ pip() {
   fi
 }
 
+webos-reset-dev-mode() {
+  TOKEN=[REDACTED]
+  for i in Reset Check; do
+    curl https://developer.lge.com/secure/${i}DevModeSession.dev?sessionToken=$TOKEN
+    echo
+  done
+}
+
+disable-android-tv-launcher() {
+  adb shell pm list features | grep -q com.google.android.feature.AMATI_EXPERIENCE
+
+  if [[ $? = 0 ]]; then
+    PACKAGES=(
+      com.google.android.apps.tv.launcherx
+      com.google.android.tungsten.setupwraith
+    )
+  else
+    PACKAGES=com.google.android.tvlauncher
+  fi
+
+  for i in ${PACKAGES[@]}; do
+    adb shell pm disable-user --user 0 $i
+  done
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -924,3 +948,5 @@ export -f install-celestia
 export -f sync-arc-browser-images
 export -f install-rsyncd
 export -f pip
+export -f webos-reset-dev-mode
+export -f disable-android-tv-launcher

@@ -88,6 +88,15 @@ Disable "These files might be harmful to your computer" warning:
 
 3. Enter the IP address of the network share (i.e. 192.168.122.1, wildcards allowed) and click Add
 
+
+Disable Windows Defender:
+
+1. Start -> type "Tamper Protection" -> turn off
+
+2. Merge "Disable Microsoft Defender.reg" from "disable_defender.zip" into registry
+
+3. Reboot
+
 -------------------------------- Install / Upgrade Tweaks --------------------------------
 
 Disable Windows 11 system requirement checks when upgrading:
@@ -106,6 +115,11 @@ Unofficial method (skips all requirements):
 Activate Windows 11 using Microsoft Activation Scripts (MAS):
 
   iwr -useb https://massgrave.dev/get | iex
+
+
+Compress the OS (to save space after install):
+
+  compact.exe /compactos:always
 
 -------------------------------- Power Management Tweaks --------------------------------
 

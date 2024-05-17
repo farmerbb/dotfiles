@@ -10,6 +10,7 @@ https://github.com/sickcodes/osx-optimizer
 VoodooHDA installation (audio):
 https://github.com/MobCode100/Dastux/blob/main/VoodooHDA-QEMU-KVM.md
 
+
 For installing MacOS within virt-manager / libvirt,
 temporarily add this to the <devices> section of the xml:
 
@@ -22,3 +23,12 @@ temporarily add this to the <devices> section of the xml:
     <input type="mouse" bus="usb">
       <address type="usb" bus="0" port="2"/>
     </input>
+
+
+Fix right-click on mouse button:
+
+* Settings -> Accessibility -> Pointer Control
+* Enable "Alternate pointer actions"
+* Press the (i) button next to the enable switch
+* Press the + button -> Next -> right-click with mouse
+* Assign the action to "Right Click" and press Done
