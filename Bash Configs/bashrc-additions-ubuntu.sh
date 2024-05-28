@@ -304,23 +304,18 @@ install-wezterm() {
   gsettings set org.cinnamon.desktop.default-applications.terminal exec wezterm-start
 }
 
-install-hexwalk() {
-  RELEASE=$(lsb_release -sc)
-	
-  sudo add-apt-repository -y ppa:carmix/ppa
-  sudo sed -i "s/$RELEASE/jammy/" /etc/apt/sources.list.d/carmix-ubuntu-ppa-$RELEASE.sources
-  sudo apt-get update
-  sudo apt-get install -y hexwalk binwalk
-}
-
-install-obs-studio() {
-  sudo add-apt-repository -y ppa:obsproject/obs-studio
-  sudo apt-get update
-  sudo apt-get install -y obs-studio
-}
-
 running-apps() {
   pgrep -l -P $(pidof gnome-shell) | grep -vwE "(Xwayland|mutter|gjs)"
+}
+
+install-celestia() {
+  wget https://celestiaproject.space/celestiaproject.key
+  sudo apt-key add celestiaproject.key
+  rm celestiaproject.key
+
+  echo "deb https://celestiaproject.space/ubuntu/ jammy main" | sudo tee /etc/apt/sources.list.d/celestia.list
+  sudo apt-get update
+  sudo apt-get install -y celestia
 }
 
 export -f virtualhere-client
@@ -347,6 +342,5 @@ export -f install-flatpak
 export -f update-firmware
 export -f adb-waydroid
 export -f install-wezterm
-export -f install-hexwalk
-export -f install-obs-studio
 export -f running-apps
+export -f install-celestia

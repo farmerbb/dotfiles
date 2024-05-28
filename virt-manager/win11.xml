@@ -187,6 +187,13 @@
       </source>
       <address type='usb' bus='0' port='1'/>
     </hostdev>
+    <hostdev mode='subsystem' type='usb' managed='yes'>
+      <source startupPolicy='optional'>
+        <vendor id='0x13fe'/>
+        <product id='0x5200'/>
+      </source>
+      <address type='usb' bus='0' port='2'/>
+    </hostdev>
     <watchdog model='itco' action='reset'/>
     <memballoon model='none'/>
   </devices>

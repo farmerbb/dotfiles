@@ -19,6 +19,7 @@ docker run \
     --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini \
     --agree-tos \
     -d [REDACTED] \
+    -d '*.[REDACTED]' \
     --server https://acme-v02.api.letsencrypt.org/directory
 
 sudo rm ~/certs/cloudflare.ini

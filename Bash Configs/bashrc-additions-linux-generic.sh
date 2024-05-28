@@ -32,6 +32,7 @@ alias flatpak-update-all="flatpak update -y; flatpak uninstall --unused -y; flat
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
 alias hibernate="sudo swapon /swapfile; sudo systemctl --no-block hibernate || sudo swapoff /swapfile"
 alias hypercalc="perl ~/Other\ Stuff/Utilities/hypercalc.txt"
+alias make="make -j$(nproc)"
 alias mine="sudo chown -R $USER:$USER"
 alias mount-all="sudo mount -a && mount-adbfs"
 alias mount-nuc="mount-sshfs nuc /mnt/NUC"
@@ -826,11 +827,6 @@ pi() {
   ssh nuc -o LogLevel=QUIET -t ssh pi
 }
 
-install-celestia() {
-  sudo wget -O /usr/local/bin/celestia https://download.opensuse.org/repositories/home:/munix9:/unstable/AppImage/celestia-latest-x86_64.AppImage
-  sudo chmod +x /usr/local/bin/celestia
-}
-
 sync-arc-browser-images() {
   [[ $HOSTNAME != NUC ]] && mountpoint -q ~/NUC && NUC_PREFIX="/home/$USER/NUC"
 
@@ -880,6 +876,14 @@ disable-android-tv-launcher() {
   for i in ${PACKAGES[@]}; do
     adb shell pm disable-user --user 0 $i
   done
+}
+
+switch-user() {
+  [[ -z $1 ]] && \
+    echo "Usage: switch-user <username>" &&
+    return 1
+
+  sudo machinectl shell ${1}@ /bin/bash
 }
 
 export -f btrfs-dedupe
@@ -944,9 +948,9 @@ export -f install-steam
 export -f install-tvheadend
 export -f apt-upgrade-all
 export -f pi
-export -f install-celestia
 export -f sync-arc-browser-images
 export -f install-rsyncd
 export -f pip
 export -f webos-reset-dev-mode
 export -f disable-android-tv-launcher
+export -f switch-user

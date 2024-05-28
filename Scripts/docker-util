@@ -82,8 +82,13 @@ install-container() {
         -e WYZE_EMAIL=[REDACTED] \
         -e WYZE_PASSWORD=$(echo [REDACTED] | base64 -d) \
         -e TOTP_KEY=[REDACTED] \
+        -e API_ID=[REDACTED] \
+        -e API_KEY=[REDACTED] \
+        -e WB_API=[REDACTED] \
+        -e WB_IP=192.168.86.10 \
         -e ENABLE_AUDIO=true \
         -p 1935:1935 -p 8554:8554 -p 8888:8888 -p 5000:5000 \
+        -p 8889:8889 -p 8189:8189/udp \
         --restart unless-stopped \
         mrlt8/wyze-bridge:latest
     ;;
