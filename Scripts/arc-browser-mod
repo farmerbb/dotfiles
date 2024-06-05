@@ -252,7 +252,7 @@ convert() {
 
   if [[ $3 = retroid ]]; then
     sed -i "s/%saf_uri%/%rom_uri%/g" emulators.xml
-    sed -i "s/96,1,97,2/96,2,97,1/g" settings.xml
+  # sed -i "s/96,1,97,2/96,2,97,1/g" settings.xml
   fi
 
   tar cf "$FINAL_FILENAME" *
