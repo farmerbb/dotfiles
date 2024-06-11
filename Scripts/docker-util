@@ -50,6 +50,10 @@ install-container() {
     ;;
 
     wireguard)
+      [[ $SSH_CONNECTION =~ 10.13.13 ]] && \
+        echo "Skipping installation of wireguard container" && \
+        return 0
+
       docker pull lscr.io/linuxserver/wireguard:latest
       docker stop wireguard 2&>/dev/null
       docker rm wireguard 2&>/dev/null
