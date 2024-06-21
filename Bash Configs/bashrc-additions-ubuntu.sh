@@ -206,9 +206,11 @@ install-rhythmbox() {
 }
 
 toggle-ultrawide-fixes() {
-  [[ $(dconf read /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout) = true ]] && \
-    dconf reset /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout || \
-    dconf write /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout true
+  [[ $(hwinfo --monitor --short) =~ "LG ELECTRONICS LG HDR WQHD" ]] && \
+    dconf write /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout true || \
+    dconf reset /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout
+
+  daemonize $(which timeout) 10 bash -c 'while [[ ! -z $(pidof srandrd) ]]; do sleep 1; done; srandrd bash -i -c toggle-ultrawide-fixes'
 }
 
 install-eupnea-utils() {
@@ -318,6 +320,22 @@ install-celestia() {
   sudo apt-get install -y celestia
 }
 
+install-srandrd() {
+  git clone https://github.com/jceb/srandrd.git
+  cd srandrd
+  sudo make install
+  cd ..
+  sudo rm -rf srandrd
+
+  echo '[Desktop Entry]' > ~/.config/autostart/bash.desktop
+  echo 'Type=Application' >> ~/.config/autostart/bash.desktop
+  echo 'Exec=bash -i -c toggle-ultrawide-fixes' >> ~/.config/autostart/bash.desktop
+  echo 'Hidden=false' >> ~/.config/autostart/bash.desktop
+  echo 'NoDisplay=false' >> ~/.config/autostart/bash.desktop
+  echo 'X-GNOME-Autostart-enabled=true' >> ~/.config/autostart/bash.desktop
+  echo 'Name=Toggle Ultrawide Fixes' >> ~/.config/autostart/bash.desktop
+}
+
 export -f virtualhere-client
 export -f allow-all-usb
 export -f make-trackpad-great-again
@@ -344,3 +362,4 @@ export -f adb-waydroid
 export -f install-wezterm
 export -f running-apps
 export -f install-celestia
+export -f install-srandrd

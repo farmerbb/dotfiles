@@ -1,0 +1,32 @@
+#!/bin/bash
+
+print-usage() {
+  BASENAME=$(basename "$0")
+  echo "Usage: $BASENAME <ip-address> <share> <mountpoint> <user> <optional-password>"
+  exit 1
+}
+
+do-mount() {
+  [[ -z $5 ]] && \
+    CREDS="credentials=/home/farmerbb/.sharelogin" || \
+    CREDS="password=$(echo $5 | base64 -d)"
+
+  mountpoint -q "$3" || \
+  sudo mount -t cifs -o user=$4,$CREDS,uid=$USER,gid=$USER //$1/$2 "$3"
+}
+
+do-unmount() {
+  sudo umount "$3" 2> /dev/null || \
+  sudo umount -f "$3" 2> /dev/null || \
+  sudo umount -l "$3" 2> /dev/null
+}
+
+[[ $# -lt 4 ]] && print-usage
+
+ping -c1 -W1 $1 2> /dev/null
+if [[ $? = 0 ]]; then
+  do-mount "$@"
+  [[ $? != 0 ]] && do-unmount "$@" && do-mount "$@"
+else
+  do-unmount "$@"
+fi

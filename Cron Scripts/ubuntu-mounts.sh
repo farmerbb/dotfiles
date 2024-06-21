@@ -15,8 +15,6 @@ daemonize $(which rclone) --vfs-cache-mode writes mount OneDrive: /mnt/OneDrive
 timeout 10 mount-sshfs nuc /mnt/NUC
 timeout 10 mount-adbfs
 
-# run-bees
-
 ##################################################
 
 [[ $? -eq 0 ]] && touch ~/.lastrun/ubuntu-mounts.lastrun
