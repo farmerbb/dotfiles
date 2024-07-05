@@ -336,6 +336,15 @@ install-srandrd() {
   echo 'Name=Toggle Ultrawide Fixes' >> ~/.config/autostart/bash.desktop
 }
 
+install-imhex() {
+  TAG=$(curl --silent "https://api.github.com/repos/WerWolv/ImHex/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+  FILENAME=imhex-$(echo $TAG | sed 's/v//')-Ubuntu-24.04-x86_64.deb
+
+  curl -LO https://github.com/WerWolv/ImHex/releases/download/$TAG/$FILENAME
+  install-deb ./$FILENAME
+  rm ./$FILENAME
+}
+
 export -f virtualhere-client
 export -f allow-all-usb
 export -f make-trackpad-great-again
@@ -363,3 +372,4 @@ export -f install-wezterm
 export -f running-apps
 export -f install-celestia
 export -f install-srandrd
+export -f install-imhex

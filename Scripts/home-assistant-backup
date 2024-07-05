@@ -1,0 +1,25 @@
+#!/bin/bash
+if [[ $HOSTNAME != NUC ]]; then
+    ssh nuc -o LogLevel=QUIET -t bash -i -c $(basename "$0")
+    exit $?
+fi
+
+TOKEN=[REDACTED]
+NEST_ID=[REDACTED]
+BACKUP_NAME="$(date +%Y%m%d)"
+
+mkdir ~/temp-nest-media
+sudo mv ~/Home\ Assistant/nest/event_media/$NEST_ID/* ~/temp-nest-media
+
+curl -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d '{}' https://[REDACTED]:[REDACTED]/api/services/backup/create
+
+sudo mv ~/temp-nest-media/* ~/Home\ Assistant/nest/event_media/$NEST_ID
+rm -r ~/temp-nest-media
+
+sudo chown -R $USER:$USER ~/Home\ Assistant/backups/*.tar
+for i in ~/Other\ Stuff/Home\ Assistant ~/OneDrive/Other\ Stuff/Home\ Assistant; do
+  rm "$i"/*.tar
+  cp ~/Home\ Assistant/backups/*.tar "$i"/backup-$BACKUP_NAME.tar
+done
+
+rm ~/Home\ Assistant/backups/*.tar

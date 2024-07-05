@@ -104,12 +104,18 @@ remove-container() {
   docker rm $1 2&>/dev/null
 }
 
+wait-for-run() {
+  until [[ $(docker inspect -f "{{.State.Running}}" $1) == "true" ]]; do
+    sleep 1
+  done
+}
+
 print-usage() {
   BASENAME=$(basename "$0")
   echo -e "\033[1mContainers:\033[0m"
   for i in "${CONTAINERS[@]}"; do echo $i; done
   echo
-  echo -e "\033[1mUsage:\033[0m $BASENAME  <install | start | remove>  <container-name | all>"
+  echo -e "\033[1mUsage:\033[0m $BASENAME  <install | start | remove | wait-for-run>  <container-name | all>"
   exit 1
 }
 
@@ -150,6 +156,15 @@ if [[ "${CONTAINERS[@]}" =~ $2 || $2 = all ]]; then
       fi
 
       sudo docker system prune --volumes -a -f
+      exit 0
+    ;;
+
+    wait-for-run)
+      if [[ $2 = all ]]; then
+        for i in "${CONTAINERS[@]}"; do wait-for-run $i; done
+      else
+        wait-for-run $2
+      fi
       exit 0
     ;;
 

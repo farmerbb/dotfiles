@@ -10,7 +10,6 @@ PACKAGES=(
   flatseal:com.github.tchx84.Flatseal
   freac:org.freac.freac
   gzdoom:org.zdoom.GZDoom
-  imhex:net.werwolv.ImHex
   jazz2:tk.deat.Jazz2Resurrection
   pegasus:org.pegasus_frontend.Pegasus
   pysol:io.sourceforge.pysolfc.PySolFC

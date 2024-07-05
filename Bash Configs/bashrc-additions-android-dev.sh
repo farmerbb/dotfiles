@@ -28,6 +28,7 @@ alias kill-android-studio="pkill -f '.*com.intellij.idea.Main.*' -9"
 alias reset-android-studio='for i in ~/.cache ~/.local/share ~/.config; do rm -rf $i/Google; done'
 alias sdb="~/tizen-studio/tools/sdb"
 alias tizen="~/tizen-studio/tools/ide/bin/tizen"
+alias webos-get-token='ares-novacom --run "/bin/cat /var/luna/preferences/devmode_enabled"'
 alias webos-shell='ares-novacom --run "/bin/sh -i"'
 
 gradle-deep-clean() {

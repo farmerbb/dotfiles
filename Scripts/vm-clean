@@ -12,7 +12,7 @@ for i in $(sudo ls -1 --ignore=OSX-KVM ~/VMs); do
   echo "Optimizing $i..."
   [[ -z $(pgrep -a qemu | grep $i) ]] && \
   sudo virt-sparsify --in-place ~/VMs/$i
-  sudo btrfs fi defrag -rf -czstd ~/VMs/$i
+  [[ ! -z $BTRFS_HOME_MNT ]] && sudo btrfs fi defrag -rf -czstd ~/VMs/$i
   echo
 done
 

@@ -25,7 +25,7 @@ alias cpu-monitor='watch -n1 "lscpu -e; echo; sensors coretemp-isa-0000 dell_smm
 alias current-governor="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
 alias docker-run="docker build -t temp-container . && sudo docker run -it temp-container:latest"
 alias docker-clean="docker system prune --volumes -a -f"
-alias docker-upgrade-all="docker-util install all; docker-clean"
+alias docker-upgrade-all="docker-util install all; docker-util wait-for-run all; docker-clean"
 alias download-chromeosflex="wget --trust-server-names https://dl.google.com/chromeos-flex/images/latest.bin.zip"
 alias firmware-util="curl -LOk mrchromebox.tech/firmware-util.sh && sudo bash firmware-util.sh; rm firmware-util.sh"
 alias flatpak-upgrade-all="flatpak update -y; flatpak uninstall --unused -y; flatpak uninstall --delete-data -y"
@@ -46,6 +46,7 @@ alias qemu95="qemu-system-i386 -monitor stdio -cpu pentium -vga cirrus -nic user
 alias starwars="telnet towel.blinkenlights.nl"
 alias sudo="sudo "
 alias reboot-device="restart-device"
+alias reboot-to-bios="sudo systemctl reboot --firmware-setup"
 alias reset-webcam="usbreset 046d:082c"
 alias robomirror-linux-dir='SYNC_DIRS=("Other Stuff/Linux"); robomirror onedrive'
 alias running-vms="sudo lsof 2>&1 | grep /dev/kvm | awk '!seen[\$2]++'"
@@ -886,6 +887,12 @@ switch-user() {
   sudo machinectl shell ${1}@ /bin/bash
 }
 
+dns-failsafe() {
+  [[ -z $1 ]] && IP=127.0.0.53 || IP=$1
+  sudo sed -i "s/^\(nameserver\).*/\1 $IP/" /etc/resolv.conf
+  echo "Temporarily setting DNS to $IP"
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -954,3 +961,4 @@ export -f pip
 export -f webos-reset-dev-mode
 export -f disable-android-tv-launcher
 export -f switch-user
+export -f dns-failsafe
