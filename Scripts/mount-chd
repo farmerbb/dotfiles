@@ -5,10 +5,16 @@
   exit 1
 
 $(uname -r | grep "[m|M]icrosoft" > /dev/null) && IS_WSL=true
+[[ $1 =~ \.chd$ ]] && IS_CHD=true
 
 if [[ ! -z $IS_WSL ]]; then
-  /mnt/z/Games/Utilities/chdman/chdman.exe extractcd -i "$(wslpath -w "$1")" -o C:\\Users\\Braden\\AppData\\Local\\Temp\\temp.cue
-  /mnt/z/Other\ Stuff/Utilities/ImgDrive/imgdrivecmd_x64.exe C:\\Users\\Braden\\AppData\\Local\\Temp\\temp.cue
+  IMG_PATH="$(wslpath -w "$1")"
+  if [[ $IS_CHD = true ]]; then
+    /mnt/z/Games/Utilities/chdman/chdman.exe extractcd -i "$IMG_PATH" -o C:\\Users\\Braden\\AppData\\Local\\Temp\\temp.cue
+    IMG_PATH=C:\\Users\\Braden\\AppData\\Local\\Temp\\temp.cue
+  fi
+
+  /mnt/z/Other\ Stuff/Utilities/ImgDrive/imgdrivecmd_x64.exe "$IMG_PATH"
 
   sleep 1
   /mnt/c/Windows/explorer.exe D:\\
@@ -21,8 +27,13 @@ else
     sudo apt-get -y install fuseiso # mame-tools
   fi
 
-  ~/Games/Utilities/chdman/chdman extractcd -i "$(realpath "$1")" -o /tmp/temp.cue
-  fuseiso -p /tmp/temp.bin /tmp/mnt
+  IMG_PATH="$(realpath "$1")"
+  if [[ $IS_CHD = true ]]; then
+    ~/Games/Utilities/chdman/chdman extractcd -i "$IMG_PATH" -o /tmp/temp.cue
+    IMG_PATH=/tmp/temp.bin
+  fi
+
+  fuseiso -p "$IMG_PATH" /tmp/mnt
 
   open /tmp/mnt > /dev/null 2>&1
 fi
@@ -33,10 +44,14 @@ read _
 
 if [[ ! -z $IS_WSL ]]; then
   /mnt/z/Other\ Stuff/Utilities/ImgDrive/imgdrivecmd_x64.exe -u
-  rm /mnt/c/Users/Braden/AppData/Local/Temp/temp.bin
-  rm /mnt/c/Users/Braden/AppData/Local/Temp/temp.cue
+  if [[ $IS_CHD = true ]]; then
+    rm /mnt/c/Users/Braden/AppData/Local/Temp/temp.bin
+    rm /mnt/c/Users/Braden/AppData/Local/Temp/temp.cue
+  fi
 else
   sudo umount /tmp/mnt
-  rm /tmp/temp.bin
-  rm /tmp/temp.cue
+  if [[ $IS_CHD = true ]]; then
+    rm /tmp/temp.bin
+    rm /tmp/temp.cue
+  fi
 fi

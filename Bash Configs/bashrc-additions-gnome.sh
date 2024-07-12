@@ -111,7 +111,9 @@ sync-extensions() {
   sudo apt-get install -y ${EXTENSIONS_APT[@]}
 
   for i in $(gnome-extensions list); do
-    echo ${ALL_EXTENSIONS[@]} | grep -owq $i || gnome-extensions uninstall $i
+    echo ${ALL_EXTENSIONS[@]} | grep -owq $i || UNINSTALL=true
+    [[ $i = power-profile-switcher@eliapasquali.github.io ]] && [[ $HOSTNAME = NUC ]] && UNINSTALL=true
+    [[ $UNINSTALL = true ]] && gnome-extensions uninstall $i; UNINSTALL=false
   done
 }
 

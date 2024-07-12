@@ -32,9 +32,11 @@ alias flatpak-upgrade-all="flatpak update -y; flatpak uninstall --unused -y; fla
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
 alias hibernate="sudo swapon /swapfile; sudo systemctl --no-block hibernate || sudo swapoff /swapfile"
 alias hypercalc="perl ~/Other\ Stuff/Utilities/hypercalc.txt"
+alias local-ip="ip -o route get to 8.8.8.8 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'"
 alias make="make -j$(nproc)"
 alias mine="sudo chown -R $USER:$USER"
 alias mount-all="sudo mount -a && mount-adbfs"
+alias mount-iso="mount-chd"
 alias mount-nuc="mount-sshfs nuc /mnt/NUC"
 alias nano='MICRO_TRUECOLOR=1 micro'
 alias port-monitor='watch -n1 "sudo lsof -i -P -n | grep LISTEN"'
@@ -43,6 +45,7 @@ alias public-ipv6="dig @resolver1.ipv6-sandbox.opendns.com AAAA myip.opendns.com
 alias qemu="qemu-system-x86_64 -monitor stdio -accel kvm -cpu host -m 4G -smp cores=6"
 alias qemu-gl="qemu -display gtk,gl=on -device virtio-vga-gl"
 alias qemu95="qemu-system-i386 -monitor stdio -cpu pentium -vga cirrus -nic user,model=pcnet -device sb16 -m 256"
+alias refresh-theme='for i in {1..2}; do darkman toggle >/dev/null; done'
 alias starwars="telnet towel.blinkenlights.nl"
 alias sudo="sudo "
 alias reboot-device="restart-device"

@@ -6,12 +6,12 @@ touch /tmp/letsencrypt-autorenew.running
 
 ##################################################
 
-mkdir -p ~/certs
-echo 'dns_cloudflare_api_token = [REDACTED]' | sudo tee ~/certs/cloudflare.ini > /dev/null
-sudo chmod 600 ~/certs/cloudflare.ini
+mkdir -p ~/Docker/certs
+echo 'dns_cloudflare_api_token = [REDACTED]' | sudo tee ~/Docker/certs/cloudflare.ini > /dev/null
+sudo chmod 600 ~/Docker/certs/cloudflare.ini
 
 docker run \
-  -v /home/farmerbb/certs:/etc/letsencrypt \
+  -v /home/farmerbb/Docker/certs:/etc/letsencrypt \
   certbot/dns-cloudflare \
   certonly \
     --non-interactive \
@@ -22,7 +22,7 @@ docker run \
     -d '*.[REDACTED]' \
     --server https://acme-v02.api.letsencrypt.org/directory
 
-sudo rm ~/certs/cloudflare.ini
+sudo rm ~/Docker/certs/cloudflare.ini
 
 ##################################################
 

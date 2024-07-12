@@ -10,9 +10,9 @@ CONTAINERS=(
 install-container() {
   case $1 in
     adguardhome)
-      mkdir -p ~/adguardhome/work
-      mkdir -p ~/adguardhome/conf
-      mkdir -p ~/certs
+      mkdir -p ~/Docker/adguardhome/work
+      mkdir -p ~/Docker/adguardhome/conf
+      mkdir -p ~/Docker/certs
 
       docker pull adguard/adguardhome:latest
       docker stop adguardhome 2&>/dev/null
@@ -21,9 +21,9 @@ install-container() {
       docker run -d \
         --name adguardhome \
         --restart unless-stopped \
-        -v /home/farmerbb/adguardhome/work:/opt/adguardhome/work \
-        -v /home/farmerbb/adguardhome/conf:/opt/adguardhome/conf \
-        -v /home/farmerbb/certs:/etc/letsencrypt \
+        -v /home/farmerbb/Docker/adguardhome/work:/opt/adguardhome/work \
+        -v /home/farmerbb/Docker/adguardhome/conf:/opt/adguardhome/conf \
+        -v /home/farmerbb/Docker/certs:/etc/letsencrypt \
         -p 192.168.86.10:53:53/tcp -p 192.168.86.10:53:53/udp \
         -p 80:80/tcp -p 443:443/tcp -p 443:443/udp -p 3000:3000/tcp \
         -p 853:853/tcp \
@@ -31,8 +31,8 @@ install-container() {
     ;;
 
     homeassistant)
-      mkdir -p ~/Home\ Assistant
-      mkdir -p ~/certs
+      mkdir -p ~/Docker/homeassistant
+      mkdir -p ~/Docker/certs
 
       docker pull ghcr.io/home-assistant/home-assistant:stable
       docker stop homeassistant 2&>/dev/null
@@ -43,8 +43,8 @@ install-container() {
         --privileged \
         --restart=unless-stopped \
         -e TZ=America/Denver \
-        -v /home/farmerbb/Home\ Assistant:/config \
-        -v /home/farmerbb/certs:/etc/letsencrypt \
+        -v /home/farmerbb/Docker/homeassistant:/config \
+        -v /home/farmerbb/Docker/certs:/etc/letsencrypt \
         --network=host \
         ghcr.io/home-assistant/home-assistant:stable
     ;;
@@ -53,6 +53,8 @@ install-container() {
       [[ $SSH_CONNECTION =~ 10.13.13 ]] && \
         echo "Skipping installation of wireguard container" && \
         return 0
+
+      mkdir -p ~/Docker/wireguard
 
       docker pull lscr.io/linuxserver/wireguard:latest
       docker stop wireguard 2&>/dev/null
@@ -71,7 +73,7 @@ install-container() {
         -e PEERDNS=none \
         -e ALLOWEDIPS=10.13.13.0/24,192.168.86.0/24 \
         -e LOG_CONFS=true \
-        -v /home/farmerbb/WireGuard:/config \
+        -v /home/farmerbb/Docker/wireguard:/config \
         --restart unless-stopped \
         lscr.io/linuxserver/wireguard:latest
     ;;
@@ -105,8 +107,12 @@ remove-container() {
 }
 
 wait-for-run() {
+  TRIES=0
   until [[ $(docker inspect -f "{{.State.Running}}" $1) == "true" ]]; do
     sleep 1
+
+    ((TRIES++))
+    [[ $(($TRIES % 10)) -eq 0 ]] && install-container $1
   done
 }
 

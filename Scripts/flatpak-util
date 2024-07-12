@@ -8,8 +8,8 @@ PACKAGES=(
   eduke32:com.eduke32.EDuke32
   ezquake:io.github.ezQuake
   flatseal:com.github.tchx84.Flatseal
-  freac:org.freac.freac
   gzdoom:org.zdoom.GZDoom
+  heroic:com.heroicgameslauncher.hgl
   jazz2:tk.deat.Jazz2Resurrection
   pegasus:org.pegasus_frontend.Pegasus
   pysol:io.sourceforge.pysolfc.PySolFC
