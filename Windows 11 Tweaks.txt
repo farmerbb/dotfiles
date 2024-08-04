@@ -97,6 +97,11 @@ Disable Windows Defender:
 
 3. Reboot
 
+
+Allow PowerShell to run scripts (run as admin):
+
+  Set-ExecutionPolicy -ExecutionPolicy Unrestricted
+
 -------------------------------- Install / Upgrade Tweaks --------------------------------
 
 Disable Windows 11 system requirement checks when upgrading:

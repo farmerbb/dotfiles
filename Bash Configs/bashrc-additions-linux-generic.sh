@@ -649,7 +649,7 @@ install-wireguard-client() {
 
   sudo apt-get update
   sudo apt-get -y install wireguard resolvconf
-  sudo cp "$LINUX_DIR_PREFIX/Network Config/WireGuard/$1/$1.conf" /etc/wireguard/wg0.conf
+  sudo cp ~/Other\ Stuff/Docker/wireguard/$1/$1.conf /etc/wireguard/wg0.conf
 }
 
 wireguard-run() {

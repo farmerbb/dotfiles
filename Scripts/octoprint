@@ -1,0 +1,72 @@
+#!/bin/bash
+: '
+-------------------------- Prerequisites (Raspberry Pi) -------------------------
+
+- Put a very tiny piece of electrical tape over the leftmost pin (5V power) on
+  the mini-USB connector, when connector is in this orientation:
+
+   _________
+   |       |
+  /_ _ _ _ _\
+  -----------
+
+- Disable OctoPi services:
+
+    sudo systemctl disable octoprint.service
+    sudo systemctl disable webcamd.service
+
+- Install daemonize:
+
+    sudo apt-get install -y daemonize
+
+- Place vhusbdarm binary in the /home/pi directory, and mark it executable
+
+- Append the following to the end of /etc/rc.local, right before the "exit 0" line:
+
+    echo 0 > /sys/class/leds/led0/brightness
+    /usr/bin/tvservice -o
+    /usr/sbin/daemonize /home/pi/vhusbdarm
+
+- Reboot the Raspberry Pi
+
+--------------------------------------------------------------------------------
+'
+
+if [[ $HOSTNAME != NUC ]]; then
+  BASENAME=$(basename "$0")
+  ssh nuc -o LogLevel=QUIET -t "\"$(which $BASENAME)\"" $@
+  exit $?
+fi
+
+VHCLIENT_PATH="/mnt/files/Other Stuff/Utilities/VirtualHere/vhclientx86_64"
+
+toggle-switch() {
+  TOKEN=[REDACTED]
+  curl -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d '{"entity_id": "switch.3d_printer"}' https://[REDACTED]:[REDACTED]/api/services/switch/turn_$1
+}
+
+start() {
+  toggle-switch on
+
+  sudo daemonize "$VHCLIENT_PATH"
+  sleep 2
+
+  while true; do
+    "$VHCLIENT_PATH" -t "USE,octopi.11" && return || sleep 1
+  done
+}
+
+stop() {
+  "$VHCLIENT_PATH" -t "EXIT"
+  toggle-switch off
+}
+
+print-usage() {
+  BASENAME=$(basename "$0")
+  echo -e "\033[1mUsage:\033[0m $BASENAME <start | stop>"
+  exit 1
+}
+
+[[ $1 = start ]] && start && exit 0
+[[ $1 = stop ]] && stop && exit 0
+print-usage && exit 1

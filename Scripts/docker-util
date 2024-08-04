@@ -1,10 +1,11 @@
 #!/bin/bash
 
 CONTAINERS=(
-  adguardhome
   homeassistant
+  octoprint
   wireguard
   wyze-bridge
+  adguardhome # intentionally kept last, to avoid DNS issues when downloading containers
 )
 
 install-container() {
@@ -47,6 +48,21 @@ install-container() {
         -v /home/farmerbb/Docker/certs:/etc/letsencrypt \
         --network=host \
         ghcr.io/home-assistant/home-assistant:stable
+    ;;
+
+    octoprint)
+      docker volume create octoprint
+      docker pull octoprint/octoprint:latest
+      docker stop octoprint 2&>/dev/null
+      docker rm octoprint 2&>/dev/null
+
+      docker run -d \
+        --name octoprint \
+        --privileged \
+        -v octoprint:/octoprint \
+        -v /dev:/dev \
+        -p 8080:80 \
+        octoprint/octoprint:latest
     ;;
 
     wireguard)

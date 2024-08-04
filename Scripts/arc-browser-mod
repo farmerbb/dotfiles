@@ -3,7 +3,7 @@
 print-usage() {
   BASENAME=$(basename "$0")
   echo "Usage: $BASENAME ARCBrowser-export-yyyymmdd-hhmmss.tar <from-device>"
-  echo "(where <from-device> is one of: spin713, pixel5, shield, or retroid)"
+  echo "(where <from-device> is one of: shield, rgarcd, or odin2mini)"
   exit 1
 }
 
@@ -18,9 +18,8 @@ convert() {
   FINAL_FILENAME=$DIRNAME/$BASE_FILENAME_SECOND-mod-$3.tar
 
   SHIELD_DIR=emulated/0
-  SPIN713_DIR=BF17B9A278DEB8F2BC9F49198523B7855CB089E7
-  PIXEL5_DIR=emulated/0
-  RETROID_DIR=emulated/0
+  RGARCD_DIR=emulated/0
+  ODIN2MINI_DIR=emulated/0
 
   if [[ $2 = shield ]] ; then
     STORAGE_DIR_FROM=$SHIELD_DIR
@@ -33,36 +32,25 @@ convert() {
     EMULATOR_SUITE_FROM=HIGH
     ALT_L2R2_FROM=true
     UI_SCALE_FROM=0.875
-  elif [[ $2 = spin713 ]] ; then
-    STORAGE_DIR_FROM=$SPIN713_DIR
+  elif [[ $2 = rgarcd ]] ; then
+    STORAGE_DIR_FROM=$RGARCD_DIR
+    HIDE_GC_FROM=false
+    HIDE_WII_FROM=true
+    HIDE_PS1_FROM=false
+    HIDE_DC_FROM=false
+    HIDE_SCD_FROM=false
+    HIDE_SWITCH_FROM=true
+    EMULATOR_SUITE_FROM=HIGH
+    ALT_L2R2_FROM=false
+    UI_SCALE_FROM=1.0
+  elif [[ $2 = odin2mini ]] ; then
+    STORAGE_DIR_FROM=$ODIN2MINI_DIR
     HIDE_GC_FROM=false
     HIDE_WII_FROM=false
     HIDE_PS1_FROM=false
     HIDE_DC_FROM=false
     HIDE_SCD_FROM=false
-    HIDE_SWITCH_FROM=true
-    EMULATOR_SUITE_FROM=HIGH
-    ALT_L2R2_FROM=false
-    UI_SCALE_FROM=1.0
-  elif [[ $2 = pixel5 ]] ; then
-    STORAGE_DIR_FROM=$PIXEL5_DIR
-    HIDE_GC_FROM=false
-    HIDE_WII_FROM=true
-    HIDE_PS1_FROM=false
-    HIDE_DC_FROM=false
-    HIDE_SCD_FROM=false
     HIDE_SWITCH_FROM=false
-    EMULATOR_SUITE_FROM=HIGH
-    ALT_L2R2_FROM=false
-    UI_SCALE_FROM=1.0
-  elif [[ $2 = retroid ]] ; then
-    STORAGE_DIR_FROM=$RETROID_DIR
-    HIDE_GC_FROM=false
-    HIDE_WII_FROM=true
-    HIDE_PS1_FROM=false
-    HIDE_DC_FROM=false
-    HIDE_SCD_FROM=false
-    HIDE_SWITCH_FROM=true
     EMULATOR_SUITE_FROM=HIGH
     ALT_L2R2_FROM=false
     UI_SCALE_FROM=1.0
@@ -79,36 +67,25 @@ convert() {
     EMULATOR_SUITE_TO=HIGH
     ALT_L2R2_TO=true
     UI_SCALE_TO=0.875
-  elif [[ $3 = spin713 ]] ; then
-    STORAGE_DIR_TO=$SPIN713_DIR
-    HIDE_GC_TO=false
-    HIDE_WII_TO=false
-    HIDE_PS1_TO=false
-    HIDE_DC_TO=false
-    HIDE_SCD_TO=false
-    HIDE_SWITCH_TO=true
-    EMULATOR_SUITE_TO=HIGH
-    ALT_L2R2_TO=false
-    UI_SCALE_TO=1.0
-  elif [[ $3 = pixel5 ]] ; then
-    STORAGE_DIR_TO=$PIXEL5_DIR
-    HIDE_GC_TO=false
-    HIDE_WII_TO=true
-    HIDE_PS1_TO=false
-    HIDE_DC_TO=false
-    HIDE_SCD_TO=false
-    HIDE_SWITCH_TO=false
-    EMULATOR_SUITE_TO=HIGH
-    ALT_L2R2_TO=false
-    UI_SCALE_TO=1.0
-  elif [[ $3 = retroid ]] ; then
-    STORAGE_DIR_TO=$RETROID_DIR
+  elif [[ $3 = rgarcd ]] ; then
+    STORAGE_DIR_TO=$RGARCD_DIR
     HIDE_GC_TO=true
     HIDE_WII_TO=true
     HIDE_PS1_TO=false
     HIDE_DC_TO=false
     HIDE_SCD_TO=false
     HIDE_SWITCH_TO=true
+    EMULATOR_SUITE_TO=HIGH
+    ALT_L2R2_TO=false
+    UI_SCALE_TO=1.0
+  elif [[ $3 = odin2mini ]] ; then
+    STORAGE_DIR_TO=$RGARCD_DIR
+    HIDE_GC_TO=false
+    HIDE_WII_TO=false
+    HIDE_PS1_TO=false
+    HIDE_DC_TO=false
+    HIDE_SCD_TO=false
+    HIDE_SWITCH_TO=false
     EMULATOR_SUITE_TO=HIGH
     ALT_L2R2_TO=false
     UI_SCALE_TO=1.0
@@ -250,7 +227,7 @@ convert() {
 
   #################################################################################
 
-  if [[ $3 = retroid ]]; then
+  if [[ $3 = rgarcd ]]; then
     sed -i "s/%saf_uri%/%rom_uri%/g" emulators.xml
   # sed -i "s/96,1,97,2/96,2,97,1/g" settings.xml
   fi
@@ -265,15 +242,13 @@ batch-convert() {
   rm -rfv "ARC Browser"
 
   SHIELD_NAME="SHIELD"
-  SPIN713_NAME="Acer Spin 713"
-  PIXEL5_NAME="Pixel 5"
-  RETROID_NAME="RG ARC-D"
+  RGARCD_NAME="RG ARC-D"
+  ODIN2MINI_NAME="Odin 2 Mini"
 
   TARGETS=(
     shield
-  # spin713
-  # pixel5
     retroid
+    odin2mini
   )
 
   for target in ${TARGETS[@]}; do

@@ -41,12 +41,6 @@ for i in ${REPOS[@]}; do
   sudo rm -rf $i
 done
 
-for i in Qogir Qogir-Dark; do
-  for j in '.overview-tile, ' '.overview-tile:hover, ' '.overview-tile:active, '; do
-    sed -i "s/$j//g" ~/.themes/$i/gnome-shell/gnome-shell.css
-  done
-done
-
 install-fonts
 
 echo 'gtk-theme-name = Qogir' > ~/.gtkrc-2.0

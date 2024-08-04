@@ -9,9 +9,9 @@ alias enable-trackpad="gsettings set org.gnome.desktop.peripherals.touchpad send
 alias disable-trackpad="gsettings set org.gnome.desktop.peripherals.touchpad send-events disabled"
 
 virtualhere-client() {
-  chmod +x /mnt/files/Other\ Stuff/Utilities/VirtualHere/vhuit64
+  chmod +x /home/$USER/Other\ Stuff/Utilities/VirtualHere/vhuit64
   sudo pkill vhuit64 && sleep 3
-  sudo daemonize /mnt/files/Other\ Stuff/Utilities/VirtualHere/vhuit64
+  sudo daemonize /home/$USER/Other\ Stuff/Utilities/VirtualHere/vhuit64
 }
 
 allow-all-usb() {

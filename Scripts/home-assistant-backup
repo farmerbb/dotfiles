@@ -17,9 +17,9 @@ sudo mv ~/temp-nest-media/* ~/Docker/homeassistant/nest/event_media/$NEST_ID
 rm -r ~/temp-nest-media
 
 sudo chown -R $USER:$USER ~/Docker/homeassistant/backups/*.tar
-for i in ~/Other\ Stuff/Home\ Assistant ~/OneDrive/Other\ Stuff/Home\ Assistant; do
-  rm "$i"/*.tar
-  cp ~/Docker/homeassistant/backups/*.tar "$i"/backup-$BACKUP_NAME.tar
+for i in ~/Other\ Stuff/Docker ~/OneDrive/Other\ Stuff/Docker; do
+  rm "$i"/homeassistant-*.tar
+  cp ~/Docker/homeassistant/backups/*.tar "$i"/homeassistant-$BACKUP_NAME.tar
 done
 
 rm ~/Docker/homeassistant/backups/*.tar

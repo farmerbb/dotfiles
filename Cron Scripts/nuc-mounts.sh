@@ -24,6 +24,7 @@ mount-cifs 192.168.86.5 Z /mnt/PC/Z Braden
 mount-cifs 192.168.86.24 SystemScratch /mnt/xbox DevToolsUser [REDACTED]
 
 timeout 10 mount-sshfs pi /mnt/pi
+timeout 10 mount-adbfs
 
 ##################################################
 
