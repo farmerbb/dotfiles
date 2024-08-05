@@ -624,7 +624,7 @@ install-samba() {
   sudo apt-get -y install samba
 
   sudo mkdir -p /etc/samba
-  sudo cp ~/Other\ Stuff/Chrome\ OS/Crostini/smb.conf /etc/samba/smb.conf
+  sudo cp ~/Other\ Stuff/Linux/Ubuntu/smb.conf /etc/samba/smb.conf
   echo "farmerbb = Braden" | sudo tee /etc/samba/usermap.txt > /dev/null
 
   echo

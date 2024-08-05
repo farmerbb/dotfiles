@@ -51,8 +51,12 @@ start() {
   sudo daemonize "$VHCLIENT_PATH"
   sleep 2
 
+  echo
+  echo "Waiting for Raspberry Pi to boot..."
+
   while true; do
-    "$VHCLIENT_PATH" -t "USE,octopi.11" && return || sleep 1
+    "$VHCLIENT_PATH" -t "USE,octopi.11" >/dev/null
+    [[ $? != 2 ]] && return || sleep 1
   done
 }
 
