@@ -46,6 +46,7 @@ alias qemu="qemu-system-x86_64 -monitor stdio -accel kvm -cpu host -m 4G -smp co
 alias qemu-gl="qemu -display gtk,gl=on -device virtio-vga-gl"
 alias qemu95="qemu-system-i386 -monitor stdio -cpu pentium -vga cirrus -nic user,model=pcnet -device sb16 -m 256"
 alias refresh-theme='for i in {1..2}; do darkman toggle >/dev/null; done'
+alias set-timezone='timedatectl set-timezone "America/Denver"; timedatectl'
 alias starwars="telnet towel.blinkenlights.nl"
 alias sudo="sudo "
 alias reboot-device="restart-device"

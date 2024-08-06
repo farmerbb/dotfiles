@@ -2,8 +2,8 @@
 : '
 -------------------------- Prerequisites (Raspberry Pi) -------------------------
 
-- Put a very tiny piece of electrical tape over the leftmost pin (5V power) on
-  the mini-USB connector, when connector is in this orientation:
+- Wrap a small piece of electrical tape around the mini-USB connector, covering
+  the leftmost pin (5V power) when connector is in this orientation:
 
    _________
    |       |
@@ -52,10 +52,10 @@ start() {
   sleep 2
 
   echo
-  echo "Waiting for Raspberry Pi to boot..."
+# echo "Waiting for Raspberry Pi to boot..."
 
   while true; do
-    "$VHCLIENT_PATH" -t "USE,octopi.11" >/dev/null
+    "$VHCLIENT_PATH" -t "USE,octopi.11" # >/dev/null
     [[ $? != 2 ]] && return || sleep 1
   done
 }
