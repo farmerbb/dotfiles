@@ -45,6 +45,7 @@ alias public-ipv6="dig @resolver1.ipv6-sandbox.opendns.com AAAA myip.opendns.com
 alias qemu="qemu-system-x86_64 -monitor stdio -accel kvm -cpu host -m 4G -smp cores=6"
 alias qemu-gl="qemu -display gtk,gl=on -device virtio-vga-gl"
 alias qemu95="qemu-system-i386 -monitor stdio -cpu pentium -vga cirrus -nic user,model=pcnet -device sb16 -m 256"
+alias qr-code="qrencode -t UTF8"
 alias refresh-theme='for i in {1..2}; do darkman toggle >/dev/null; done'
 alias set-timezone='timedatectl set-timezone "America/Denver"; timedatectl'
 alias starwars="telnet towel.blinkenlights.nl"
@@ -311,6 +312,20 @@ edit-ssh-config() {
     nano "$FILE"
     cp "$FILE" ~/.ssh/config
     [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_LINUX_DIR_PREFIX/Network Config/ssh/config"
+  fi
+}
+
+edit-netdata-config() {
+  DIR="$DEVICE_DIR_PREFIX"
+  FILE="$DIR/netdata.conf"
+  if [[ -f "$FILE" ]]; then
+    MD5=$(md5sum "$FILE")
+    nano "$FILE"
+    sudo cp "$FILE" /etc/netdata/netdata.conf
+    if [[ $(md5sum "$FILE") != $MD5 ]]; then
+      sudo systemctl restart netdata
+      cp "$FILE" "$OD_DEVICE_DIR_PREFIX/netdata.conf"
+    fi
   fi
 }
 
@@ -897,6 +912,22 @@ dns-failsafe() {
   echo "Temporarily setting DNS to $IP"
 }
 
+install-netdata() {
+  wget -O /tmp/netdata-kickstart.sh https://get.netdata.cloud/kickstart.sh && \
+  sh /tmp/netdata-kickstart.sh --disable-telemetry
+
+  DIR="$DEVICE_DIR_PREFIX"
+  FILE="$DIR/netdata.conf"
+  if [[ -f "$FILE" ]]; then
+    sudo cp "$FILE" /etc/netdata/netdata.conf
+    sudo systemctl restart netdata
+  else
+    for i in "$DEVICE_DIR_PREFIX" "$OD_DEVICE_DIR_PREFIX"; do
+      cp /etc/netdata/netdata.conf "$i/netdata.conf"
+    done
+  fi
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -917,6 +948,7 @@ export -f edit-crontab
 export -f edit-vm-config
 export -f edit-hosts
 export -f edit-ssh-config
+export -f edit-netdata-config
 export -f install-apks-recursive
 export -f max-cpu
 export -f unsparsify
@@ -966,3 +998,4 @@ export -f webos-reset-dev-mode
 export -f disable-android-tv-launcher
 export -f switch-user
 export -f dns-failsafe
+export -f install-netdata

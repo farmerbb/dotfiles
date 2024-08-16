@@ -3,6 +3,7 @@
 CONTAINERS=(
   homeassistant
   octoprint
+  proxy-manager
   wireguard
   wyze-bridge
   adguardhome # intentionally kept last, to avoid DNS issues when downloading containers
@@ -26,7 +27,7 @@ install-container() {
         -v /home/farmerbb/Docker/adguardhome/conf:/opt/adguardhome/conf \
         -v /home/farmerbb/Docker/certs:/etc/letsencrypt \
         -p 192.168.86.10:53:53/tcp -p 192.168.86.10:53:53/udp \
-        -p 80:80/tcp -p 443:443/tcp -p 443:443/udp -p 3000:3000/tcp \
+        -p 1443:1443/tcp -p 1443:1443/udp \
         -p 853:853/tcp \
         adguard/adguardhome:latest
     ;;
@@ -63,6 +64,22 @@ install-container() {
         -v /dev:/dev \
         -p 8080:80 \
         octoprint/octoprint:latest
+    ;;
+
+    proxy-manager)
+      mkdir -p ~/Docker/proxy-manager
+
+      docker pull jc21/nginx-proxy-manager:latest
+      docker stop proxy-manager 2&>/dev/null
+      docker rm proxy-manager 2&>/dev/null
+
+      docker run -d \
+        --name=proxy-manager \
+        -p 81:81 -p 443:443 -p 5555:5555 \
+        -v /home/farmerbb/Docker/proxy-manager:/data \
+        -v /home/farmerbb/Docker/certs:/etc/letsencrypt \
+        --restart unless-stopped \
+        jc21/nginx-proxy-manager:latest
     ;;
 
     wireguard)
@@ -139,7 +156,7 @@ print-usage() {
   echo -e "\033[1mContainers:\033[0m"
   for i in "${CONTAINERS[@]}"; do echo $i; done
   echo
-  echo -e "\033[1mUsage:\033[0m $BASENAME  <install | start | remove | wait-for-run>  <container-name | all>"
+  echo -e "\033[1mUsage:\033[0m $BASENAME  <install | start | remove | wait-for-run | shell>  <container-name | all>"
   exit 1
 }
 
@@ -189,6 +206,16 @@ if [[ "${CONTAINERS[@]}" =~ $2 || $2 = all ]]; then
       else
         wait-for-run $2
       fi
+      exit 0
+    ;;
+
+    shell)
+      if [[ $2 = all ]]; then
+        echo '"shell" is not valid when used with "all", aborting...'
+        exit 1
+      fi
+
+      docker exec -it $2 bash || docker exec -it $2 sh
       exit 0
     ;;
 
