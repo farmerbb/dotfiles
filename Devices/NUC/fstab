@@ -4,11 +4,8 @@
 # device; this may be used with UUID= as a more robust way to name devices
 # that works even if disks are added and removed. See fstab(5).
 #
-# <file system> <mount point>   <type>  <options>       <dump>  <pass>
-# / was on /dev/nvme0n1p2 during installation
-UUID=a0cb59dd-7976-4934-b570-c4d5b998248e /               ext4    errors=remount-ro,noatime,discard 0       1
-# /boot/efi was on /dev/nvme0n1p1 during installation
-UUID=3696-9814  /boot/efi       vfat    umask=0077      0       1
-# /swapfile                                 none            swap    sw              0       0
+# <file system>                               <mount point>    <type>  <options>                  <dump>  <pass>
 
-UUID=882f09c3-00c4-43d4-9754-efa93290907c   /mnt/files       ext4    errors=remount-ro,noatime                            0   2
+UUID=a0cb59dd-7976-4934-b570-c4d5b998248e     /                ext4    defaults,noatime,discard       0   1
+UUID=3696-9814                                /boot/efi        vfat    defaults                       0   1
+UUID=882f09c3-00c4-43d4-9754-efa93290907c     /mnt/files       ext4    defaults,noatime               0   2

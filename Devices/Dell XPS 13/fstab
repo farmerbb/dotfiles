@@ -4,12 +4,10 @@
 # device; this may be used with UUID= as a more robust way to name devices
 # that works even if disks are added and removed. See fstab(5).
 #
-# <file system> <mount point>   <type>  <options>       <dump>  <pass>
-# / was on /dev/nvme0n1p4 during curtin installation
-/dev/disk/by-uuid/2eda5b12-9656-463a-a3b3-b33932ca45a6 / ext4 defaults,noatime,discard 0 1
-# /boot/efi was on /dev/nvme0n1p1 during curtin installation
-/dev/disk/by-uuid/68D6-0E5F /boot/efi vfat defaults 0 1
-# /swap.img	none	swap	sw	0	0
+# <file system>                               <mount point>    <type>  <options>                                                              <dump>  <pass>
+
+UUID=2eda5b12-9656-463a-a3b3-b33932ca45a6     /                ext4    defaults,noatime,discard                                                   0   1
+UUID=68D6-0E5F                                /boot/efi        vfat    defaults                                                                   0   1
 
 # UUID=c175fde1-554a-4555-8598-68d3d325fcc0   /mnt/files       btrfs   defaults,noatime,compress-force=zstd:1,discard=async                       0   2
 # UUID=c175fde1-554a-4555-8598-68d3d325fcc0   /home/farmerbb   btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=/Local/Home    0   2
