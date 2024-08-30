@@ -8,11 +8,11 @@ fi
 touch /tmp/.btrfs-maintenance
 sudo pkill bees
 
-for i in $(sudo ls -1 --ignore=OSX-KVM ~/VMs); do
+for i in $(sudo ls -1 --ignore=OSX-KVM /mnt/VMs); do
   echo "Optimizing $i..."
   [[ -z $(pgrep -a qemu | grep $i) ]] && \
-  sudo virt-sparsify --in-place ~/VMs/$i
-  [[ ! -z $BTRFS_HOME_MNT ]] && sudo btrfs fi defrag -rf -czstd ~/VMs/$i
+  sudo virt-sparsify --in-place /mnt/VMs/$i
+  [[ ! -z $BTRFS_MNT ]] && sudo btrfs fi defrag -rf -czstd /mnt/VMs/$i
   echo
 done
 

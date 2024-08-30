@@ -7,10 +7,10 @@ print-usage() {
 }
 
 print-available-backups() {
-  ls -1 ~/VMs/backups/$1~*.img >/dev/null 2>&1
+  ls -1 /mnt/VMs/backups/$1~*.img >/dev/null 2>&1
   if [[ $? = 0 ]]; then
     echo "Available backups:"
-    ls -1 ~/VMs/backups/$1~*.img | cut -d'~' -f2 | cut -d'.' -f1
+    ls -1 /mnt/VMs/backups/$1~*.img | cut -d'~' -f2 | cut -d'.' -f1
     echo
   fi
 
@@ -21,9 +21,9 @@ print-available-backups() {
 [[ $# -ne 2 ]] && print-usage
 
 NAME=$2
-IMAGE_ORIGINAL=~/VMs/$1.img
-IMAGE_BACKUP=~/VMs/backups/$1~$NAME.img
-XML_BACKUP=~/VMs/backups/$1~$NAME.xml
+IMAGE_ORIGINAL=/mnt/VMs/$1.img
+IMAGE_BACKUP=/mnt/VMs/backups/$1~$NAME.img
+XML_BACKUP=/mnt/VMs/backups/$1~$NAME.xml
 
 [[ ! -f "$IMAGE_BACKUP" ]] && print-available-backups $1
 [[ ! -f "$IMAGE_ORIGINAL" ]] && print-usage
@@ -45,6 +45,6 @@ cp --reflink=auto --sparse=auto "$IMAGE_BACKUP" "$IMAGE_ORIGINAL"
 [[ -f "$XML_BACKUP" ]] && sudo virsh define "$XML_BACKUP" >/dev/null
 
 if [[ $1 = macos* ]]; then
-  sudo rm -rf ~/VMs/OSX-KVM
-  cp -r --reflink=auto --sparse=auto ~/VMs/backups/OSX-KVM~$NAME ~/VMs/OSX-KVM
+  sudo rm -rf /mnt/VMs/OSX-KVM
+  cp -r --reflink=auto --sparse=auto /mnt/VMs/backups/OSX-KVM~$NAME /mnt/VMs/OSX-KVM
 fi

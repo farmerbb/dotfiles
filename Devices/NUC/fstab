@@ -4,8 +4,9 @@
 # device; this may be used with UUID= as a more robust way to name devices
 # that works even if disks are added and removed. See fstab(5).
 #
-# <file system>                               <mount point>    <type>  <options>                  <dump>  <pass>
+# <file system>                               <mount point>    <type>  <options>                                           <dump>  <pass>
 
-UUID=a0cb59dd-7976-4934-b570-c4d5b998248e     /                ext4    defaults,noatime,discard       0   1
-UUID=3696-9814                                /boot/efi        vfat    defaults                       0   1
-UUID=882f09c3-00c4-43d4-9754-efa93290907c     /mnt/files       ext4    defaults,noatime               0   2
+UUID=a0cb59dd-7976-4934-b570-c4d5b998248e     /                ext4    defaults,noatime,discard                                0   1
+UUID=3696-9814                                /boot/efi        vfat    defaults                                                0   1
+UUID=882f09c3-00c4-43d4-9754-efa93290907c     /mnt/files       ext4    defaults,noatime                                        0   2
+UUID=89b781da-f11b-4834-abb9-ef0b3fc398a5     /mnt/VMs         btrfs   defaults,noatime,compress-force=zstd:1,discard=async    0   2

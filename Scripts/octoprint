@@ -46,12 +46,12 @@ toggle-switch() {
 }
 
 start() {
-  toggle-switch on
+# toggle-switch on
 
   sudo daemonize "$VHCLIENT_PATH"
   sleep 2
 
-  echo
+# echo
 # echo "Waiting for Raspberry Pi to boot..."
 
   while true; do
@@ -62,7 +62,7 @@ start() {
 
 stop() {
   "$VHCLIENT_PATH" -t "EXIT"
-  toggle-switch off
+# toggle-switch off
 }
 
 print-usage() {

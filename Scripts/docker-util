@@ -52,6 +52,10 @@ install-container() {
     ;;
 
     octoprint)
+      [[ -e /dev/ttyUSB0 ]] && \
+        echo "Skipping installation of octoprint container" && \
+        return 0
+
       docker volume create octoprint
       docker pull octoprint/octoprint:latest
       docker stop octoprint 2&>/dev/null

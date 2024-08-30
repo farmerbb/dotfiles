@@ -6,8 +6,8 @@
       <libosinfo:os id="http://microsoft.com/win/10"/>
     </libosinfo:libosinfo>
   </metadata>
-  <memory unit='KiB'>4194304</memory>
-  <currentMemory unit='KiB'>4194304</currentMemory>
+  <memory unit='KiB'>8388608</memory>
+  <currentMemory unit='KiB'>8388608</currentMemory>
   <memoryBacking>
     <source type='memfd'/>
     <access mode='shared'/>
@@ -61,7 +61,7 @@
     <cache mode='passthrough'/>
     <feature policy='require' name='invtsc'/>
     <numa>
-      <cell id='0' cpus='0-5' memory='4194304' unit='KiB' memAccess='shared'/>
+      <cell id='0' cpus='0-5' memory='8388608' unit='KiB' memAccess='shared'/>
     </numa>
   </cpu>
   <clock offset='localtime'>
@@ -81,8 +81,8 @@
   <devices>
     <emulator>/usr/bin/qemu-system-x86_64</emulator>
     <disk type='file' device='disk'>
-      <driver name='qemu' type='raw' cache='none' io='threads' discard='unmap' iothread='1' queues='6'/>
-      <source file='/home/farmerbb/VMs/win11.img'/>
+      <driver name='qemu' type='raw' cache='writeback' io='threads' discard='unmap' iothread='1' queues='6'/>
+      <source file='/mnt/VMs/win11.img'/>
       <target dev='vda' bus='virtio'/>
       <boot order='2'/>
       <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
