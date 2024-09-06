@@ -19,6 +19,7 @@ PACKAGES=(
   ryujinx:org.ryujinx.Ryujinx
   sonic3air:org.sonic3air.Sonic3AIR
   srb2:org.srb2.SRB2
+  xemu:app.xemu.xemu
   yamagi:org.yamagi.YamagiQ2
 )
 

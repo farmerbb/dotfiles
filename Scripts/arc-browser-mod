@@ -247,7 +247,7 @@ batch-convert() {
 
   TARGETS=(
     shield
-    retroid
+    rgarcd
     odin2mini
   )
 
@@ -274,15 +274,19 @@ batch-convert() {
 }
 
 if [[ $# -eq 0 ]]; then
-  mountpoint -q /mnt/NUC || mountpoint -q /mnt/shield || print-usage
   mountpoint -q /mnt/OneDrive || print-usage
 
-  echo "Pulling ARC Browser export from SHIELD..."
-  [[ $HOSTNAME != NUC ]] && PREFIX="/home/$USER/NUC"
-  mv $PREFIX/mnt/shield/Android/data/net.floatingpoint.android.arcturus/files/ARCBrowser-export-*.tar . || exit 1
+  if [[ $HOSTNAME != NUC ]]; then
+    mountpoint -q /mnt/NUC || print-usage
+
+    echo "Pulling ARC Browser export from NUC..."
+    mv /mnt/NUC/home/farmerbb/ARCBrowser-export-*.tar . || exit 1
+  else
+    [[ -f ARCBrowser-export-*.tar ]] || print-usage
+  fi
 
   echo "Converting exports for other devices..."
-  batch-convert ARCBrowser-export-*.tar shield
+  batch-convert ARCBrowser-export-*.tar odin2mini
 
   echo "Pushing exports to OneDrive..."
   rm -r ~/OneDrive/Android/Backup/Settings/ARC\ Browser
@@ -291,6 +295,6 @@ if [[ $# -eq 0 ]]; then
 fi
 
 [[ $1 == "--help" ]] && print-usage
-[[ $# -eq 1 ]] && batch-convert $1 shield
+[[ $# -eq 1 ]] && batch-convert $1 odin2mini
 [[ $# -eq 2 ]] && batch-convert $1 $2
 [[ $# -eq 3 ]] && convert $1 $2 $3
