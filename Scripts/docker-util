@@ -79,7 +79,7 @@ install-container() {
 
       docker run -d \
         --name=proxy-manager \
-        -p 81:81 -p 443:443 -p 5555:5555 \
+        --network=host \
         -v /home/farmerbb/Docker/proxy-manager:/data \
         -v /home/farmerbb/Docker/certs:/etc/letsencrypt \
         --restart unless-stopped \

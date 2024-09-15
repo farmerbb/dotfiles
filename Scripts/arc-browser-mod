@@ -42,7 +42,7 @@ convert() {
     HIDE_SWITCH_FROM=true
     EMULATOR_SUITE_FROM=HIGH
     ALT_L2R2_FROM=false
-    UI_SCALE_FROM=1.0
+    UI_SCALE_FROM=0.875
   elif [[ $2 = odin2mini ]] ; then
     STORAGE_DIR_FROM=$ODIN2MINI_DIR
     HIDE_GC_FROM=false
@@ -77,7 +77,7 @@ convert() {
     HIDE_SWITCH_TO=true
     EMULATOR_SUITE_TO=HIGH
     ALT_L2R2_TO=false
-    UI_SCALE_TO=1.0
+    UI_SCALE_TO=0.875
   elif [[ $3 = odin2mini ]] ; then
     STORAGE_DIR_TO=$RGARCD_DIR
     HIDE_GC_TO=false

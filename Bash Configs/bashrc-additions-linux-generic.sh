@@ -24,7 +24,7 @@ alias chdman='~/Games/Utilities/chdman/chdman'
 alias cpu-monitor='watch -n1 "lscpu -e; echo; sensors coretemp-isa-0000 dell_smm-isa-0000"'
 alias current-governor="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
 alias docker-run="docker build -t temp-container . && sudo docker run -it temp-container:latest"
-alias docker-clean="docker system prune --volumes -a -f"
+alias docker-clean="docker system prune --volumes -a -f; docker volume prune -a -f"
 alias docker-upgrade-all="docker-util install all; docker-util wait-for-run all; docker-clean"
 alias download-chromeosflex="wget --trust-server-names https://dl.google.com/chromeos-flex/images/latest.bin.zip"
 alias firmware-util="curl -LOk mrchromebox.tech/firmware-util.sh && sudo bash firmware-util.sh; rm firmware-util.sh"
@@ -928,6 +928,32 @@ install-netdata() {
   fi
 }
 
+update-everything() {
+  if [[ $HOSTNAME != NUC ]]; then
+    timeout 1 nc -z 192.168.86.10 22 2> /dev/null
+    [[ $? = 0 ]] && robomirror nuc
+  fi
+
+  robomirror-linux-dir
+# apply-theme
+
+  for i in ${!SOURCES[@]}; do
+    case "${SOURCES[$i]}" in
+      apt)
+        apt-upgrade-all
+      ;;
+
+      flatpak)
+        flatpak-upgrade-all
+      ;;
+
+      docker)
+        docker-upgrade-all
+      ;;
+    esac
+  done
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -999,3 +1025,4 @@ export -f disable-android-tv-launcher
 export -f switch-user
 export -f dns-failsafe
 export -f install-netdata
+export -f update-everything

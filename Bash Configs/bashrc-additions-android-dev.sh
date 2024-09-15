@@ -47,8 +47,15 @@ gradle-deep-clean() {
 
 emulator() {
   OLD_DIR="$PWD"
+  SECONDS=0
+
   cd "$ANDROID_SDK_ROOT/tools"
   ./emulator "$@"
+
+  [[ SECONDS -eq 0 ]] && \
+    echo -e "\033[1mAVDs:\033[0m" && \
+    ls -1 ~/.android/avd | grep ".avd" | sed "s/.avd//"
+
   cd "$PWD"
 }
 
@@ -84,11 +91,25 @@ init-android-dev-environment() {
 
   cp ~/OneDrive/Android/Development/*.sh ~/AndroidStudioProjects/
   cp ~/OneDrive/Android/Development/gradle.properties ~/.gradle/
+  cp ~/OneDrive/Android/Development/Source\ Code/Keys/Keystore ~
 
   cd ~/AndroidStudioProjects
   chmod +x *.sh
-  for i in Notepad SecondScreen Taskbar AppNotifier; do git-clone $i; done
-  cd -
+
+  PROJECTS=( "$@" )
+  [[ -z $PROJECTS ]] && PROJECTS=(
+    AppNotifier
+    Notepad
+    SecondScreen
+    Taskbar
+  )
+
+  for i in ${!PROJECTS[@]}; do
+    REPO="${PROJECTS[$i]}"
+    [[ ! -d $REPO ]] && git-clone $REPO
+  done
+
+  cd - >/dev/null
 }
 
 project-root() {

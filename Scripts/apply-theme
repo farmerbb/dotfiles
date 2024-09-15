@@ -41,6 +41,12 @@ for i in ${REPOS[@]}; do
   sudo rm -rf $i
 done
 
+cd ~/.themes
+for i in *; do
+  mv $i $(echo $i | sed 's/-Round//')
+done
+cd - >/dev/null
+
 install-fonts
 
 echo 'gtk-theme-name = Qogir' > ~/.gtkrc-2.0

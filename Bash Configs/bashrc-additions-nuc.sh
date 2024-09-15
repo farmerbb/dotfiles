@@ -15,4 +15,9 @@ export SYNC_DIRS=(
   "Other Stuff"
 )
 
+export SOURCES=(
+  "apt"
+  "docker"
+)
+
 chmod +x "$LINUX_DIR_PREFIX/Scripts/"* >/dev/null 2>&1

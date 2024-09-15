@@ -62,7 +62,7 @@ sleep 3 && \
   echo "Be sure to close the scrcpy window first before disconnecting your device." && \
   echo "Press ALT+F inside the scrcpy window to toggle fullscreen." &
 
-DISPLAY_ID=$(scrcpy $DASH_S $DEVICE -V error --display 65535 2>&1 | grep "\-\-display" | tail -n1 |  awk '$1=$1' | cut -d' ' -f1 | cut -d'=' -f2)
-scrcpy $DASH_S $DEVICE --display $DISPLAY_ID
+DISPLAY_ID=$(scrcpy $DASH_S $DEVICE -V error --display-id 65535 2>&1 | grep "\-\-display" | tail -n1 |  awk '$1=$1' | cut -d' ' -f1 | cut -d'=' -f2)
+scrcpy $DASH_S $DEVICE --display-id $DISPLAY_ID
 
 adb $DASH_S $DEVICE shell settings delete global overlay_display_devices >/dev/null 2>&1

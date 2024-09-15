@@ -14,6 +14,7 @@ then
 fi
 
 PASSWORD=$(base64 -d <<< [REDACTED])
+OUTPUT_FILENAME="$(echo "$*" | sed "s#/##")-output.zip"
 
 export KSTOREFILE=~/Keystore
 export KEYALIAS=farmerbb
@@ -21,7 +22,7 @@ export KEYPWD=$PASSWORD
 export KSTOREPWD=$PASSWORD
 
 # Remove old output.zip file
-rm -f output.zip
+rm -f "$OUTPUT_FILENAME"
 
 # Reset the git repo
 cd "$*"
@@ -40,7 +41,7 @@ fi
 if [[ $? == 0 ]]; then
     # Zip folder contents
     cd ..
-    zip -rq output.zip "$*"
+    zip -rq "$OUTPUT_FILENAME" "$*"
     cd "$*"
 
     # Open folder where APKs are stored
