@@ -934,15 +934,11 @@ update-everything() {
     [[ $? = 0 ]] && robomirror nuc
   fi
 
-  robomirror-linux-dir
-# apply-theme
+  mountpoint -q /mnt/OneDrive && robomirror-linux-dir
+  apt-upgrade-all
 
   for i in ${!SOURCES[@]}; do
     case "${SOURCES[$i]}" in
-      apt)
-        apt-upgrade-all
-      ;;
-
       flatpak)
         flatpak-upgrade-all
       ;;

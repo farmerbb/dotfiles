@@ -13,7 +13,6 @@ export SYNC_DIRS=(
 )
 
 export SOURCES=(
-  "apt"
   "flatpak"
 )
 
