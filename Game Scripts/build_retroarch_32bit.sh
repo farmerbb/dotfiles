@@ -1,7 +1,7 @@
 #!/bin/bash
 
 RETROARCH_REPO=~/libretro-super/retroarch
-KEYSTORE=~/Documents/Keystore
+KEYSTORE=~/AndroidStudioProjects/Keystore
 PASSWORD=$(base64 -d <<< [REDACTED])
 
 CURRENT_DIR=$(pwd)

@@ -54,7 +54,7 @@ emulator() {
 
   [[ SECONDS -eq 0 ]] && \
     echo -e "\033[1mAVDs:\033[0m" && \
-    ls -1 ~/.android/avd | grep ".avd" | sed "s/.avd//"
+    ls -1 ~/.android/avd | grep ".avd" | sed -e "s/^/@/" -e "s/.avd//"
 
   cd "$PWD"
 }
@@ -91,7 +91,7 @@ init-android-dev-environment() {
 
   cp ~/OneDrive/Android/Development/*.sh ~/AndroidStudioProjects/
   cp ~/OneDrive/Android/Development/gradle.properties ~/.gradle/
-  cp ~/OneDrive/Android/Development/Source\ Code/Keys/Keystore ~
+  cp ~/OneDrive/Android/Development/Source\ Code/Keys/Keystore ~/AndroidStudioProjects/
 
   cd ~/AndroidStudioProjects
   chmod +x *.sh
@@ -106,7 +106,9 @@ init-android-dev-environment() {
 
   for i in ${!PROJECTS[@]}; do
     REPO="${PROJECTS[$i]}"
-    [[ ! -d $REPO ]] && git-clone $REPO
+    [[ ! -d $REPO ]] && \
+      git-clone $REPO && \
+      echo 'sdk.dir=/home/farmerbb/Android/Sdk' > $REPO/local.properties
   done
 
   cd - >/dev/null

@@ -32,7 +32,7 @@ cd ../../../..
 ./gradlew assembleRelease
 
 cd app/build/outputs/apk/release
-apksigner sign --ks ~/Keystore --ks-key-alias farmerbb --ks-pass pass:$PASSWORD --key-pass pass:$PASSWORD --in app-release-unsigned.apk --out "$CURRENT_DIR/VVVVVV.apk"
+apksigner sign --ks ~/AndroidStudioProjects/Keystore --ks-key-alias farmerbb --ks-pass pass:$PASSWORD --key-pass pass:$PASSWORD --in app-release-unsigned.apk --out "$CURRENT_DIR/VVVVVV.apk"
 
 cd "$CURRENT_DIR"
 sudo rm -rf VVVVVV

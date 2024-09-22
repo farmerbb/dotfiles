@@ -16,7 +16,7 @@ fi
 PASSWORD=$(base64 -d <<< [REDACTED])
 OUTPUT_FILENAME="$(echo "$*" | sed "s#/##")-output.zip"
 
-export KSTOREFILE=~/Keystore
+export KSTOREFILE=~/AndroidStudioProjects/Keystore
 export KEYALIAS=farmerbb
 export KEYPWD=$PASSWORD
 export KSTOREPWD=$PASSWORD
