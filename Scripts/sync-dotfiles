@@ -29,6 +29,7 @@ DOTFILE_DIRS=(
   "Android/Backup/Settings/Termux"
   "Android/Development"
   "Games/Utilities/Game Scripts"
+  "Other Stuff/Docker/docker-compose.yml"
   "Other Stuff/Linux/*"
   "Other Stuff/Chrome OS/Crostini"
   "Other Stuff/Utilities/Command Scripts"

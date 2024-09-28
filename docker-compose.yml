@@ -1,0 +1,92 @@
+name: nuc
+services:
+    adguardhome:
+        container_name: adguardhome
+        restart: unless-stopped
+        volumes:
+            - /home/farmerbb/Docker/adguardhome/work:/opt/adguardhome/work
+            - /home/farmerbb/Docker/adguardhome/conf:/opt/adguardhome/conf
+            - /home/farmerbb/Docker/certs:/etc/letsencrypt
+        ports:
+            - 192.168.86.10:53:53/tcp
+            - 192.168.86.10:53:53/udp
+            - 34357:34357/tcp
+            - 34357:34357/udp
+            - 853:853/tcp
+        image: adguard/adguardhome:latest
+    home-assistant:
+        container_name: homeassistant
+        privileged: true
+        restart: unless-stopped
+        environment:
+            - TZ=America/Denver
+        volumes:
+            - /home/farmerbb/Docker/homeassistant:/config
+            - /home/farmerbb/Docker/certs:/etc/letsencrypt
+        network_mode: host
+        image: ghcr.io/home-assistant/home-assistant:stable
+    octoprint:
+        container_name: octoprint
+        privileged: true
+        volumes:
+            - octoprint:/octoprint
+            - /dev:/dev
+        ports:
+            - 8080:80
+        restart: unless-stopped
+        image: octoprint/octoprint:latest
+    nginx-proxy-manager:
+        container_name: proxy-manager
+        ports:
+            - 81:81
+            - 443:443
+            - 3390:3390
+            - 5555:5555
+        volumes:
+            - /home/farmerbb/Docker/proxy-manager:/data
+            - /home/farmerbb/Docker/certs:/etc/letsencrypt
+        restart: unless-stopped
+        image: jc21/nginx-proxy-manager:latest
+    wireguard:
+        container_name: wireguard
+        cap_add:
+            - NET_ADMIN
+        network_mode: host
+        environment:
+            - PUID=1000
+            - PGID=1000
+            - TZ=America/Denver
+            - SERVERURL=[REDACTED]
+            - SERVERPORT=[REDACTED]
+            - PEERS=5
+            - PEERDNS=none
+            - ALLOWEDIPS=10.13.13.0/24,192.168.86.0/24
+            - LOG_CONFS=true
+        volumes:
+            - /home/farmerbb/Docker/wireguard:/config
+        restart: unless-stopped
+        image: lscr.io/linuxserver/wireguard:latest
+    wyze-bridge:
+        container_name: wyze-bridge
+        environment:
+            - WYZE_EMAIL=[REDACTED]
+            - WYZE_PASSWORD=${password}
+            - TOTP_KEY=[REDACTED]
+            - API_ID=[REDACTED]
+            - API_KEY=[REDACTED]
+            - WB_API=[REDACTED]
+            - WB_IP=192.168.86.10
+            - WB_USERNAME=farmerbb
+            - WB_PASSWORD=${password}
+            - ENABLE_AUDIO=true
+        ports:
+            - 1935:1935
+            - 8554:8554
+            - 8888:8888
+            - 5000:5000
+            - 8889:8889
+            - 8189:8189/udp
+        restart: unless-stopped
+        image: mrlt8/wyze-bridge:latest
+volumes:
+    octoprint:

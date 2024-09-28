@@ -1,6 +1,10 @@
 #!/bin/bash
 
 print-usage() {
+  echo "VMs:"
+  ls -1 /mnt/VMs/*.img | cut -d'/' -f4 | cut -d'.' -f1
+  echo
+
   BASENAME=$(basename "$0")
   echo "Usage: $BASENAME <name-of-vm> <optional-backup-name>"
   exit 1
@@ -31,7 +35,7 @@ done
 # fi
 
 mkdir -p /mnt/VMs/backups
-cp --reflink=auto --sparse=auto "$IMAGE_ORIGINAL" "$IMAGE_BACKUP"
+sudo cp --reflink=auto --sparse=auto "$IMAGE_ORIGINAL" "$IMAGE_BACKUP"
 sudo virsh dumpxml $1 > "$XML_BACKUP" 2>/dev/null || rm "$XML_BACKUP"
 
-[[ $1 = macos* ]] && cp -r --reflink=auto --sparse=auto /mnt/VMs/OSX-KVM /mnt/VMs/backups/OSX-KVM~$NAME
+[[ $1 = macos* ]] && sudo cp -r --reflink=auto --sparse=auto /mnt/VMs/OSX-KVM /mnt/VMs/backups/OSX-KVM~$NAME

@@ -16,7 +16,7 @@ temporarily add this to the <devices> section of the xml:
 
     <disk type="file" device="disk">
       <driver name="qemu" type="raw" cache="writeback"/>
-      <source file="/home/farmerbb/VMs/OSX-KVM/BaseSystem.img"/>
+      <source file="/mnt/VMs/OSX-KVM/BaseSystem.img"/>
       <target dev="vdc" bus="virtio"/>
       <address type="pci" domain="0x0000" bus="0x08" slot="0x00" function="0x0"/>
     </disk>

@@ -1,6 +1,12 @@
 #!/bin/bash
 
 print-usage() {
+  if [[ $1 != skip-vm-list ]]; then
+    echo "VMs:"
+    ls -1 /mnt/VMs/*.img | cut -d'/' -f4 | cut -d'.' -f1
+    echo
+  fi
+
   BASENAME=$(basename "$0")
   echo "Usage: $BASENAME <name-of-vm> <name-of-backup>"
   exit 1
@@ -14,7 +20,7 @@ print-available-backups() {
     echo
   fi
 
-  print-usage
+  print-usage skip-vm-list
 }
 
 [[ $# -eq 1 ]] && print-available-backups $1

@@ -1,144 +1,22 @@
 #!/bin/bash
 
 CONTAINERS=(
+  adguardhome
   homeassistant
   octoprint
   proxy-manager
   wireguard
   wyze-bridge
-  adguardhome # intentionally kept last, to avoid DNS issues when downloading containers
 )
 
-install-container() {
-  case $1 in
-    adguardhome)
-      IMAGE=adguard/adguardhome:latest
-      pull-image $IMAGE && $($2) && return 0
-      remove-container $1
+install-containers() {
+  for i in adguardhome/work adguardhome/conf certs homeassistant proxy-manager wireguard; do
+    mkdir -p ~/Docker/$i
+  done
 
-      mkdir -p ~/Docker/adguardhome/work
-      mkdir -p ~/Docker/adguardhome/conf
-      mkdir -p ~/Docker/certs
-
-      docker run -d \
-        --name adguardhome \
-        --restart unless-stopped \
-        -v /home/farmerbb/Docker/adguardhome/work:/opt/adguardhome/work \
-        -v /home/farmerbb/Docker/adguardhome/conf:/opt/adguardhome/conf \
-        -v /home/farmerbb/Docker/certs:/etc/letsencrypt \
-        -p 192.168.86.10:53:53/tcp -p 192.168.86.10:53:53/udp \
-        -p 1443:1443/tcp -p 1443:1443/udp \
-        -p 853:853/tcp \
-        $IMAGE
-    ;;
-
-    homeassistant)
-      IMAGE=ghcr.io/home-assistant/home-assistant:stable
-      pull-image $IMAGE && $($2) && return 0
-      remove-container $1
-
-      mkdir -p ~/Docker/homeassistant
-      mkdir -p ~/Docker/certs
-
-      docker run -d \
-        --name homeassistant \
-        --privileged \
-        --restart=unless-stopped \
-        -e TZ=America/Denver \
-        -v /home/farmerbb/Docker/homeassistant:/config \
-        -v /home/farmerbb/Docker/certs:/etc/letsencrypt \
-        --network=host \
-        $IMAGE
-    ;;
-
-    octoprint)
-      [[ -e /dev/ttyUSB0 ]] && \
-        echo "Skipping installation of octoprint container" && \
-        return 0
-
-      IMAGE=octoprint/octoprint:latest
-      pull-image $IMAGE && $($2) && return 0
-      remove-container $1
-
-      docker volume create octoprint
-
-      docker run -d \
-        --name octoprint \
-        --privileged \
-        -v octoprint:/octoprint \
-        -v /dev:/dev \
-        -p 8080:80 \
-        $IMAGE
-    ;;
-
-    proxy-manager)
-      IMAGE=jc21/nginx-proxy-manager:latest
-      pull-image $IMAGE && $($2) && return 0
-      remove-container $1
-
-      mkdir -p ~/Docker/proxy-manager
-
-      docker run -d \
-        --name=proxy-manager \
-        -p 81:81 -p 443:443 -p 3390:3390 -p 5555:5555 \
-        -v /home/farmerbb/Docker/proxy-manager:/data \
-        -v /home/farmerbb/Docker/certs:/etc/letsencrypt \
-        --restart unless-stopped \
-        $IMAGE
-    ;;
-
-    wireguard)
-      [[ $SSH_CONNECTION =~ 10.13.13 ]] && \
-        echo "Skipping installation of wireguard container" && \
-        return 0
-
-      IMAGE=lscr.io/linuxserver/wireguard:latest
-      pull-image $IMAGE && $($2) && return 0
-      remove-container $1
-
-      mkdir -p ~/Docker/wireguard
-
-      docker run -d \
-        --name=wireguard \
-        --cap-add=NET_ADMIN \
-        --network=host \
-        -e PUID=1000 \
-        -e PGID=1000 \
-        -e TZ=America/Denver \
-        -e SERVERURL=[REDACTED] \
-        -e SERVERPORT=[REDACTED] \
-        -e PEERS=5 \
-        -e PEERDNS=none \
-        -e ALLOWEDIPS=10.13.13.0/24,192.168.86.0/24 \
-        -e LOG_CONFS=true \
-        -v /home/farmerbb/Docker/wireguard:/config \
-        --restart unless-stopped \
-        $IMAGE
-    ;;
-
-    wyze-bridge)
-      IMAGE=mrlt8/wyze-bridge:latest
-      pull-image $IMAGE && $($2) && return 0
-      remove-container $1
-
-      docker run -d \
-        --name=wyze-bridge \
-        -e WYZE_EMAIL=[REDACTED] \
-        -e WYZE_PASSWORD=$(echo [REDACTED] | base64 -d) \
-        -e TOTP_KEY=[REDACTED] \
-        -e API_ID=[REDACTED] \
-        -e API_KEY=[REDACTED] \
-        -e WB_API=[REDACTED] \
-        -e WB_IP=192.168.86.10 \
-        -e WB_USERNAME=farmerbb \
-        -e WB_PASSWORD=$(echo [REDACTED] | base64 -d) \
-        -e ENABLE_AUDIO=true \
-        -p 1935:1935 -p 8554:8554 -p 8888:8888 -p 5000:5000 \
-        -p 8889:8889 -p 8189:8189/udp \
-        --restart unless-stopped \
-        $IMAGE
-    ;;
-  esac
+  echo password=$(echo [REDACTED] | base64 -d) > ~/Docker/.env
+  cp ~/Other\ Stuff/Docker/docker-compose.yml ~/Docker/docker-compose.yml
+  docker compose -f ~/Docker/docker-compose.yml up -d
 }
 
 backup-container() {
@@ -152,7 +30,7 @@ backup-container() {
     ;;
 
     octoprint)
-      BACKUP_PATH=$(docker exec -it octoprint octoprint plugins backup:backup --exclude uploads | tee /dev/stderr | tail -1 | cut -d' ' -f4 | sed 's/'$'\r//')
+      BACKUP_PATH=$(docker exec -it octoprint octoprint plugins backup:backup | tee /dev/stderr | tail -1 | cut -d' ' -f4 | sed 's/'$'\r//')
 
       rm ~/OneDrive/Other\ Stuff/Docker/octoprint-*
       docker cp octoprint:$BACKUP_PATH ~/OneDrive/Other\ Stuff/Docker/
@@ -177,16 +55,10 @@ rclone-backup() {
     --exclude="/logs**"
 }
 
-pull-image() {
-  OLD_ID=$(docker images --quiet $1)
-  docker pull $1
-  NEW_ID=$(docker images --quiet $1)
-  [[ $OLD_ID == $NEW_ID ]] || return 1
-}
-
-remove-container() {
-  docker stop $1 2&>/dev/null
-  docker rm $1 2&>/dev/null
+backup-yml() {
+  for i in OneDrive/Other\ Stuff/Docker Other\ Stuff/Docker; do
+    cp ~/Docker/docker-compose.yml "$i/docker-compose.yml"
+  done
 }
 
 wait-for-run() {
@@ -204,7 +76,7 @@ print-usage() {
   echo -e "\033[1mContainers:\033[0m"
   for i in "${CONTAINERS[@]}"; do echo $i; done
   echo
-  echo -e "\033[1mUsage:\033[0m $BASENAME  <install | upgrade | start | remove | wait-for-run | shell | backup>  <container-name | all>"
+  echo -e "\033[1mUsage:\033[0m $BASENAME  <install | backup | shell | wait-for-run>  <container-name | all>"
   exit 1
 }
 
@@ -218,43 +90,12 @@ if [[ "${CONTAINERS[@]}" =~ $2 || $2 = all ]]; then
   case $1 in
     install)
       if [[ $2 = all ]]; then
-        for i in "${CONTAINERS[@]}"; do install-container $i false; done
-      else
-        install-container $2 false
-      fi
-      exit 0
-    ;;
-
-    upgrade)
-      if [[ $2 = all ]]; then
-        for i in "${CONTAINERS[@]}"; do install-container $i true; done
-      else
-        install-container $2 true
-      fi
-      exit 0
-    ;;
-
-    start)
-      if [[ $2 = all ]]; then
-        for i in "${CONTAINERS[@]}"; do docker start $i; done
-      else
-        docker start $2
-      fi
-      exit 0
-    ;;
-
-    remove)
-      if [[ $2 = all ]]; then
-        printf "Press Enter if you really want to remove all containers, or CTRL+C to abort..."
-        read _
-
-        for i in "${CONTAINERS[@]}"; do remove-container $i; done
-      else
-        remove-container $2
+        install-containers
+        exit 0
       fi
 
-      sudo docker system prune --volumes -a -f
-      exit 0
+      echo "Installing individual containers is no longer supported"
+      exit 1
     ;;
 
     wait-for-run)
@@ -282,6 +123,8 @@ if [[ "${CONTAINERS[@]}" =~ $2 || $2 = all ]]; then
       else
         backup-container $2
       fi
+
+      backup-yml
       exit 0
     ;;
 
