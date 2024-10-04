@@ -147,7 +147,7 @@ fix-libvirt-permissions() {
 
 remove-all-snaps() {
   while [[ $SNAP_TO_REMOVE != "provided" ]]; do
-    SNAP_TO_REMOVE=$(sudo snap remove $(snap list | awk '!/^Name|^snapd/ {print $1}' | grep -vxF core) 2>&1 | tr ' ' '\n' | tail -n1 | sed 's/\.//g')
+    SNAP_TO_REMOVE=$(sudo snap remove $(snap list | awk '!/^Name|^snapd/ {print $1}' | grep -vxF -e core -e core22 -e core24) 2>&1 | tr ' ' '\n' | tail -n1 | sed 's/\.//g')
     [[ $SNAP_TO_REMOVE != "removed" && $SNAP_TO_REMOVE != "provided" ]] && sudo snap remove $SNAP_TO_REMOVE
   done
 

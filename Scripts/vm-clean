@@ -8,7 +8,7 @@ fi
 touch /tmp/.btrfs-maintenance
 sudo pkill bees
 
-for i in $(sudo ls -1 --ignore=OSX-KVM /mnt/VMs); do
+for i in $(sudo ls -1 --ignore=OSX-KVM --ignore=backups /mnt/VMs); do
   echo "Optimizing $i..."
   [[ -z $(pgrep -a qemu | grep $i) ]] && \
   sudo virt-sparsify --in-place /mnt/VMs/$i

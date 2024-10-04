@@ -6,7 +6,7 @@ bashrc-additions() {
 
 IDE_DIRS=(
   "/opt/android-studio"
-  "/home/$USER/.local/share/JetBrains/Toolbox/apps/intellij-idea-ultimate"
+  "/home/$USER/.local/share/JetBrains/Toolbox/apps/intellij-idea-ultimate*"
 )
 
 for i in ${IDE_DIRS[@]}; do

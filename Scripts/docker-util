@@ -10,10 +10,6 @@ CONTAINERS=(
 )
 
 install-containers() {
-  for i in adguardhome/work adguardhome/conf certs homeassistant proxy-manager wireguard; do
-    mkdir -p ~/Docker/$i
-  done
-
   echo password=$(echo [REDACTED] | base64 -d) > ~/Docker/.env
   cp ~/Other\ Stuff/Docker/docker-compose.yml ~/Docker/docker-compose.yml
   docker compose -f ~/Docker/docker-compose.yml up -d
@@ -57,7 +53,7 @@ rclone-backup() {
 
 backup-yml() {
   for i in OneDrive/Other\ Stuff/Docker Other\ Stuff/Docker; do
-    cp ~/Docker/docker-compose.yml "$i/docker-compose.yml"
+    cp ~/Docker/docker-compose.yml "/home/farmerbb/$i/docker-compose.yml"
   done
 }
 
@@ -124,6 +120,7 @@ if [[ "${CONTAINERS[@]}" =~ $2 || $2 = all ]]; then
         backup-container $2
       fi
 
+    # rclone-backup certs
       backup-yml
       exit 0
     ;;

@@ -47,6 +47,21 @@ services:
             - /home/farmerbb/Docker/certs:/etc/letsencrypt
         restart: unless-stopped
         image: jc21/nginx-proxy-manager:latest
+    plex:
+        container_name: plex
+        image: plexinc/pms-docker
+        restart: unless-stopped
+        environment:
+            - TZ=America/Denver
+            - PLEX_CLAIM=[REDACTED]
+            - ALLOWED_NETWORKS=192.168.86.0/24,10.13.13.0/24
+        network_mode: host
+        volumes:
+            - /home/farmerbb/Docker/plex/config:/config
+            - /home/farmerbb/Docker/plex/transcode:/transcode
+            - /mnt/files:/mnt/files
+        devices:
+            - /dev/dri:/dev/dri
     wireguard:
         container_name: wireguard
         cap_add:

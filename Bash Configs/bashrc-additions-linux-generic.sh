@@ -43,6 +43,7 @@ alias nano='MICRO_TRUECOLOR=1 micro'
 alias port-monitor='watch -n1 "sudo lsof -i -P -n | grep LISTEN"'
 alias public-ip="dig @resolver4.opendns.com myip.opendns.com +short"
 alias public-ipv6="dig @resolver1.ipv6-sandbox.opendns.com AAAA myip.opendns.com +short -6"
+alias python="python3"
 alias qemu="qemu-system-x86_64 -monitor stdio -accel kvm -cpu host -m 4G -smp cores=6"
 alias qemu-gl="qemu -display gtk,gl=on -device virtio-vga-gl"
 alias qemu95="qemu-system-i386 -monitor stdio -cpu pentium -vga cirrus -nic user,model=pcnet -device sb16 -m 256"
@@ -917,14 +918,15 @@ install-netdata() {
   wget -O /tmp/netdata-kickstart.sh https://get.netdata.cloud/kickstart.sh && \
   sh /tmp/netdata-kickstart.sh --disable-telemetry
 
+  CONF_DIR=$(curl localhost:19999/netdata.conf | grep '# config = ' | xargs | sed 's/# config = //')
   DIR="$DEVICE_DIR_PREFIX"
   FILE="$DIR/netdata.conf"
   if [[ -f "$FILE" ]]; then
-    sudo cp "$FILE" /etc/netdata/netdata.conf
+    sudo cp "$FILE" "$CONF_DIR/netdata.conf"
     sudo systemctl restart netdata
   else
     for i in "$DEVICE_DIR_PREFIX" "$OD_DEVICE_DIR_PREFIX"; do
-      cp /etc/netdata/netdata.conf "$i/netdata.conf"
+      cp "$CONF_DIR/netdata.conf" "$i/netdata.conf"
     done
   fi
 }
@@ -949,6 +951,68 @@ update-everything() {
       ;;
     esac
   done
+}
+
+mac-address() {
+  MAC=$(cat /sys/class/net/$(ip -o route get to 8.8.8.8 | cut -d' ' -f5)/address)
+  echo ${MAC^^}
+}
+
+network-scan() {
+  if [[ -z $(which nmap) ]]; then
+    sudo apt-get update
+    sudo apt-get install -y nmap
+  fi
+
+  if [[ -z $1 ]]; then
+    IP=$(local-ip)
+    IP=${IP%.*}
+
+    sudo nmap -sn $IP.0/24 --exclude $IP.255 | sed -e '/^Host is up/d' -e "s/Nmap done/MAC Address: $(mac-address)\n\nNmap done/" -e 's/Nmap scan report for /\n/'
+  else
+    sudo nmap -p- $1 | sed -e '/^Not shown/d' -e 's/PORT/\nPORT/' -e 's/MAC Address/\nMAC Address/' -e 's/Nmap scan report for /\n/'
+  fi
+}
+
+plex-backup() {
+  echo "Temporarily stopping Plex server..."
+  docker stop plex
+
+  PLEX_DIR="/home/farmerbb/Docker/plex/config"
+  BACKUP_DIR="/mnt/files/Local/plex-backup"
+  mkdir -p "$BACKUP_DIR"
+
+  sudo rsync -avu --delete --inplace "$PLEX_DIR/" "$BACKUP_DIR"
+
+  docker start plex
+}
+
+plex-restore() {
+  echo "Temporarily stopping Plex server..."
+  docker stop plex
+
+  PLEX_DIR="/home/farmerbb/Docker/plex/config"
+  BACKUP_DIR="/mnt/files/Local/plex-backup"
+  mkdir -p "$BACKUP_DIR"
+
+  sudo rsync -avu --delete --inplace "$BACKUP_DIR/" "$PLEX_DIR"
+
+  docker start plex
+}
+
+home-assistant-restore() {
+  docker stop homeassistant
+
+  cd ~/Docker
+  mv homeassistant homeassistant-old
+  mkdir homeassistant
+
+  tar -xOf ~/Other\ Stuff/Docker/homeassistant-*.tar "homeassistant.tar.gz" | tar --strip-components=1 -zxf - -C homeassistant
+
+  docker start homeassistant
+  rm -rf homeassistant-old
+
+  cd - >/dev/null
 }
 
 export -f btrfs-dedupe
@@ -1023,3 +1087,8 @@ export -f switch-user
 export -f dns-failsafe
 export -f install-netdata
 export -f update-everything
+export -f mac-address
+export -f network-scan
+export -f plex-backup
+export -f plex-restore
+export -f home-assistant-restore
