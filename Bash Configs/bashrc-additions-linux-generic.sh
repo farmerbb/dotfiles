@@ -26,7 +26,7 @@ alias current-governor="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governo
 alias docker-run="docker build -t temp-container . && sudo docker run -it temp-container:latest"
 alias docker-clean="docker system prune --volumes -a -f; docker volume prune -a -f"
 alias docker-compose="docker compose"
-alias docker-upgrade-all='YML=~/Docker/docker-compose.yml; docker compose -f $YML pull; docker compose -f $YML up -d; docker-clean'
+alias docker-upgrade-all='YML=~/Docker/docker-compose.yml; docker compose -f $YML pull; docker compose -f $YML up -d --remove-orphans; docker-clean'
 alias download-chromeosflex="wget --trust-server-names https://dl.google.com/chromeos-flex/images/latest.bin.zip"
 alias firmware-util="curl -LOk mrchromebox.tech/firmware-util.sh && sudo bash firmware-util.sh; rm firmware-util.sh"
 alias flatpak-upgrade-all="flatpak update -y; flatpak uninstall --unused -y; flatpak uninstall --delete-data -y"
@@ -974,45 +974,20 @@ network-scan() {
   fi
 }
 
-plex-backup() {
-  echo "Temporarily stopping Plex server..."
-  docker stop plex
-
-  PLEX_DIR="/home/farmerbb/Docker/plex/config"
-  BACKUP_DIR="/mnt/files/Local/plex-backup"
-  mkdir -p "$BACKUP_DIR"
-
-  sudo rsync -avu --delete --inplace "$PLEX_DIR/" "$BACKUP_DIR"
-
-  docker start plex
+apt-reenable-sources() {
+  for i in /etc/apt/sources.list.d/*.sources; do
+    grep -q 'cdrom:' $i || sudo sed -i 's/Enabled: no/Enabled: yes/' $i
+  done
 }
 
-plex-restore() {
-  echo "Temporarily stopping Plex server..."
-  docker stop plex
+install-mosquitto() {
+  sudo apt-get update
+  sudo apt-get install -y mosquitto mosquitto-clients
 
-  PLEX_DIR="/home/farmerbb/Docker/plex/config"
-  BACKUP_DIR="/mnt/files/Local/plex-backup"
-  mkdir -p "$BACKUP_DIR"
+  echo 'listener 1883 0.0.0.0' | sudo tee -a /etc/mosquitto/mosquitto.conf > /dev/null
+  echo 'allow_anonymous true' | sudo tee -a /etc/mosquitto/mosquitto.conf > /dev/null
 
-  sudo rsync -avu --delete --inplace "$BACKUP_DIR/" "$PLEX_DIR"
-
-  docker start plex
-}
-
-home-assistant-restore() {
-  docker stop homeassistant
-
-  cd ~/Docker
-  mv homeassistant homeassistant-old
-  mkdir homeassistant
-
-  tar -xOf ~/Other\ Stuff/Docker/homeassistant-*.tar "homeassistant.tar.gz" | tar --strip-components=1 -zxf - -C homeassistant
-
-  docker start homeassistant
-  rm -rf homeassistant-old
-
-  cd - >/dev/null
+  sudo systemctl restart mosquitto
 }
 
 export -f btrfs-dedupe
@@ -1089,6 +1064,5 @@ export -f install-netdata
 export -f update-everything
 export -f mac-address
 export -f network-scan
-export -f plex-backup
-export -f plex-restore
-export -f home-assistant-restore
+export -f apt-reenable-sources
+export -f install-mosquitto

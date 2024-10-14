@@ -14,6 +14,15 @@ services:
             - 34357:34357/udp
             - 853:853/tcp
         image: adguard/adguardhome:latest
+    esphome:
+        container_name: esphome
+        image: esphome/esphome
+        volumes:
+            - /home/farmerbb/Docker/esphome:/config
+            - /etc/localtime:/etc/localtime:ro
+        restart: unless-stopped
+        privileged: true
+        network_mode: host
     home-assistant:
         container_name: homeassistant
         privileged: true
@@ -25,6 +34,18 @@ services:
             - /home/farmerbb/Docker/certs:/etc/letsencrypt
         network_mode: host
         image: ghcr.io/home-assistant/home-assistant:stable
+    netalertx:
+        container_name: netalertx
+        image: "jokobsk/netalertx:latest"
+        network_mode: host
+        restart: unless-stopped
+        volumes:
+            - /home/farmerbb/Docker/netalertx/config:/app/config
+            - /home/farmerbb/Docker/netalertx/db:/app/db
+            - /home/farmerbb/Docker/netalertx/logs:/app/front/log
+        environment:
+            - TZ=America/Denver
+            - PORT=20211
     octoprint:
         container_name: octoprint
         privileged: true
@@ -35,7 +56,9 @@ services:
             - 8080:80
         restart: unless-stopped
         image: octoprint/octoprint:latest
-    nginx-proxy-manager:
+        environment:
+            - TZ=America/Denver
+    proxy-manager:
         container_name: proxy-manager
         ports:
             - 81:81

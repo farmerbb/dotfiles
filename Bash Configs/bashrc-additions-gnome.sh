@@ -6,7 +6,6 @@ ALL_EXTENSIONS=(
   arcmenu@arcmenu.com
   quick-settings-tweaks@qwreey
   gestureImprovements@gestures
-  power-profile-switcher@eliapasquali.github.io
   ding@rastersoft.com
   ubuntu-appindicators@ubuntu.com
   gsconnect@andyholmes.github.io
@@ -14,6 +13,7 @@ ALL_EXTENSIONS=(
   compiz-windows-effect@hermes83.github.com
   notification-banner-reloaded@marcinjakubowski.github.com
   transparent-window-moving@noobsai.github.com
+  auto-power-profile@dmy3k.github.io
 )
 
 EXTENSIONS_WEB=(
@@ -24,15 +24,17 @@ EXTENSIONS_WEB=(
   3628 # arcmenu@arcmenu.com
   3210 # compiz-windows-effect@hermes83.github.com
   4651 # notification-banner-reloaded@marcinjakubowski.github.com
-  1446 # transparent-window-moving@noobsai.github.com
-  5575 # power-profile-switcher@eliapasquali.github.io
   3733 # tiling-assistant@leleat-on-github
+  6583 # auto-power-profile@dmy3k.github.io
+# 1446 # transparent-window-moving@noobsai.github.com
+# 4245 # gestureImprovements@gestures
+# 5446 # quick-settings-tweaks@qwreey
 )
 
 EXTENSIONS_APT=(
-  gnome-shell-extension-desktop-icons-ng        # ding@rastersoft.com
-  gnome-shell-extension-appindicator            # ubuntu-appindicators@ubuntu.com
-  gnome-shell-extension-gsconnect               # gsconnect@andyholmes.github.io
+  gnome-shell-extension-desktop-icons-ng # ding@rastersoft.com
+  gnome-shell-extension-appindicator     # ubuntu-appindicators@ubuntu.com
+  gnome-shell-extension-gsconnect        # gsconnect@andyholmes.github.io
 )
 
 export-extension-config() {
@@ -97,7 +99,7 @@ sync-extensions() {
 
   if [[ -z $(which curl) ]]; then
     sudo apt-get update
-    sudo apt-get install -y curl
+    sudo apt-get install -y curl gnome-shell-extension-manager
   fi
 
   if [[ -z $(which gnome-shell-extension-installer) ]]; then
@@ -112,7 +114,7 @@ sync-extensions() {
 
   for i in $(gnome-extensions list); do
     echo ${ALL_EXTENSIONS[@]} | grep -owq $i || UNINSTALL=true
-    [[ $i = power-profile-switcher@eliapasquali.github.io ]] && [[ $HOSTNAME = NUC ]] && UNINSTALL=true
+    [[ $i = auto-power-profile@dmy3k.github.io ]] && [[ $HOSTNAME = NUC ]] && UNINSTALL=true
     [[ $UNINSTALL = true ]] && gnome-extensions uninstall $i; UNINSTALL=false
   done
 }

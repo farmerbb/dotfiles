@@ -86,7 +86,7 @@ edit-bluez-config() {
   systemctl --user restart wireplumber
 }
 
-edit-resolved-config() {
+edit-resolved-conf() {
   DIR="$DEVICE_DIR_PREFIX"
   FILE="$DIR/resolved.conf"
   if [[ -f "$FILE" ]]; then
@@ -96,7 +96,7 @@ edit-resolved-config() {
     [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_DEVICE_DIR_PREFIX/resolved.conf"
   fi
 
-  sudo service systemd-resolved restart
+  sudo systemctl restart systemd-resolved
   resolvectl status
 }
 
@@ -156,13 +156,6 @@ remove-all-snaps() {
   sudo apt-mark hold snapd
 
   rm -rf ~/snap
-}
-
-install-plex-server() {
-  echo deb https://downloads.plex.tv/repo/deb public main | sudo tee /etc/apt/sources.list.d/plexmediaserver.list > /dev/null
-  curl https://downloads.plex.tv/plex-keys/PlexSign.key | sudo apt-key add -
-  sudo apt-get update
-  sudo apt-get -y install plexmediaserver
 }
 
 install-waydroid() {
@@ -352,14 +345,13 @@ export -f edit-grub-config
 export -f edit-fstab
 export -f edit-synaptics
 export -f edit-bluez-config
-export -f edit-resolved-config
+export -f edit-resolved-conf
 export -f boot-to-windows
 export -f install-blackbox
 export -f install-ssh-server
 export -f install-input-remapper
 export -f fix-libvirt-permissions
 export -f remove-all-snaps
-export -f install-plex-server
 export -f install-waydroid
 export -f install-rhythmbox
 export -f toggle-ultrawide-fixes

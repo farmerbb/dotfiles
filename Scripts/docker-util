@@ -1,54 +1,42 @@
 #!/bin/bash
 
-CONTAINERS=(
-  adguardhome
-  homeassistant
-  octoprint
-  proxy-manager
-  wireguard
-  wyze-bridge
-)
-
 install-containers() {
   echo password=$(echo [REDACTED] | base64 -d) > ~/Docker/.env
   cp ~/Other\ Stuff/Docker/docker-compose.yml ~/Docker/docker-compose.yml
-  docker compose -f ~/Docker/docker-compose.yml up -d
+  docker compose -f ~/Docker/docker-compose.yml up -d --remove-orphans
 }
 
-backup-container() {
-  case $1 in
-    adguardhome)
-      rclone-backup adguardhome/conf
-    ;;
+backup-containers() {
+  echo -e "\n\033[1mRunning prerequisites for NetAlertX\033[0m\n"
+  for i in backup bak; do
+    sudo bash -i -c "rm -f /home/farmerbb/Docker/netalertx/config/*.$i"
+  done
 
-    homeassistant)
-      home-assistant-backup
-    ;;
+  sudo sed -i 's/SETPWD_enable_password=True/SETPWD_enable_password=False/' ~/Docker/netalertx/config/app.conf
+  sudo curl http://192.168.86.10:20211/php/server/devices.php?action=ExportCSV -o ~/Docker/netalertx/config/devices.csv
+  sudo sed -i 's/SETPWD_enable_password=False/SETPWD_enable_password=True/' ~/Docker/netalertx/config/app.conf
 
-    octoprint)
-      BACKUP_PATH=$(docker exec -it octoprint octoprint plugins backup:backup | tee /dev/stderr | tail -1 | cut -d' ' -f4 | sed 's/'$'\r//')
+  echo -e "\n\033[1mRunning rclone backups\033[0m\n"
+  for i in adguardhome/conf esphome netalertx proxy-manager wireguard; do
+    rclone-backup $i
+  done
 
-      rm ~/OneDrive/Other\ Stuff/Docker/octoprint-*
-      docker cp octoprint:$BACKUP_PATH ~/OneDrive/Other\ Stuff/Docker/
+  echo -e "\033[1mRunning Home Assistant backup\033[0m\n"
+  home-assistant-backup
 
-      docker exec -it octoprint rm $BACKUP_PATH
-    ;;
-
-    proxy-manager)
-      rclone-backup proxy-manager
-    ;;
-
-    wireguard)
-      rclone-backup wireguard
-    ;;
-  esac
+  echo -e "\n\n\033[1mRunning OctoPrint backup\033[0m\n"
+  BACKUP_PATH=$(docker exec -it octoprint octoprint --basedir /octoprint/octoprint plugins backup:backup | tee /dev/stderr | tail -1 | cut -d' ' -f4 | sed 's/'$'\r//')
+  rm ~/OneDrive/Other\ Stuff/Docker/octoprint-*
+  docker cp octoprint:$BACKUP_PATH ~/OneDrive/Other\ Stuff/Docker/
+  docker exec -it octoprint rm $BACKUP_PATH
 }
 
 rclone-backup() {
   sudo rclone \
     --config /home/farmerbb/.config/rclone/rclone.conf \
     sync -v /home/farmerbb/Docker/$1 "OneDrive:Other Stuff/Docker/$1" \
-    --exclude="/logs**"
+    --exclude="/logs**" \
+    --exclude="/.esphome**"
 }
 
 backup-yml() {
@@ -57,22 +45,9 @@ backup-yml() {
   done
 }
 
-wait-for-run() {
-  TRIES=0
-  until [[ $(docker inspect -f "{{.State.Running}}" $1) == "true" ]]; do
-    sleep 1
-
-    ((TRIES++))
-    [[ $(($TRIES % 10)) -eq 0 ]] && install-container $1
-  done
-}
-
 print-usage() {
   BASENAME=$(basename "$0")
-  echo -e "\033[1mContainers:\033[0m"
-  for i in "${CONTAINERS[@]}"; do echo $i; done
-  echo
-  echo -e "\033[1mUsage:\033[0m $BASENAME  <install | backup | shell | wait-for-run>  <container-name | all>"
+  echo -e "\033[1mUsage:\033[0m $BASENAME  <install | backup | shell>"
   exit 1
 }
 
@@ -80,55 +55,30 @@ print-usage() {
   echo "Please run install-docker before running this script." && \
   exit 1
 
-[[ $# -ne 2 ]] && print-usage
+case $1 in
+  install)
+    install-containers
+    exit 0
+  ;;
 
-if [[ "${CONTAINERS[@]}" =~ $2 || $2 = all ]]; then
-  case $1 in
-    install)
-      if [[ $2 = all ]]; then
-        install-containers
-        exit 0
-      fi
-
-      echo "Installing individual containers is no longer supported"
+  shell)
+    [[ -z $2 ]] && \
+      echo "\"shell\" requires a container name to be specified" && \
       exit 1
-    ;;
 
-    wait-for-run)
-      if [[ $2 = all ]]; then
-        for i in "${CONTAINERS[@]}"; do wait-for-run $i; done
-      else
-        wait-for-run $2
-      fi
-      exit 0
-    ;;
+    docker exec -it $2 bash || docker exec -it $2 sh
+    exit 0
+  ;;
 
-    shell)
-      if [[ $2 = all ]]; then
-        echo '"shell" is not valid when used with "all", aborting...'
-        exit 1
-      fi
+  backup)
+    backup-containers
+    backup-yml
+    exit 0
+  ;;
 
-      docker exec -it $2 bash || docker exec -it $2 sh
-      exit 0
-    ;;
-
-    backup)
-      if [[ $2 = all ]]; then
-        for i in "${CONTAINERS[@]}"; do backup-container $i; done
-      else
-        backup-container $2
-      fi
-
-    # rclone-backup certs
-      backup-yml
-      exit 0
-    ;;
-
-    *)
-      print-usage
-    ;;
-  esac
-fi
+  *)
+    print-usage
+  ;;
+esac
 
 print-usage

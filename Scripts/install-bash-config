@@ -15,6 +15,7 @@ done
 
 bashrc-additions linux-generic
 [[ -d "$IDE_DIR" ]] && bashrc-additions android-dev
+[[ -d ~/Docker ]] && bashrc-additions docker
 [[ $(which gnome-shell) ]] && bashrc-additions gnome
 [[ $(lsb_release -is 2>/dev/null) = Ubuntu ]] && bashrc-additions ubuntu
 

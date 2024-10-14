@@ -22,7 +22,7 @@
 # 
 # m h  dom mon dow   command
 
-@reboot docker compose -f ~/Docker/docker-compose.yml up -d
+@reboot docker compose -f ~/Docker/docker-compose.yml up -d --remove-orphans
 @reboot bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/nuc-mounts.sh
 @reboot bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/tvheadend-expose-ports.sh
 @reboot sudo rsync --daemon

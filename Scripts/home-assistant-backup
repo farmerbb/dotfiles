@@ -6,7 +6,7 @@ fi
 
 TOKEN=[REDACTED]
 NEST_ID=[REDACTED]
-BACKUP_NAME="$(date +%Y%m%d)"
+BACKUP_NAME="$(date +%Y%m%d-%H%M%S)"
 
 mkdir ~/temp-nest-media
 sudo mv ~/Docker/homeassistant/nest/event_media/$NEST_ID/* ~/temp-nest-media
