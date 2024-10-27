@@ -1,0 +1,32 @@
+#!/bin/bash
+
+verify-command() {
+  if [[ -z $(which $1) ]]; then
+    sudo apt-get update
+    sudo apt-get install guestfs-tools
+  fi
+}
+
+list-filesystems() {
+  if [[ ! -z "$1" ]]; then
+    verify-command virt-filesystems
+    virt-filesystems -lha "$1"
+    echo
+  fi
+}
+
+print-usage() {
+  list-filesystems "$1"
+
+  BASENAME=$(basename "$0")
+  echo "Usage: $BASENAME <img-name> <partition-name> <mountpoint>"
+  exit 1
+}
+
+if [[ $# -gt 2 ]]; then
+  verify-command guestmount
+  guestmount -a "$1" -m "$2" --ro "$3" && exit 0
+  echo
+fi
+
+print-usage "$1"

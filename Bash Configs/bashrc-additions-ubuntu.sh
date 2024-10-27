@@ -74,14 +74,14 @@ edit-synaptics() {
 }
 
 edit-bluez-config() {
-  DIR="$DEVICE_DIR_PREFIX"
-  FILE="$DIR/50-bluez-config.lua"
-  if [[ -f "$FILE" ]]; then
-    MD5=$(md5sum "$FILE")
+# DIR="$DEVICE_DIR_PREFIX"
+# FILE="$DIR/50-bluez-config.lua"
+# if [[ -f "$FILE" ]]; then
+#   MD5=$(md5sum "$FILE")
     sudo nano /usr/share/wireplumber/bluetooth.lua.d/50-bluez-config.lua
-    cp /usr/share/wireplumber/bluetooth.lua.d/50-bluez-config.lua "$FILE"
-    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_DEVICE_DIR_PREFIX/50-bluez-config.lua"
-  fi
+#   cp /usr/share/wireplumber/bluetooth.lua.d/50-bluez-config.lua "$FILE"
+#   [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_DEVICE_DIR_PREFIX/50-bluez-config.lua"
+# fi
 
   systemctl --user restart wireplumber
 }

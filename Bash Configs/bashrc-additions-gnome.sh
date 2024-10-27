@@ -14,6 +14,7 @@ ALL_EXTENSIONS=(
   notification-banner-reloaded@marcinjakubowski.github.com
   transparent-window-moving@noobsai.github.com
   auto-power-profile@dmy3k.github.io
+  custom-command-toggle@storageb.github.com
 )
 
 EXTENSIONS_WEB=(
@@ -26,6 +27,7 @@ EXTENSIONS_WEB=(
   4651 # notification-banner-reloaded@marcinjakubowski.github.com
   3733 # tiling-assistant@leleat-on-github
   6583 # auto-power-profile@dmy3k.github.io
+  7012 # custom-command-toggle@storageb.github.com
 # 1446 # transparent-window-moving@noobsai.github.com
 # 4245 # gestureImprovements@gestures
 # 5446 # quick-settings-tweaks@qwreey
@@ -36,6 +38,13 @@ EXTENSIONS_APT=(
   gnome-shell-extension-appindicator     # ubuntu-appindicators@ubuntu.com
   gnome-shell-extension-gsconnect        # gsconnect@andyholmes.github.io
 )
+
+if [[ $HOSTNAME = NUC ]]; then
+  ALL_EXTENSIONS=("${ALL_EXTENSIONS[@]/auto-power-profile@dmy3k.github.io}" )
+  ALL_EXTENSIONS=("${ALL_EXTENSIONS[@]/gsconnect@andyholmes.github.io}" )
+  EXTENSIONS_WEB=("${EXTENSIONS_WEB[@]/6583}" )
+  EXTENSIONS_APT=("${EXTENSIONS_APT[@]/gnome-shell-extension-gsconnect}" )
+fi
 
 export-extension-config() {
   DIR="$LINUX_DIR_PREFIX/Ubuntu/extensions"
@@ -99,7 +108,7 @@ sync-extensions() {
 
   if [[ -z $(which curl) ]]; then
     sudo apt-get update
-    sudo apt-get install -y curl gnome-shell-extension-manager
+    sudo apt-get install -y curl
   fi
 
   if [[ -z $(which gnome-shell-extension-installer) ]]; then
@@ -110,13 +119,20 @@ sync-extensions() {
   gnome-shell-extension-installer ${EXTENSIONS_WEB[@]}
 
   sudo apt-get update
-  sudo apt-get install -y ${EXTENSIONS_APT[@]}
+  sudo apt-get install -y ${EXTENSIONS_APT[@]} gnome-shell-extension-manager
 
   for i in $(gnome-extensions list); do
     echo ${ALL_EXTENSIONS[@]} | grep -owq $i || UNINSTALL=true
-    [[ $i = auto-power-profile@dmy3k.github.io ]] && [[ $HOSTNAME = NUC ]] && UNINSTALL=true
     [[ $UNINSTALL = true ]] && gnome-extensions uninstall $i; UNINSTALL=false
   done
+
+  DIR="$LINUX_DIR_PREFIX/Ubuntu/extensions"
+  for i in $(ls --color=auto "$DIR"/*.txt | sed -e "s#$DIR/##g" -e "s/\.txt//g" -e "s/:/:\n/g"); do
+    import-extension-config $i
+  done
+
+  echo
+  echo "Please reboot, then run 'fix-extensions' to finish applying changes."
 }
 
 export -f export-extension-config

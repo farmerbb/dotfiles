@@ -18,9 +18,10 @@ PLATFORM_TOOLS_DIR=$ANDROID_SDK_ROOT/platform-tools
 TOOLS_DIR=$ANDROID_SDK_ROOT/tools
 CMDLINE_TOOLS_DIR=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
 TOOLS_BIN_DIR=$ANDROID_SDK_ROOT/tools/bin
+EMULATOR_DIR=$ANDROID_SDK_ROOT/emulator
 WEBOS_TOOLS_BIN_DIR="/home/$USER/webOS_TV_SDK/CLI/bin"
 
-export PATH="$PLUGINS_DIR:$PLATFORM_TOOLS_DIR:$TOOLS_DIR:$CMDLINE_TOOLS_DIR:$TOOLS_BIN_DIR:$BUILD_TOOLS_DIR:$NDK_DIR:$PATH:$WEBOS_TOOLS_BIN_DIR"
+export PATH="$PLUGINS_DIR:$PLATFORM_TOOLS_DIR:$TOOLS_DIR:$CMDLINE_TOOLS_DIR:$TOOLS_BIN_DIR:$EMULATOR_DIR:$BUILD_TOOLS_DIR:$NDK_DIR:$PATH:$WEBOS_TOOLS_BIN_DIR"
 
 alias clear-emulator-lockfiles="rm ~/.android/avd/*.avd/*.lock"
 alias gradle-stop="pkill -f '.*GradleDaemon.*'"
@@ -49,7 +50,7 @@ emulator() {
   OLD_DIR="$PWD"
   SECONDS=0
 
-  cd "$ANDROID_SDK_ROOT/tools"
+  cd "$ANDROID_SDK_ROOT/emulator"
   ./emulator "$@"
 
   [[ SECONDS -eq 0 ]] && \

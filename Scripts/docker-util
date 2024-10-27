@@ -16,12 +16,16 @@ backup-containers() {
   sudo curl http://192.168.86.10:20211/php/server/devices.php?action=ExportCSV -o ~/Docker/netalertx/config/devices.csv
   sudo sed -i 's/SETPWD_enable_password=False/SETPWD_enable_password=True/' ~/Docker/netalertx/config/app.conf
 
+  docker stop netalertx
+
   echo -e "\n\033[1mRunning rclone backups\033[0m\n"
-  for i in adguardhome/conf esphome netalertx proxy-manager wireguard; do
+  for i in adguardhome/conf esphome netalertx wireguard; do
     rclone-backup $i
   done
 
-  echo -e "\033[1mRunning Home Assistant backup\033[0m\n"
+  docker start netalertx
+
+  echo -e "\n\033[1mRunning Home Assistant backup\033[0m\n"
   home-assistant-backup
 
   echo -e "\n\n\033[1mRunning OctoPrint backup\033[0m\n"

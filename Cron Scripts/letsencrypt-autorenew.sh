@@ -6,23 +6,29 @@ touch /tmp/letsencrypt-autorenew.running
 
 ##################################################
 
-mkdir -p ~/Docker/certs
-echo 'dns_cloudflare_api_token = [REDACTED]' | sudo tee ~/Docker/certs/cloudflare.ini > /dev/null
-sudo chmod 600 ~/Docker/certs/cloudflare.ini
+if [[ -z $(which certbot) ]]; then
+  sudo apt-get update
+  sudo apt-get install -y python3-certbot-dns-cloudflare
+fi
 
-docker run \
-  -v /home/farmerbb/Docker/certs:/etc/letsencrypt \
-  certbot/dns-cloudflare \
-  certonly \
-    --non-interactive \
-    --dns-cloudflare \
-    --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini \
-    --agree-tos \
-    -d [REDACTED] \
-    -d '*.[REDACTED]' \
-    --server https://acme-v02.api.letsencrypt.org/directory
+CERT_DIR=/etc/letsencrypt
+CREDS=$CERT_DIR/cloudflare.ini
 
-sudo rm ~/Docker/certs/cloudflare.ini
+sudo mkdir -p $CERT_DIR
+echo 'dns_cloudflare_api_token = [REDACTED]' | sudo tee $CREDS > /dev/null
+sudo chmod 600 $CREDS
+
+sudo certbot certonly \
+  --non-interactive \
+  --dns-cloudflare \
+  --dns-cloudflare-credentials $CREDS \
+  --agree-tos \
+  --email [REDACTED] \
+  -d [REDACTED] \
+  -d '*.[REDACTED]' \
+  --server https://acme-v02.api.letsencrypt.org/directory
+
+sudo rm $CREDS
 
 ##################################################
 

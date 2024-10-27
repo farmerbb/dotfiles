@@ -6,6 +6,6 @@
 #
 # <file system>                               <mount point>    <type>  <options>                                           <dump>  <pass>
 
-UUID=2eda5b12-9656-463a-a3b3-b33932ca45a6     /                ext4    defaults,noatime,discard                                0   1
-UUID=68D6-0E5F                                /boot/efi        vfat    defaults                                                0   1
-UUID=e1cc56bc-3a6b-4440-abee-0668821d3b87     /mnt/VMs         btrfs   defaults,noatime,compress-force=zstd:1,discard=async    0   2
+UUID=46ee0e41-e46a-47a7-893a-a34495d9ff5b     /                ext4    defaults,noatime,discard                                0   1
+UUID=910E-D763                                /boot/efi        vfat    defaults                                                0   1
+UUID=e171f4e6-f08d-488e-850a-83c531a8fc91     /mnt/VMs         btrfs   defaults,noatime,compress-force=zstd:1,discard=async    0   2

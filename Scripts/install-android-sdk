@@ -1,10 +1,10 @@
 #!/bin/bash
 # Adapted from https://git.libretro.com/libretro-infrastructure/libretro-build-android/-/blob/master/Dockerfile
 
-ANDROID_COMPILE_SDK=30
-ANDROID_BUILD_TOOLS=30.0.2
-ANDROID_SDK_TOOLS=6858069
-ANDROID_NDK_VERSION=22.0.7026061
+ANDROID_COMPILE_SDK=34
+ANDROID_BUILD_TOOLS=34.0.0
+ANDROID_SDK_TOOLS=11076708
+ANDROID_NDK_VERSION=25.1.8937393
 
 sudo apt-get update
 sudo apt-get -y install wget unzip
@@ -23,3 +23,6 @@ wget -O android-sdk.zip https://dl.google.com/android/repository/commandlinetool
  && yes | android-sdk-linux/cmdline-tools/latest/bin/sdkmanager --licenses \
  && mkdir -p ~/Android \
  && mv android-sdk-linux ~/Android/Sdk
+
+echo 'function check_type() { type -t "$1"; }' | sudo tee /etc/bash_completion.d/adb.bash > /dev/null
+curl https://android.googlesource.com/platform/packages/modules/adb/+/refs/heads/master/adb.bash?format=TEXT | base64 -d | sudo tee -a /etc/bash_completion.d/adb.bash > /dev/null

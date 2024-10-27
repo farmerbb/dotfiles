@@ -1,0 +1,6 @@
+[/]
+entryrow1-setting='darkman set dark'
+entryrow2-setting='darkman set light'
+entryrow3-setting='Dark Theme'
+entryrow4-setting='dark-mode-symbolic'
+togglestate1-setting=false

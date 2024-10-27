@@ -23,7 +23,6 @@ alias badram='sudo cat /proc/iomem | grep "Unusable memory"'
 alias chdman='~/Games/Utilities/chdman/chdman'
 alias cpu-monitor='watch -n1 "lscpu -e; echo; sensors coretemp-isa-0000 dell_smm-isa-0000"'
 alias current-governor="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
-alias docker-run="docker build -t temp-container . && sudo docker run -it temp-container:latest"
 alias docker-clean="docker system prune --volumes -a -f; docker volume prune -a -f"
 alias docker-compose="docker compose"
 alias docker-upgrade-all='YML=~/Docker/docker-compose.yml; docker compose -f $YML pull; docker compose -f $YML up -d --remove-orphans; docker-clean'
@@ -41,6 +40,7 @@ alias mount-iso="mount-chd"
 alias mount-nuc="mount-sshfs nuc /mnt/NUC"
 alias nano='MICRO_TRUECOLOR=1 micro'
 alias port-monitor='watch -n1 "sudo lsof -i -P -n | grep LISTEN"'
+alias ports-monitor='port-monitor'
 alias public-ip="dig @resolver4.opendns.com myip.opendns.com +short"
 alias public-ipv6="dig @resolver1.ipv6-sandbox.opendns.com AAAA myip.opendns.com +short -6"
 alias python="python3"
@@ -48,14 +48,15 @@ alias qemu="qemu-system-x86_64 -monitor stdio -accel kvm -cpu host -m 4G -smp co
 alias qemu-gl="qemu -display gtk,gl=on -device virtio-vga-gl"
 alias qemu95="qemu-system-i386 -monitor stdio -cpu pentium -vga cirrus -nic user,model=pcnet -device sb16 -m 256"
 alias qr-code="qrencode -t UTF8"
+alias refresh-bash-config='source "$LINUX_DIR_PREFIX/Scripts/install-bash-config"'
 alias refresh-theme='for i in {1..2}; do darkman toggle >/dev/null; done'
 alias set-timezone='timedatectl set-timezone "America/Denver"; timedatectl'
 alias starwars="telnet towel.blinkenlights.nl"
 alias sudo="sudo "
 alias reboot-device="restart-device"
 alias reboot-to-bios="sudo systemctl reboot --firmware-setup"
-alias reset-webcam="usbreset 046d:082c"
-alias robomirror-linux-dir='SYNC_DIRS=("Other Stuff/Linux"); robomirror onedrive'
+alias reset-webcam="sudo usbreset 046d:082c"
+alias robomirror-linux-dir='SYNC_DIRS=("Other Stuff/Linux"); robomirror onedrive; refresh-bash-config'
 alias running-vms="sudo lsof 2>&1 | grep /dev/kvm | awk '!seen[\$2]++'"
 alias running-vms-fast="sudo lsof /dev/kvm 2>&1 | grep /dev/kvm | awk '!seen[\$2]++'"
 alias stop-nuc="ssh -q -O stop nuc"
@@ -240,7 +241,7 @@ edit-bash-config() {
   if [[ -f "$FILE" ]]; then
     MD5=$(md5sum "$FILE")
     nano "$FILE"
-    [[ $(md5sum "$FILE") != $MD5 ]] && . ~/.bashrc && cp "$FILE" "$OD_LINUX_DIR_PREFIX/Bash Configs/bashrc-additions-$1.sh"
+    [[ $(md5sum "$FILE") != $MD5 ]] && refresh-bash-config && cp "$FILE" "$OD_LINUX_DIR_PREFIX/Bash Configs/bashrc-additions-$1.sh"
   else
     echo -e "\033[1m$(echo $DIR | sed "s#$LINUX_DIR_PREFIX/##g"):\033[0m"
     ls "$DIR"/*.sh | sed -e "s#$DIR/bashrc-additions-##g" -e "s/\.sh//g" -e "s/:/:\n/g" | column
@@ -306,17 +307,6 @@ edit-hosts() {
   fi
 }
 
-edit-ssh-config() {
-  DIR="$LINUX_DIR_PREFIX/Network Config/ssh"
-  FILE="$DIR/config"
-  if [[ -f "$FILE" ]]; then
-    MD5=$(md5sum "$FILE")
-    nano "$FILE"
-    cp "$FILE" ~/.ssh/config
-    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_LINUX_DIR_PREFIX/Network Config/ssh/config"
-  fi
-}
-
 edit-netdata-config() {
   DIR="$DEVICE_DIR_PREFIX"
   FILE="$DIR/netdata.conf"
@@ -328,6 +318,17 @@ edit-netdata-config() {
       sudo systemctl restart netdata
       cp "$FILE" "$OD_DEVICE_DIR_PREFIX/netdata.conf"
     fi
+  fi
+}
+
+edit-caddyfile() {
+  DIR="$LINUX_DIR_PREFIX/Network Config"
+  FILE="$DIR/Caddyfile"
+  if [[ -f "$FILE" ]]; then
+    MD5=$(md5sum "$FILE")
+    nano "$FILE"
+    caddy reload
+    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_LINUX_DIR_PREFIX/Network Config/Caddyfile"
   fi
 }
 
@@ -919,14 +920,14 @@ install-netdata() {
   sh /tmp/netdata-kickstart.sh --disable-telemetry
 
   CONF_DIR=$(curl localhost:19999/netdata.conf | grep '# config = ' | xargs | sed 's/# config = //')
-  DIR="$DEVICE_DIR_PREFIX"
-  FILE="$DIR/netdata.conf"
-  if [[ -f "$FILE" ]]; then
-    sudo cp "$FILE" "$CONF_DIR/netdata.conf"
+  DIR="$DEVICE_DIR_PREFIX/netdata"
+  if [[ -d "$DIR" ]]; then
+    sudo cp -rT "$DIR" "$CONF_DIR"
     sudo systemctl restart netdata
   else
     for i in "$DEVICE_DIR_PREFIX" "$OD_DEVICE_DIR_PREFIX"; do
-      cp "$CONF_DIR/netdata.conf" "$i/netdata.conf"
+      mkdir -p "$i/netdata"
+      cp "$CONF_DIR/netdata.conf" "$i/netdata/netdata.conf"
     done
   fi
 }
@@ -990,6 +991,42 @@ install-mosquitto() {
   sudo systemctl restart mosquitto
 }
 
+install-caddy() {
+  if [[ -z $(which xcaddy) ]]; then
+    sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https
+    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/xcaddy/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-xcaddy-archive-keyring.gpg
+    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/xcaddy/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-xcaddy.list
+
+    sudo apt-get update
+    sudo apt-get install -y golang-go xcaddy
+  fi
+
+  xcaddy build \
+    --with github.com/caddy-dns/cloudflare \
+    --with github.com/mholt/caddy-l4
+
+  sudo mv caddy /usr/local/bin/caddy
+  sudo rm -rf ~/go
+}
+
+docker-run() {
+  if [[ ! -f Dockerfile ]]; then
+    [[ -z $1 ]] && echo "Usage: docker-run <image-name>" && return 1
+
+    DIR="/tmp/docker-run"
+    mkdir -p $DIR
+
+    echo "FROM $1:latest" > $DIR/Dockerfile
+    TAG_SUFFIX="-$1"
+  else
+    DIR="."
+    TAG_SUFFIX="$(basename "$PWD")"
+  fi
+
+  docker build -t temp-container-$1 $DIR || return 1
+  docker run -it temp-container-$1:latest
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -1009,8 +1046,8 @@ export -f edit-cron-script
 export -f edit-crontab
 export -f edit-vm-config
 export -f edit-hosts
-export -f edit-ssh-config
 export -f edit-netdata-config
+export -f edit-caddyfile
 export -f install-apks-recursive
 export -f max-cpu
 export -f unsparsify
@@ -1066,3 +1103,5 @@ export -f mac-address
 export -f network-scan
 export -f apt-reenable-sources
 export -f install-mosquitto
+export -f install-caddy
+export -f docker-run

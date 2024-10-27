@@ -6,7 +6,7 @@ services:
         volumes:
             - /home/farmerbb/Docker/adguardhome/work:/opt/adguardhome/work
             - /home/farmerbb/Docker/adguardhome/conf:/opt/adguardhome/conf
-            - /home/farmerbb/Docker/certs:/etc/letsencrypt
+            - /etc/letsencrypt:/etc/letsencrypt:ro
         ports:
             - 192.168.86.10:53:53/tcp
             - 192.168.86.10:53:53/udp
@@ -31,7 +31,7 @@ services:
             - TZ=America/Denver
         volumes:
             - /home/farmerbb/Docker/homeassistant:/config
-            - /home/farmerbb/Docker/certs:/etc/letsencrypt
+            - /etc/letsencrypt:/etc/letsencrypt:ro
         network_mode: host
         image: ghcr.io/home-assistant/home-assistant:stable
     netalertx:
@@ -58,18 +58,6 @@ services:
         image: octoprint/octoprint:latest
         environment:
             - TZ=America/Denver
-    proxy-manager:
-        container_name: proxy-manager
-        ports:
-            - 81:81
-            - 443:443
-            - 3390:3390
-            - 5555:5555
-        volumes:
-            - /home/farmerbb/Docker/proxy-manager:/data
-            - /home/farmerbb/Docker/certs:/etc/letsencrypt
-        restart: unless-stopped
-        image: jc21/nginx-proxy-manager:latest
     plex:
         container_name: plex
         image: plexinc/pms-docker
