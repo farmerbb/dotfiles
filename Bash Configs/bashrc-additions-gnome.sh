@@ -28,7 +28,7 @@ EXTENSIONS_WEB=(
   3733 # tiling-assistant@leleat-on-github
   6583 # auto-power-profile@dmy3k.github.io
   7012 # custom-command-toggle@storageb.github.com
-# 1446 # transparent-window-moving@noobsai.github.com
+  1446 # transparent-window-moving@noobsai.github.com
 # 4245 # gestureImprovements@gestures
 # 5446 # quick-settings-tweaks@qwreey
 )

@@ -42,7 +42,7 @@ VHCLIENT_PATH="/mnt/files/Other Stuff/Utilities/VirtualHere/vhclientx86_64"
 
 toggle-switch() {
   TOKEN=[REDACTED]
-  curl -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d '{"entity_id": "switch.3d_printer"}' https://[REDACTED]:[REDACTED]/api/services/switch/turn_$1
+  curl -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d '{"entity_id": "switch.3d_printer"}' https://[REDACTED]/api/services/switch/turn_$1
 }
 
 start() {

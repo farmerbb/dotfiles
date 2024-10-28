@@ -96,8 +96,7 @@ edit-resolved-conf() {
     [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_DEVICE_DIR_PREFIX/resolved.conf"
   fi
 
-  sudo systemctl restart systemd-resolved
-  resolvectl status
+  flush-dns-cache
 }
 
 boot-to-windows() {

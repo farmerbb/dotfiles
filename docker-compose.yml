@@ -10,8 +10,8 @@ services:
         ports:
             - 192.168.86.10:53:53/tcp
             - 192.168.86.10:53:53/udp
-            - 34357:34357/tcp
-            - 34357:34357/udp
+            - 1443:1443/tcp
+            - 1443:1443/udp
             - 853:853/tcp
         image: adguard/adguardhome:latest
     esphome:

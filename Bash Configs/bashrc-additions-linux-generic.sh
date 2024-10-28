@@ -29,6 +29,7 @@ alias docker-upgrade-all='YML=~/Docker/docker-compose.yml; docker compose -f $YM
 alias download-chromeosflex="wget --trust-server-names https://dl.google.com/chromeos-flex/images/latest.bin.zip"
 alias firmware-util="curl -LOk mrchromebox.tech/firmware-util.sh && sudo bash firmware-util.sh; rm firmware-util.sh"
 alias flatpak-upgrade-all="flatpak update -y; flatpak uninstall --unused -y; flatpak uninstall --delete-data -y"
+alias flush-dns-cache="sudo systemctl restart systemd-resolved; resolvectl status"
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
 alias hibernate="sudo swapon /swapfile; sudo systemctl --no-block hibernate || sudo swapoff /swapfile"
 alias hypercalc="perl ~/Other\ Stuff/Utilities/hypercalc.txt"
@@ -327,7 +328,7 @@ edit-caddyfile() {
   if [[ -f "$FILE" ]]; then
     MD5=$(md5sum "$FILE")
     nano "$FILE"
-    caddy reload
+    caddy reload --config ~/Other\ Stuff/Linux/Network\ Config/Caddyfile
     [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_LINUX_DIR_PREFIX/Network Config/Caddyfile"
   fi
 }

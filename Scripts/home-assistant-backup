@@ -11,7 +11,7 @@ BACKUP_NAME="$(date +%Y%m%d-%H%M%S)"
 mkdir ~/temp-nest-media
 sudo mv ~/Docker/homeassistant/nest/event_media/$NEST_ID/* ~/temp-nest-media
 
-curl -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d '{}' https://[REDACTED]:[REDACTED]/api/services/backup/create
+curl -H "Content-Type: application/json" -H "Authorization: Bearer $TOKEN" -d '{}' https://[REDACTED]/api/services/backup/create
 
 sudo mv ~/temp-nest-media/* ~/Docker/homeassistant/nest/event_media/$NEST_ID
 rm -r ~/temp-nest-media
