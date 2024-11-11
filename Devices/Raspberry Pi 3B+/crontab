@@ -23,5 +23,5 @@
 # m h  dom mon dow   command
 
 @reboot bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/wireguard-connect.sh
-*/2 * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/wireguard-connect.sh
+* * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/wireguard-connect.sh
 0 5 * * * sudo reboot

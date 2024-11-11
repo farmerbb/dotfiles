@@ -1,15 +1,1 @@
-# /etc/fstab: static file system information.
-#
-# Use 'blkid' to print the universally unique identifier for a
-# device; this may be used with UUID= as a more robust way to name devices
-# that works even if disks are added and removed. See fstab(5).
-#
-# <file system> <mount point>   <type>  <options>       <dump>  <pass>
-# / was on /dev/vda3 during installation
-UUID=0e8a18d4-34c5-4d3f-8c99-467e1b8ba3cb /               ext4    errors=remount-ro 0       1
-# /boot/efi was on /dev/vda2 during installation
-UUID=0875-404D  /boot/efi       vfat    umask=0077      0       1
-/swapfile                                 none            swap    sw              0       0
-
-ChromeOS /mnt/chromeos virtiofs defaults 0 0
 Files /mnt/files virtiofs defaults 0 0

@@ -1,8 +1,8 @@
 #!/bin/bash
 unset HISTFILE
 
-[[ -f /tmp/wireguard-connect.running ]] && exit 1
-touch /tmp/wireguard-connect.running
+[[ -f /run/user/$UID/.wireguard-connect ]] && exit 1
+touch /run/user/$UID/.wireguard-connect
 
 ##################################################
 
@@ -26,4 +26,4 @@ handle-wireguard
 ##################################################
 
 [[ $? -eq 0 ]] && touch ~/.lastrun/wireguard-connect.lastrun
-rm -f /tmp/wireguard-connect.running
+rm -f /run/user/$UID/.wireguard-connect

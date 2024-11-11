@@ -147,8 +147,8 @@ cat() {
     $(which cat) "$@"
   elif [[ -d "$1" ]]; then
     ls -al "$1"
-  elif [[ "${1,,}" = *.jpg || "${1,,}" = *.png || "${1,,}" = *.gif || "${1,,}" = *.bmp ]]; then
-    catimg -w 120 "$1"
+  elif [[ "${1,,}" = *.jpg || "${1,,}" = *.jpeg || "${1,,}" = *.png || "${1,,}" = *.gif || "${1,,}" = *.bmp ]]; then
+    img2sixel "$1"
   elif [[ "${1,,}" = *.mp3 || "${1,,}" = *.m4a || "${1,,}" = *.wav \
        || "${1,,}" = *.ogg || "${1,,}" = *.flac ]]; then
     play -q "$1"
@@ -678,25 +678,6 @@ wireguard-run() {
   sudo wg-quick down wg0 2>/dev/null
 }
 
-organize-camera-roll() (
-  organize-camera-roll-internal() {
-    mkdir -p $1/Media/Unsorted\ Pictures/$YEAR/$MONTH
-    mkdir -p $1/Media/Unsorted\ Videos/$YEAR/$MONTH
-    mkdir -p $1/Media/Unsorted\ Pictures/Screenshots
-
-    mv -v $1/Media/Camera\ Roll/$YEAR/$MONTH/*.jpg $1/Media/Unsorted\ Pictures/$YEAR/$MONTH/ 2>/dev/null
-    mv -v $1/Media/Camera\ Roll/$YEAR/$MONTH/*.mp4 $1/Media/Unsorted\ Videos/$YEAR/$MONTH/ 2>/dev/null
-    mv -v $1/Media/Camera\ Roll/$YEAR/$MONTH/*.png $1/Media/Unsorted\ Pictures/Screenshots/ 2>/dev/null
-    mv -v $1/Media/Camera\ Roll/Pictures/Screenshots/*.png $1/Media/Unsorted\ Pictures/Screenshots/ 2>/dev/null
-  }
-
-  YEAR=$(date +%Y)
-  MONTH=$(date +%m)
-
-  [[ -d ~/OneDrive/Media/Camera\ Roll ]] && organize-camera-roll-internal ~/OneDrive
-  [[ -d ~/Media/Camera\ Roll ]] && organize-camera-roll-internal ~
-)
-
 shield-share-menu() {
   for i in shield 0323118103330; do
     adb devices | grep -q $i && adb -s $i shell input keyevent --longpress KEYCODE_HOME
@@ -951,6 +932,10 @@ update-everything() {
       docker)
         docker-upgrade-all
       ;;
+
+      caddy)
+        upgrade-caddy
+      ;;
     esac
   done
 }
@@ -1028,6 +1013,14 @@ docker-run() {
   docker run -it temp-container-$1:latest
 }
 
+upgrade-caddy() {
+  MD5=$(md5sum $(which caddy))
+  sudo caddy upgrade
+  [[ $(md5sum $(which caddy)) != $MD5 ]] && \
+    caddy stop && \
+    sudo caddy start --config ~/Other\ Stuff/Linux/Network\ Config/Caddyfile
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -1076,7 +1069,6 @@ export -f install-samba
 export -f iommu-groups
 export -f install-wireguard-client
 export -f wireguard-run
-export -f organize-camera-roll
 export -f shield-share-menu
 export -f wireguard-monitor
 export -f toggle-vm-maintenance
@@ -1106,3 +1098,4 @@ export -f apt-reenable-sources
 export -f install-mosquitto
 export -f install-caddy
 export -f docker-run
+export -f upgrade-caddy

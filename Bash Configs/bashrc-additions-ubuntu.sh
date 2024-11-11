@@ -198,11 +198,16 @@ install-rhythmbox() {
 }
 
 toggle-ultrawide-fixes() {
-  [[ $(hwinfo --monitor --short) =~ "LG ELECTRONICS LG HDR WQHD" ]] && \
-    dconf write /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout true || \
-    dconf reset /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout
+  if [[ -z $1 ]]; then
+    [[ $(hwinfo --monitor --short) =~ "LG ELECTRONICS LG HDR WQHD" ]] && TOGGLE=on || TOGGLE=off
+  else
+    TOGGLE=$1
+  fi
 
-  daemonize $(which timeout) 10 bash -c 'while [[ ! -z $(pidof srandrd) ]]; do sleep 1; done; srandrd bash -i -c toggle-ultrawide-fixes'
+  [[ $TOGGLE = on ]] && dconf write /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout true
+  [[ $TOGGLE = off ]] && dconf reset /org/gnome/shell/extensions/tiling-assistant/adapt-edge-tiling-to-favorite-layout
+
+# daemonize $(which timeout) 10 bash -c 'while [[ ! -z $(pidof srandrd) ]]; do sleep 1; done; srandrd bash -i -c toggle-ultrawide-fixes'
 }
 
 install-eupnea-utils() {

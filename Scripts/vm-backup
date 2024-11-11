@@ -34,8 +34,10 @@ done
 #   chattr +C "$IMAGE_BACKUP"
 # fi
 
-mkdir -p /mnt/VMs/backups
+sudo mkdir -p /mnt/VMs/backups
+sudo chown -R $USER:$USER /mnt/VMs/backups
+
 sudo cp --reflink=auto --sparse=auto "$IMAGE_ORIGINAL" "$IMAGE_BACKUP"
-sudo virsh dumpxml $1 > "$XML_BACKUP" 2>/dev/null || rm "$XML_BACKUP"
+sudo virsh dumpxml $1 > "$XML_BACKUP" 2>/dev/null || sudo rm "$XML_BACKUP"
 
 [[ $1 = macos* ]] && sudo cp -r --reflink=auto --sparse=auto /mnt/VMs/OSX-KVM /mnt/VMs/backups/OSX-KVM~$NAME

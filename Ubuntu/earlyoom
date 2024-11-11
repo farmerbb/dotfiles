@@ -1,7 +1,0 @@
-# Place this file in /etc/default and install earlyoom with:
-#
-#  sudo apt install earlyoom
-#
-############################################################
-
-EARLYOOM_ARGS="-r 3600 -m 2 -s 2"

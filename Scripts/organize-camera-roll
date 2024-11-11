@@ -1,0 +1,33 @@
+#!/bin/bash
+
+create-dirs() {
+  mkdir -p $1/Media/Unsorted\ Pictures/$YEAR/$MONTH
+  mkdir -p $1/Media/Unsorted\ Videos/$YEAR/$MONTH
+  mkdir -p $1/Media/Unsorted\ Pictures/Screenshots
+}
+
+organize-camera-roll-internal() {
+  mv -v $1/Media/Camera\ Roll/$YEAR/$MONTH/*.jpg $1/Media/Unsorted\ Pictures/$YEAR/$MONTH/ 2>/dev/null
+  mv -v $1/Media/Camera\ Roll/$YEAR/$MONTH/*.mp4 $1/Media/Unsorted\ Videos/$YEAR/$MONTH/ 2>/dev/null
+  mv -v $1/Media/Camera\ Roll/$YEAR/$MONTH/*.png $1/Media/Unsorted\ Pictures/Screenshots/ 2>/dev/null
+  mv -v $1/Media/Camera\ Roll/Pictures/Screenshots/*.png $1/Media/Unsorted\ Pictures/Screenshots/ 2>/dev/null
+}
+
+for i in ~ ~/OneDrive; do
+  if [[ -d $i/Media/Camera\ Roll ]]; then
+    YEAR=$(date +%Y)
+    CURRENT_MONTH=$(date +%m)
+
+    for j in $i/Media/Camera\ Roll/$YEAR/*; do
+      MONTH=$(echo $(basename "$j"))
+
+      if [[ $MONTH == $CURRENT_MONTH ]]; then
+        create-dirs $i
+      elif [[ $(ls -1 "$j" | wc -l) == 0 ]]; then
+        rm -r "$j"
+      fi
+
+      organize-camera-roll-internal $i
+    done
+  fi
+done

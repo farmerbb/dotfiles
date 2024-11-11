@@ -1,6 +1,12 @@
 [/]
-entryrow1-setting='darkman set dark'
-entryrow2-setting='darkman set light'
-entryrow3-setting='Dark Theme'
-entryrow4-setting='dark-mode-symbolic'
-togglestate1-setting=false
+entryrow1-setting='bash -i -c "toggle-ultrawide-fixes on"'
+entryrow12-setting='darkman set dark'
+entryrow2-setting='bash -i -c "toggle-ultrawide-fixes off"'
+entryrow22-setting='darkman set light'
+entryrow3-setting='Ultrawide Fixes'
+entryrow32-setting='Dark Theme'
+entryrow4-setting='view-right-pane-symbolic'
+entryrow42-setting='dark-mode-symbolic'
+numbuttons-setting=2
+togglestate1-setting=true
+togglestate2-setting=false

@@ -20,6 +20,8 @@ upload() {
     sudo apt-get -y install guestfs-tools
 
   sudo virt-sparsify --in-place /home/farmerbb/VMs/$1.img
+  ssh nuc -o LogLevel=QUIET -t sudo touch /home/farmerbb/VMs/$1.img
+  ssh nuc -o LogLevel=QUIET -t sudo chown $USER:$USER /home/farmerbb/VMs/$1.img
   rsync -avzSPh --no-perms --inplace --compress-choice=zstd --compress-level=1 \
     /home/farmerbb/VMs/$1.img \
     farmerbb@nuc:/home/farmerbb/VMs/$1.img
@@ -32,6 +34,8 @@ download() {
     sudo apt-get -y install guestfs-tools'
 
   ssh nuc -o LogLevel=QUIET -t sudo virt-sparsify --in-place /home/farmerbb/VMs/$1.img
+  sudo touch /home/farmerbb/VMs/$1.img
+  sudo chown $USER:$USER /home/farmerbb/VMs/$1.img
   rsync -avzSPh --no-perms --inplace --compress-choice=zstd --compress-level=1 \
     farmerbb@nuc:/home/farmerbb/VMs/$1.img \
     /home/farmerbb/VMs/$1.img

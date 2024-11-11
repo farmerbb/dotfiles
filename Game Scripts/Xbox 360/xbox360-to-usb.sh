@@ -19,8 +19,12 @@ for i in *; do
 
     CONTENT_ID=$(cat output.txt | dos2unix -f | grep -a "Content Id:" | sed "s/Content Id://g" | awk '{$1=$1};1')
     INSTALL_DIR=$(cat output.txt | dos2unix -f | grep -a "Install Dir:" | sed "s/Install Dir://g" | awk '{$1=$1};1' | sed -e "s#\\\#/#g")
+    VERSION=$(cat output.txt | dos2unix -f | grep -a "Base Version:" | sed "s/Base Version://g" | awk '{$1=$1};1')
 
-    [[ $(echo $INSTALL_DIR | cut -d'/' -f3) == 00007000 ]] && CONTENT_ID=$(echo $CONTENT_ID | cut -c1-32,41-)
+    TYPE=$(echo $INSTALL_DIR | cut -d'/' -f3)
+    [[ $TYPE == 00005000 ]] && CONTENT_ID=$(echo $CONTENT_ID | cut -c1-32,41-)
+    [[ $TYPE == 00007000 ]] && CONTENT_ID=$(echo $CONTENT_ID | cut -c1-32,41-)
+    [[ $TYPE == 000B0000 ]] && CONTENT_ID="tu${VERSION}_00000000"
 
     mkdir -p "Content/$INSTALL_DIR"
     mv "$i" "Content/$INSTALL_DIR/$CONTENT_ID"
