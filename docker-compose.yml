@@ -23,7 +23,7 @@ services:
         restart: unless-stopped
         privileged: true
         network_mode: host
-    home-assistant:
+    homeassistant:
         container_name: homeassistant
         privileged: true
         restart: unless-stopped
@@ -36,7 +36,7 @@ services:
         image: ghcr.io/home-assistant/home-assistant:stable
     netalertx:
         container_name: netalertx
-        image: "jokobsk/netalertx:latest"
+        image: jokobsk/netalertx:latest
         network_mode: host
         restart: unless-stopped
         volumes:

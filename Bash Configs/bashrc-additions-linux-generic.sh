@@ -851,10 +851,17 @@ install-rsyncd() {
 }
 
 pip() {
+  PIP=$(which pip)
+  if [[ -z $PIP ]]; then
+    sudo apt-get update
+    sudo apt-get install -y python3-pip
+    PIP=$(which pip)
+  fi
+
   if [[ $1 = install ]]; then
-    $(which pip) "$@" --break-system-packages
+    $PIP "$@" --break-system-packages
   else
-    $(which pip) "$@"
+    $PIP "$@"
   fi
 }
 
@@ -1009,8 +1016,8 @@ docker-run() {
     TAG_SUFFIX="$(basename "$PWD")"
   fi
 
-  docker build -t temp-container-$1 $DIR || return 1
-  docker run -it temp-container-$1:latest
+  docker build -t temp-container-$TAG_SUFFIX $DIR || return 1
+  docker run -it temp-container-$TAG_SUFFIX:latest
 }
 
 upgrade-caddy() {

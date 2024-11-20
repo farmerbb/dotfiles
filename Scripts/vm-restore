@@ -39,7 +39,7 @@ while sudo virsh list | grep $1 >/dev/null 2>&1; do
   exit 1
 done
 
-rm -f "$IMAGE_ORIGINAL"
+sudo rm -f "$IMAGE_ORIGINAL"
 
 # lsattr -l "$IMAGE_BACKUP" | grep -q No_COW
 # if [[ $? = 0 ]]; then
@@ -47,10 +47,10 @@ rm -f "$IMAGE_ORIGINAL"
 #   chattr +C "$IMAGE_ORIGINAL"
 # fi
 
-cp --reflink=auto --sparse=auto "$IMAGE_BACKUP" "$IMAGE_ORIGINAL"
+sudo cp --reflink=auto --sparse=auto "$IMAGE_BACKUP" "$IMAGE_ORIGINAL"
 [[ -f "$XML_BACKUP" ]] && sudo virsh define "$XML_BACKUP" >/dev/null
 
 if [[ $1 = macos* ]]; then
   sudo rm -rf /mnt/VMs/OSX-KVM
-  cp -r --reflink=auto --sparse=auto /mnt/VMs/backups/OSX-KVM~$NAME /mnt/VMs/OSX-KVM
+  sudo cp -r --reflink=auto --sparse=auto /mnt/VMs/backups/OSX-KVM~$NAME /mnt/VMs/OSX-KVM
 fi
