@@ -43,13 +43,13 @@ home-assistant-restore() {
   docker stop homeassistant
 
   cd ~/Docker
-  mv homeassistant homeassistant-old
+  sudo mv homeassistant homeassistant-old
   mkdir homeassistant
 
   tar -xOf ~/Other\ Stuff/Docker/homeassistant-*.tar "homeassistant.tar.gz" | tar --strip-components=1 -zxf - -C homeassistant
 
   docker start homeassistant
-  rm -rf homeassistant-old
+  sudo rm -rf homeassistant-old
 
   cd - >/dev/null
 }

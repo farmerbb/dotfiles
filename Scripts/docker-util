@@ -12,6 +12,8 @@ backup-containers() {
     sudo bash -i -c "rm -f /home/farmerbb/Docker/netalertx/config/*.$i"
   done
 
+  sudo bash -i -c "rm -f /home/farmerbb/Docker/netalertx/config/devices_*.csv"
+
   sudo sed -i 's/SETPWD_enable_password=True/SETPWD_enable_password=False/' ~/Docker/netalertx/config/app.conf
   sudo curl http://192.168.86.10:20211/php/server/devices.php?action=ExportCSV -o ~/Docker/netalertx/config/devices.csv
   sudo sed -i 's/SETPWD_enable_password=False/SETPWD_enable_password=True/' ~/Docker/netalertx/config/app.conf

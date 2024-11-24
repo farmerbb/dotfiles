@@ -342,6 +342,15 @@ install-imhex() {
   rm ./$FILENAME
 }
 
+install-tvhplayer() {
+  TAG=$(curl --silent "https://api.github.com/repos/mfat/tvhplayer/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+  FILENAME=tvhplayer_$(echo $TAG | sed "s/v//")_amd64.deb
+
+  curl -LO https://github.com/mfat/tvhplayer/releases/download/$TAG/$FILENAME
+  install-deb ./$FILENAME
+  rm ./$FILENAME
+}
+
 export -f virtualhere-client
 export -f allow-all-usb
 export -f make-trackpad-great-again
@@ -369,3 +378,4 @@ export -f running-apps
 export -f install-celestia
 export -f install-srandrd
 export -f install-imhex
+export -f install-tvhplayer

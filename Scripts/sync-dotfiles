@@ -23,7 +23,6 @@ REDACTED_STRINGS=(
   "[REDACTED]"
   "[REDACTED]"
   "[REDACTED]"
-  "[REDACTED]"
 )
 
 DOTFILE_DIRS=(
@@ -77,6 +76,13 @@ printf "Press Enter to push changes or CTRL+C to abort..."
 read _
 
 echo "Pushing changes..."
-git-commit-and-push "Updating dotfiles" >/dev/null 2>&1
+if [[ $1 == "amend" ]]; then
+  git commit --amend --no-edit >/dev/null 2>&1
+else
+  git commit -m "Updating dotfiles" >/dev/null 2>&1
+fi
+
+git push --force origin >/dev/null 2>&1
+
 cd ..
 sudo rm -rf dotfiles

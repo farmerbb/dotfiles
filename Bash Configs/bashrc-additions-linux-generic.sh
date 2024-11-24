@@ -1028,6 +1028,19 @@ upgrade-caddy() {
     sudo caddy start --config ~/Other\ Stuff/Linux/Network\ Config/Caddyfile
 }
 
+tinytuya() {
+  [[ -z $(which pipx) ]] && \
+    sudo apt-get update && \
+    sudo apt-get install -y pipx
+
+  [[ -z $(which tinytuya) ]] && \
+    pipx install tinytuya
+
+  cd ~/Other\ Stuff/Linux/Network\ Config/tinytuya
+  $(which tinytuya) "$@"
+  cd - >/dev/null
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -1106,3 +1119,4 @@ export -f install-mosquitto
 export -f install-caddy
 export -f docker-run
 export -f upgrade-caddy
+export -f tinytuya
