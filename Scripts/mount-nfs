@@ -1,0 +1,28 @@
+#!/bin/bash
+
+print-usage() {
+  BASENAME=$(basename "$0")
+  echo "Usage: $BASENAME <ip-address> <share> <mountpoint>"
+  exit 1
+}
+
+do-mount() {
+  mountpoint -q "$3" || \
+  sudo mount -t nfs4 $1:$2 "$3"
+}
+
+do-unmount() {
+  sudo umount "$3" 2> /dev/null || \
+  sudo umount -f "$3" 2> /dev/null || \
+  sudo umount -l "$3" 2> /dev/null
+}
+
+[[ $# -ne 3 ]] && print-usage
+
+ping -c1 -W1 $1 2> /dev/null
+if [[ $? = 0 ]]; then
+  do-mount "$@"
+  [[ $? != 0 ]] && do-unmount "$@" && do-mount "$@"
+else
+  do-unmount "$@"
+fi

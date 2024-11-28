@@ -23,18 +23,18 @@ convert() {
 
   if [[ $2 = shield ]] ; then
     STORAGE_DIR_FROM=$SHIELD_DIR
-    HIDE_GC_FROM=false
-    HIDE_WII_FROM=false
+    HIDE_GC_FROM=true
+    HIDE_WII_FROM=true
     HIDE_PS1_FROM=false
     HIDE_DC_FROM=false
     HIDE_SCD_FROM=false
-    HIDE_SWITCH_FROM=false
+    HIDE_SWITCH_FROM=true
     EMULATOR_SUITE_FROM=HIGH
     ALT_L2R2_FROM=true
     UI_SCALE_FROM=0.875
   elif [[ $2 = rgarcd ]] ; then
     STORAGE_DIR_FROM=$RGARCD_DIR
-    HIDE_GC_FROM=false
+    HIDE_GC_FROM=true
     HIDE_WII_FROM=true
     HIDE_PS1_FROM=false
     HIDE_DC_FROM=false
@@ -58,12 +58,12 @@ convert() {
 
   if [[ $3 = shield ]] ; then
     STORAGE_DIR_TO=$SHIELD_DIR
-    HIDE_GC_TO=false
-    HIDE_WII_TO=false
+    HIDE_GC_TO=true
+    HIDE_WII_TO=true
     HIDE_PS1_TO=false
     HIDE_DC_TO=false
     HIDE_SCD_TO=false
-    HIDE_SWITCH_TO=false
+    HIDE_SWITCH_TO=true
     EMULATOR_SUITE_TO=HIGH
     ALT_L2R2_TO=true
     UI_SCALE_TO=0.875

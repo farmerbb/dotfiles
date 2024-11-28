@@ -15,8 +15,9 @@ touch /tmp/nuc-mounts.running
 # To allow pings on Windows PCs:
 #   netsh advfirewall firewall add rule name="Allow pings" protocol=icmpv4:8,any dir=in action=allow
 
+# user_allow_other must be uncommented in /etc/fuse.conf for --allow-other to take effect
 mountpoint -q /mnt/OneDrive || \
-daemonize $(which rclone) --vfs-cache-mode writes mount OneDrive: /mnt/OneDrive
+daemonize $(which rclone) --vfs-cache-mode writes mount --allow-other OneDrive: /mnt/OneDrive
 
 mount-cifs 192.168.86.4 internal /mnt/shield farmerbb [REDACTED]
 mount-cifs 192.168.86.5 C /mnt/PC/C Braden

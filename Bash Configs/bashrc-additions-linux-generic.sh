@@ -33,6 +33,7 @@ alias flush-dns-cache="sudo systemctl restart systemd-resolved; resolvectl statu
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
 alias hibernate="sudo swapon /swapfile; sudo systemctl --no-block hibernate || sudo swapoff /swapfile"
 alias hypercalc="perl ~/Other\ Stuff/Utilities/hypercalc.txt"
+alias lazydocker='~/Other\ Stuff/Utilities/lazydocker/lazydocker'
 alias local-ip="ip -o route get to 8.8.8.8 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'"
 alias make="make -j$(nproc)"
 alias mine="sudo chown -R $USER:$USER"
@@ -49,18 +50,17 @@ alias qemu="qemu-system-x86_64 -monitor stdio -accel kvm -cpu host -m 4G -smp co
 alias qemu-gl="qemu -display gtk,gl=on -device virtio-vga-gl"
 alias qemu95="qemu-system-i386 -monitor stdio -cpu pentium -vga cirrus -nic user,model=pcnet -device sb16 -m 256"
 alias qr-code="qrencode -t UTF8"
-alias refresh-bash-config='source "$LINUX_DIR_PREFIX/Scripts/install-bash-config"'
-alias refresh-theme='for i in {1..2}; do darkman toggle >/dev/null; done'
-alias set-timezone='timedatectl set-timezone "America/Denver"; timedatectl'
-alias starwars="telnet towel.blinkenlights.nl"
-alias sudo="sudo "
 alias reboot-device="restart-device"
 alias reboot-to-bios="sudo systemctl reboot --firmware-setup"
+alias refresh-bash-config='source "$LINUX_DIR_PREFIX/Scripts/install-bash-config"'
+alias refresh-theme='for i in {1..2}; do darkman toggle >/dev/null; done'
 alias reset-webcam="sudo usbreset 046d:082c"
 alias robomirror-linux-dir='SYNC_DIRS=("Other Stuff/Linux"); robomirror onedrive; refresh-bash-config'
 alias running-vms="sudo lsof 2>&1 | grep /dev/kvm | awk '!seen[\$2]++'"
 alias running-vms-fast="sudo lsof /dev/kvm 2>&1 | grep /dev/kvm | awk '!seen[\$2]++'"
-alias stop-nuc="ssh -q -O stop nuc"
+alias set-timezone='timedatectl set-timezone "America/Denver"; timedatectl'
+alias starwars="telnet towel.blinkenlights.nl"
+alias sudo="sudo "
 alias trim="sudo fstrim -av"
 alias turn-off-tv="curl -X POST http://192.168.86.44:8060/keypress/PowerOff"
 alias usb-monitor="clear; sudo udevadm monitor --subsystem-match=usb --property"
@@ -155,7 +155,7 @@ cat() {
   elif [[ ! -z $(sed -n '/\x0/ { s/\x0/<NUL>/g; p}' "$1") ]]; then
     xxd -g1 "$1"
   else
-    highlight -O ansi --force "$@"
+    highlight -O ansi --force --stdout "$@"
   fi
 }
 
@@ -164,7 +164,7 @@ git-commit-and-push() {
 }
 
 list-roms() {
-  for i in bin smd nes gba sfc smc z64 n64 iso chd cue zip col a78 nsp gb gbc ngc; do
+  for i in bin smd nes gba sfc smc z64 n64 iso chd cue zip col a78 nsp gb gbc ngc sms; do
     ls *.$i >/dev/null 2>&1
     if [[ $? -eq 0 ]] ; then
       ls -1 *.$i | sed "s/.$i//g"
@@ -330,6 +330,21 @@ edit-caddyfile() {
     nano "$FILE"
     caddy reload --config ~/Other\ Stuff/Linux/Network\ Config/Caddyfile
     [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_LINUX_DIR_PREFIX/Network Config/Caddyfile"
+  fi
+}
+
+edit-nfs-exports() {
+  DIR="$LINUX_DIR_PREFIX/Network Config"
+  FILE="$DIR/exports"
+  if [[ -f "$FILE" ]]; then
+    MD5=$(md5sum "$FILE")
+    nano "$FILE"
+    sudo cp "$FILE" /etc/exports
+
+    sudo exportfs -a
+    sudo systemctl restart nfs-kernel-server
+
+    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_LINUX_DIR_PREFIX/Network Config/exports"
   fi
 }
 
@@ -1041,6 +1056,22 @@ tinytuya() {
   cd - >/dev/null
 }
 
+install-nfs-server() {
+  sudo apt-get update
+  sudo apt-get install -y nfs-kernel-server
+
+  sudo cp "$LINUX_DIR_PREFIX/Network Config/exports" /etc/exports
+  sudo exportfs -a
+  sudo systemctl restart nfs-kernel-server
+}
+
+stop-nuc() {
+  ssh -q -O stop nuc
+  sudo umount /mnt/NUC 2> /dev/null || \
+  sudo umount -f /mnt/NUC 2> /dev/null || \
+  sudo umount -l /mnt/NUC 2> /dev/null
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -1062,6 +1093,7 @@ export -f edit-vm-config
 export -f edit-hosts
 export -f edit-netdata-config
 export -f edit-caddyfile
+export -f edit-nfs-exports
 export -f install-apks-recursive
 export -f max-cpu
 export -f unsparsify
@@ -1120,3 +1152,5 @@ export -f install-caddy
 export -f docker-run
 export -f upgrade-caddy
 export -f tinytuya
+export -f install-nfs-server
+export -f stop-nuc
