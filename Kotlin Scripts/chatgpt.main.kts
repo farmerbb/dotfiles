@@ -1,11 +1,4 @@
-#!/bin/bash
-/*/bin/true
-
-[[ -z $(which kscript) ]] && install-kscript
-kscript -s "$0" "$@"
-exit $?
-
-*/
+#!/usr/bin/env kotlin
 
 @file:DependsOn("com.github.ajalt.clikt:clikt-jvm:3.0.1")
 @file:DependsOn("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")

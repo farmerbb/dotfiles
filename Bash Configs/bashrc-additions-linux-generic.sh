@@ -580,10 +580,12 @@ robomirror() {
 
   if [[ -z $IS_WSL ]]; then
     RSYNC=rsync
-    RSYNC_DEST_ROOT=/home/$USER
+    RSYNC_DEST_ROOT=/mnt/files
+  # RSYNC_DEST_ROOT=/home/$USER
 
     RCLONE=rclone
-    RCLONE_DEST_ROOT=/home/$USER
+    RCLONE_DEST_ROOT=/mnt/files
+  # RCLONE_DEST_ROOT=/home/$USER
   else
     RSYNC=/mnt/z/Other\ Stuff/Utilities/cwRsync/bin/rsync.exe
     RSYNC_DEST_ROOT=/cygdrive/z
@@ -628,20 +630,32 @@ robomirror() {
 
     if [[ $SOURCE = nuc ]]; then
       echo "Mirroring $DIR from NUC using rsync..."
-      echo
-      "$RSYNC" -avuz --no-perms --delete --inplace --compress-choice=zstd --compress-level=1 "192.168.86.10::Files/$DIR/" "$RSYNC_DEST_ROOT/$DIR"
+      if [[ -d "$RSYNC_DEST_ROOT/$DIR" ]]; then
+        echo
+        "$RSYNC" -avuz --no-perms --delete --inplace --compress-choice=zstd --compress-level=1 "192.168.86.10::Files/$DIR/" "$RSYNC_DEST_ROOT/$DIR"
+      else
+        echo "Directory \"$RSYNC_DEST_ROOT/$DIR\" does not exist; aborting"
+      fi
     fi
 
     if [[ $SOURCE = onedrive ]]; then
       echo "Mirroring $DIR from OneDrive using rclone..."
-      echo
-      "$RCLONE" sync -v "OneDrive:$DIR" "$RCLONE_DEST_ROOT/$DIR"
+      if [[ -d "$RCLONE_DEST_ROOT/$DIR" ]]; then
+        echo
+        "$RCLONE" sync -v "OneDrive:$DIR" "$RCLONE_DEST_ROOT/$DIR"
+      else
+        echo "Directory \"$RCLONE_DEST_ROOT/$DIR\" does not exist; aborting"
+      fi
     fi
 
     if [[ $SOURCE = verify ]]; then
       echo "Verifying files in $DIR using rclone..."
-      echo
-      "$RCLONE" check -v "OneDrive:$DIR" "$RCLONE_DEST_ROOT/$DIR"
+      if [[ -d "$RCLONE_DEST_ROOT/$DIR" ]]; then
+        echo
+        "$RCLONE" check -v "OneDrive:$DIR" "$RCLONE_DEST_ROOT/$DIR"
+      else
+        echo "Directory \"$RCLONE_DEST_ROOT/$DIR\" does not exist; aborting"
+      fi
     fi
 
     echo
@@ -1067,9 +1081,23 @@ install-nfs-server() {
 
 stop-nuc() {
   ssh -q -O stop nuc
-  sudo umount /mnt/NUC 2> /dev/null || \
-  sudo umount -f /mnt/NUC 2> /dev/null || \
-  sudo umount -l /mnt/NUC 2> /dev/null
+  timeout 2 sudo umount /mnt/NUC 2> /dev/null || \
+  timeout 2 sudo umount -f /mnt/NUC 2> /dev/null || \
+  timeout 2 sudo umount -l /mnt/NUC 2> /dev/null || \
+  echo "Failed to stop NUC"
+}
+
+install-python2() {
+  wget https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz
+  tar xzf Python-2.7.18.tgz
+
+  cd Python-2.7.18
+  sudo ./configure --enable-optimizations
+  sudo make altinstall
+  sudo ln -s /usr/local/bin/python2.7 /usr/bin/python2
+
+  cd ..
+  sudo rm -r Python-2.7.18*
 }
 
 export -f btrfs-dedupe
@@ -1154,3 +1182,4 @@ export -f upgrade-caddy
 export -f tinytuya
 export -f install-nfs-server
 export -f stop-nuc
+export -f install-python2
