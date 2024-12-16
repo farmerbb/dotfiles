@@ -279,6 +279,10 @@ if [[ $# -eq 0 ]]; then
   if [[ $HOSTNAME != NUC ]]; then
     mountpoint -q /mnt/NUC || print-usage
 
+    echo "Checking for (and syncing) new artwork..."
+    ssh nuc tar -tf /home/farmerbb/ARCBrowser-export-*.tar artwork/ >/dev/null 2>&1
+    [[ $? -eq 0 ]] && ssh nuc "/mnt/files/Other\ Stuff/Linux/Scripts/sync-arc-browser-images" /home/farmerbb/ARCBrowser-export-*.tar
+
     echo "Pulling ARC Browser export from NUC..."
     mv /mnt/NUC/home/farmerbb/ARCBrowser-export-*.tar . || exit 1
   else

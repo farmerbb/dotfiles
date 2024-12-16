@@ -1,9 +1,11 @@
 [/]
 button-placeholder=''
 divider-string=' - '
-extension-index=1
-extension-place='left'
+enable-double-clicks=false
+extension-index=0
+extension-place='center'
 first-field='xesam:title'
+icon-padding=5
 last-field='xesam:artist'
 left-click-action='activate-player'
 left-padding=0
@@ -14,6 +16,10 @@ remove-text-paused-delay=0
 reposition-on-button-press=false
 right-click-action='open-menu'
 right-padding=0
+scroll-action='none'
 second-field=''
 show-icon='left'
+symbolic-source-icon=true
+use-album=true
 use-whitelisted-sources-only=true
+volume-control-scheme='global'

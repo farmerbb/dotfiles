@@ -13,6 +13,7 @@ fi
 
 CERT_DIR=/etc/letsencrypt
 CREDS=$CERT_DIR/cloudflare.ini
+PFX_PATH=/home/farmerbb/Docker/emby/cert.pfx
 
 sudo mkdir -p $CERT_DIR
 echo 'dns_cloudflare_api_token = [REDACTED]' | sudo tee $CREDS > /dev/null
@@ -28,7 +29,14 @@ sudo certbot certonly \
   -d '*.[REDACTED]' \
   --server https://acme-v02.api.letsencrypt.org/directory
 
+sudo openssl pkcs12 -export \
+  -in $CERT_DIR/live/[REDACTED]/fullchain.pem \
+  -inkey $CERT_DIR/live/[REDACTED]/privkey.pem \
+  -out $PFX_PATH \
+  --passout pass:$(echo [REDACTED] | base64 -d)
+
 sudo rm $CREDS
+sudo chown farmerbb:farmerbb $PFX_PATH
 
 ##################################################
 

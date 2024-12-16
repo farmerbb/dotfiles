@@ -1,0 +1,30 @@
+#!/bin/bash
+
+[[ ! $1 =~ .tar ]] && \
+  echo "Usage: sync-arc-browser-images <path-to-tar-backup>" && \
+  exit 1
+
+DIRNAME=$(dirname $1)
+[[ $DIRNAME = . ]] && DIRNAME=$(pwd)
+
+WORKING_DIR=$1-working
+
+cd "$DIRNAME"
+rm -rf "$WORKING_DIR"
+
+mkdir "$WORKING_DIR"
+tar xf "$1" -C "$WORKING_DIR"
+
+cd "$WORKING_DIR"
+
+if [[ -d artwork ]]; then
+  IMG_DIR="net.floatingpoint.android.arcturus/files/game-images"
+  DEST_DIR="OneDrive:Android/Backup/Emulation/$IMG_DIR"
+
+  rclone sync -v artwork $DEST_DIR
+
+  tar -f "$1" --delete artwork
+fi
+
+cd "$DIRNAME"
+rm -rf "$WORKING_DIR"

@@ -15,6 +15,8 @@ ALL_EXTENSIONS=(
   transparent-window-moving@noobsai.github.com
   auto-power-profile@dmy3k.github.io
   custom-command-toggle@storageb.github.com
+  space-bar@luchrioh
+  workspace-switcher-manager@G-dH.github.com
 )
 
 EXTENSIONS_WEB=(
@@ -29,6 +31,8 @@ EXTENSIONS_WEB=(
   6583 # auto-power-profile@dmy3k.github.io
   7012 # custom-command-toggle@storageb.github.com
   1446 # transparent-window-moving@noobsai.github.com
+  5090 # space-bar@luchrioh
+  4788 # workspace-switcher-manager@G-dH.github.com
 # 4245 # gestureImprovements@gestures
 # 5446 # quick-settings-tweaks@qwreey
 )

@@ -351,6 +351,12 @@ install-tvhplayer() {
   rm ./$FILENAME
 }
 
+enable-backports() {
+  echo "Package: *" | sudo tee /etc/apt/preferences.d/backports > /dev/null
+  echo "Pin: release a=$(lsb_release -cs)-backports" | sudo tee -a /etc/apt/preferences.d/backports > /dev/null
+  echo "Pin-Priority: 500" | sudo tee -a /etc/apt/preferences.d/backports > /dev/null
+}
+
 export -f virtualhere-client
 export -f allow-all-usb
 export -f make-trackpad-great-again
@@ -379,3 +385,4 @@ export -f install-celestia
 export -f install-srandrd
 export -f install-imhex
 export -f install-tvhplayer
+export -f enable-backports

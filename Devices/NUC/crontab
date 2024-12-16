@@ -34,5 +34,4 @@
 
 45 0,8,16 * * * bash -i -c robomirror
 59 23 * * * bash -i -c organize-camera-roll
-0 1 * * * bash -i -c sync-arc-browser-images
 0 9 * * * bash -i -c webos-reset-dev-mode

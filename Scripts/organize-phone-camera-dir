@@ -1,10 +1,10 @@
 #!/bin/bash
 MTP_DEVICE=/run/user/$UID/gvfs/*/
 cd $MTP_DEVICE >/dev/null 2>&1 || \
-  (echo "Please plug your phone in and enable MTP file transfer." && exit 1)
+  (echo "Please plug your phone in and enable MTP file transfer." && read _)
 
 cd Internal\ shared\ storage/DCIM/Camera >/dev/null 2>&1 || \
-  (echo "Unable to open the Camera directory on your phone." && exit 1)
+  (echo "Unable to open the Camera directory on your phone." && read _)
 
 echo "Starting (note that this may take a while to start)..."
 

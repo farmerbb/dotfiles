@@ -861,16 +861,6 @@ pi() {
   ssh nuc -o LogLevel=QUIET -t ssh pi
 }
 
-sync-arc-browser-images() {
-  [[ $HOSTNAME != NUC ]] && mountpoint -q ~/NUC && NUC_PREFIX="/home/$USER/NUC"
-
-  IMG_DIR="net.floatingpoint.android.arcturus/files/game-images"
-  SRC_DIR="$NUC_PREFIX/mnt/shield/Android/data/$IMG_DIR"
-  DEST_DIR="OneDrive:Android/Backup/Emulation/$IMG_DIR"
-
-  [[ -d $SRC_DIR ]] && rclone sync -v $SRC_DIR $DEST_DIR
-}
-
 install-rsyncd() {
   echo "[Files]" | sudo tee /etc/rsyncd.conf > /dev/null
   echo "path = /mnt/files" | sudo tee -a /etc/rsyncd.conf > /dev/null
@@ -1163,7 +1153,6 @@ export -f install-steam
 export -f install-tvheadend
 export -f apt-upgrade-all
 export -f pi
-export -f sync-arc-browser-images
 export -f install-rsyncd
 export -f pip
 export -f webos-reset-dev-mode
