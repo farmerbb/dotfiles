@@ -17,4 +17,8 @@ toggle-overview=false
 
 [shortcuts]
 back-and-forth=false
+enable-activate-workspace-shortcuts=false
 enable-move-to-workspace-shortcuts=true
+
+[state]
+version=32
