@@ -276,17 +276,21 @@ batch-convert() {
 if [[ $# -eq 0 ]]; then
   mountpoint -q /mnt/OneDrive || print-usage
 
-  if [[ $HOSTNAME != NUC ]]; then
-    mountpoint -q /mnt/NUC || print-usage
-
-    echo "Checking for (and syncing) new artwork..."
-    ssh nuc tar -tf /home/farmerbb/ARCBrowser-export-*.tar artwork/ >/dev/null 2>&1
-    [[ $? -eq 0 ]] && ssh nuc "/mnt/files/Other\ Stuff/Linux/Scripts/sync-arc-browser-images" /home/farmerbb/ARCBrowser-export-*.tar
-
-    echo "Pulling ARC Browser export from NUC..."
-    mv /mnt/NUC/home/farmerbb/ARCBrowser-export-*.tar . || exit 1
-  else
+  if [[ $HOSTNAME == NUC ]]; then
     [[ -f ARCBrowser-export-*.tar ]] || print-usage
+  else
+    mountpoint -q /mnt/NUC || print-usage
+    SSH_PREFIX="ssh nuc"
+    PATH_PREFIX="/home/farmerbb/"
+  fi
+
+  echo "Checking for (and syncing) new artwork..."
+  ${SSH_PREFIX} tar -tf ${PATH_PREFIX}ARCBrowser-export-*.tar artwork/ >/dev/null 2>&1
+  [[ $? -eq 0 ]] && ${SSH_PREFIX} "/mnt/files/Other\ Stuff/Linux/Scripts/sync-arc-browser-images" ${PATH_PREFIX}ARCBrowser-export-*.tar
+
+  if [[ $HOSTNAME != NUC ]]; then
+    echo "Pulling ARC Browser export from NUC..."
+    mv /mnt/NUC/ARCBrowser-export-*.tar . || exit 1
   fi
 
   echo "Converting exports for other devices..."

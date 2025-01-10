@@ -333,21 +333,6 @@ edit-caddyfile() {
   fi
 }
 
-edit-nfs-exports() {
-  DIR="$LINUX_DIR_PREFIX/Network Config"
-  FILE="$DIR/exports"
-  if [[ -f "$FILE" ]]; then
-    MD5=$(md5sum "$FILE")
-    nano "$FILE"
-    sudo cp "$FILE" /etc/exports
-
-    sudo exportfs -a
-    sudo systemctl restart nfs-kernel-server
-
-    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_LINUX_DIR_PREFIX/Network Config/exports"
-  fi
-}
-
 install-apks-recursive() {
 # for i in . */; do install-apks $i $1; done
   find . -type d -exec install-apks {} $1 \;
@@ -1060,15 +1045,6 @@ tinytuya() {
   cd - >/dev/null
 }
 
-install-nfs-server() {
-  sudo apt-get update
-  sudo apt-get install -y nfs-kernel-server
-
-  sudo cp "$LINUX_DIR_PREFIX/Network Config/exports" /etc/exports
-  sudo exportfs -a
-  sudo systemctl restart nfs-kernel-server
-}
-
 stop-nuc() {
   ssh -q -O stop nuc
   timeout 2 sudo umount /mnt/NUC 2> /dev/null || \
@@ -1088,6 +1064,10 @@ install-python2() {
 
   cd ..
   sudo rm -r Python-2.7.18*
+}
+
+network-monitor() {
+  watch -e -n1 ip -h -s link show $1 || echo -e "\033[1mDevices:\033[0m\n$(ip -br link | cut -d' ' -f1)"
 }
 
 export -f btrfs-dedupe
@@ -1111,7 +1091,6 @@ export -f edit-vm-config
 export -f edit-hosts
 export -f edit-netdata-config
 export -f edit-caddyfile
-export -f edit-nfs-exports
 export -f install-apks-recursive
 export -f max-cpu
 export -f unsparsify
@@ -1169,6 +1148,6 @@ export -f install-caddy
 export -f docker-run
 export -f upgrade-caddy
 export -f tinytuya
-export -f install-nfs-server
 export -f stop-nuc
 export -f install-python2
+export -f network-monitor

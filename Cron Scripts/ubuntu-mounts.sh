@@ -12,8 +12,8 @@ daemonize $(which rclone) --vfs-cache-mode writes mount OneDrive: /mnt/OneDrive
 # mountpoint -q /mnt/AndroidData || \
 # sudo bindfs --force-user=farmerbb --force-group=farmerbb ~/.local/share/waydroid/data /mnt/AndroidData
 
-timeout 10 mount-sshfs nuc /mnt/NUC
-# timeout 10 mount-nfs 192.168.86.10 / /mnt/NUC
+# timeout 10 mount-sshfs nuc /mnt/NUC
+timeout 10 mount-cifs 192.168.86.10 Files /mnt/NUC farmerbb
 timeout 10 mount-adbfs
 
 ##################################################

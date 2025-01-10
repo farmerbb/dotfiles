@@ -37,6 +37,8 @@ gradle-deep-clean() {
 
   pkill -f '.*GradleDaemon.*'
 
+  rm -rf ~/.m2
+
   mv ~/.gradle ~/.gradle-delete
   mkdir ~/.gradle
   mv ~/.gradle-delete/init.d ~/.gradle >/dev/null 2>&1
