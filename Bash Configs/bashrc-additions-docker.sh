@@ -21,7 +21,7 @@ plex-backup() {
   BACKUP_DIR="/mnt/files/Local/plex-backup"
   mkdir -p "$BACKUP_DIR"
 
-  sudo rsync -avu --delete --inplace "$PLEX_DIR/" "$BACKUP_DIR"
+  sudo rsync -av --delete --inplace "$PLEX_DIR/" "$BACKUP_DIR"
 
   docker start plex
 }
@@ -34,7 +34,7 @@ plex-restore() {
   BACKUP_DIR="/mnt/files/Local/plex-backup"
   mkdir -p "$BACKUP_DIR"
 
-  sudo rsync -avu --delete --inplace "$BACKUP_DIR/" "$PLEX_DIR"
+  sudo rsync -av --delete --inplace "$BACKUP_DIR/" "$PLEX_DIR"
 
   docker start plex
 }

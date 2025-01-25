@@ -33,6 +33,7 @@ alias flush-dns-cache="sudo systemctl restart systemd-resolved; resolvectl statu
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
 alias hibernate="sudo swapon /swapfile; sudo systemctl --no-block hibernate || sudo swapoff /swapfile"
 alias hypercalc="perl ~/Other\ Stuff/Utilities/hypercalc.txt"
+alias install-liquorix="curl -s 'https://liquorix.net/install-liquorix.sh' | sudo bash"
 alias lazydocker='~/Other\ Stuff/Utilities/lazydocker/lazydocker'
 alias local-ip="ip -o route get to 8.8.8.8 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'"
 alias make="make -j$(nproc)"
@@ -55,6 +56,7 @@ alias reboot-to-bios="sudo systemctl reboot --firmware-setup"
 alias refresh-bash-config='source "$LINUX_DIR_PREFIX/Scripts/install-bash-config"'
 alias refresh-theme='for i in {1..2}; do darkman toggle >/dev/null; done'
 alias reset-webcam="sudo usbreset 046d:082c"
+alias reset-audio="systemctl --user restart wireplumber pipewire pipewire-pulse"
 alias robomirror-linux-dir='SYNC_DIRS=("Other Stuff/Linux"); robomirror onedrive; refresh-bash-config'
 alias running-vms="sudo lsof 2>&1 | grep /dev/kvm | awk '!seen[\$2]++'"
 alias running-vms-fast="sudo lsof /dev/kvm 2>&1 | grep /dev/kvm | awk '!seen[\$2]++'"
@@ -617,7 +619,7 @@ robomirror() {
       echo "Mirroring $DIR from NUC using rsync..."
       if [[ -d "$RSYNC_DEST_ROOT/$DIR" ]]; then
         echo
-        "$RSYNC" -avuz --no-perms --delete --inplace --compress-choice=zstd --compress-level=1 "192.168.86.10::Files/$DIR/" "$RSYNC_DEST_ROOT/$DIR"
+        "$RSYNC" -avz --no-perms --delete --inplace --compress-choice=zstd --compress-level=1 "192.168.86.10::Files/$DIR/" "$RSYNC_DEST_ROOT/$DIR"
       else
         echo "Directory \"$RSYNC_DEST_ROOT/$DIR\" does not exist; aborting"
       fi
