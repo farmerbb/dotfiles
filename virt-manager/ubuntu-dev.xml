@@ -6,8 +6,8 @@
       <libosinfo:os id="http://ubuntu.com/ubuntu/22.10"/>
     </libosinfo:libosinfo>
   </metadata>
-  <memory unit='KiB'>4194304</memory>
-  <currentMemory unit='KiB'>4194304</currentMemory>
+  <memory unit='KiB'>8388608</memory>
+  <currentMemory unit='KiB'>8388608</currentMemory>
   <memoryBacking>
     <source type='memfd'/>
     <access mode='shared'/>
@@ -35,7 +35,7 @@
   <cpu mode='maximum' check='none' migratable='off'>
     <cache mode='passthrough'/>
     <numa>
-      <cell id='0' cpus='0-5' memory='4194304' unit='KiB' memAccess='shared'/>
+      <cell id='0' cpus='0-5' memory='8388608' unit='KiB' memAccess='shared'/>
     </numa>
   </cpu>
   <clock offset='utc'>

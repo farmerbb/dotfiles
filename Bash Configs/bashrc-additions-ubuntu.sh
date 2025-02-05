@@ -357,6 +357,24 @@ enable-backports() {
   echo "Pin-Priority: 500" | sudo tee -a /etc/apt/preferences.d/backports > /dev/null
 }
 
+install-sayonara() {
+  for i in sayonara sayonara-experimental; do
+    sudo apt-add-repository -y ppa:lucioc/$i
+  done
+
+  sudo apt-get update
+  sudo apt-get install -y sayonara
+}
+
+install-k6() {
+  TAG=$(curl --silent "https://api.github.com/repos/grafana/k6/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+  FILENAME=k6-${TAG}-linux-amd64.deb
+
+  curl -LO https://github.com/grafana/k6/releases/download/$TAG/$FILENAME
+  install-deb ./$FILENAME
+  rm ./$FILENAME
+}
+
 export -f virtualhere-client
 export -f allow-all-usb
 export -f make-trackpad-great-again
@@ -386,3 +404,5 @@ export -f install-srandrd
 export -f install-imhex
 export -f install-tvhplayer
 export -f enable-backports
+export -f install-sayonara
+export -f install-k6

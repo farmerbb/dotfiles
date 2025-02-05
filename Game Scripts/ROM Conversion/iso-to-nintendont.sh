@@ -25,7 +25,7 @@ convert-to-game-nintendont() {
     REGION=$(wit lll -H "$arg" | awk '{print $4}')
     GAMEID=$(wit lll -H "$arg" | awk '{print $1}')
     TITLE=$(wit lll -H "$arg" | awk '{ print substr($0, index($0,$5)) }' | awk '{$1=$1};1' )
-    DIR_FILENAME="$FILENAME [$GAMEID]"
+    DIR_FILENAME="games/$FILENAME [$GAMEID]"
     DIR_TITLENAME="$TITLE ($REGION) [$GAMEID]"
 
     ## no conversion; only generate folder base on title inside the rom, move iso to folder

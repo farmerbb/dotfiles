@@ -2,6 +2,7 @@
 
 count=2
 GDI_DIR=$(printf '%02d' $count)
+CHDMAN=~/Games/Utilities/chdman/chdman
 
 rm -f track*
 for i in *.chd; do
@@ -13,7 +14,7 @@ for i in *.chd; do
   GAME_NAME=$(echo "$i" | sed s/.chd//g)
   echo "Converting $GAME_NAME..."
 
-  chdman extractcd -i "$i" -o track.gdi
+  $CHDMAN extractcd -i "$i" -o track.gdi
   mkdir $GDI_DIR
   mv track.gdi $GDI_DIR/disc.gdi
   mv track* $GDI_DIR

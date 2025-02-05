@@ -25,7 +25,7 @@ convert-to-game-usbloadergx() {
     REGION=$(wit lll -H "$arg" | awk '{print $4}')
     GAMEID=$(wit lll -H "$arg" | awk '{print $1}')
     TITLE=$(wit lll -H "$arg" | awk '{ print substr($0, index($0,$5)) }' | awk '{$1=$1};1' )
-    DIR_FILENAME="$FILENAME [$GAMEID]"
+    DIR_FILENAME="wbfs/$FILENAME [$GAMEID]"
     DIR_TITLENAME="$TITLE ($REGION) [$GAMEID]"
 
     ## create proper folder structure base on title inside the rom, scrub image & convert to wbfs, auto split at 4GB a piece
