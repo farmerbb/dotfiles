@@ -18,7 +18,7 @@ convert() {
   FINAL_FILENAME=$DIRNAME/$BASE_FILENAME_SECOND-mod-$3.tar
 
   SHIELD_DIR=emulated/0
-  RGARCD_DIR=emulated/0
+  RGARCD_DIR=00000000-0000-0000-0000-000000000001
   ODIN2MINI_DIR=emulated/0
 
   if [[ $2 = shield ]] ; then

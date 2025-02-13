@@ -40,7 +40,7 @@ alias make="make -j$(nproc)"
 alias mine="sudo chown -R $USER:$USER"
 alias mount-all="sudo mount -a && mount-adbfs"
 alias mount-iso="mount-chd"
-alias mount-nuc="mount-sshfs nuc /mnt/NUC"
+alias mount-nuc="mount-cifs 192.168.86.10 Files /mnt/NUC farmerbb"
 alias nano='MICRO_TRUECOLOR=1 micro'
 alias port-monitor='watch -n1 "sudo lsof -i -P -n | grep LISTEN"'
 alias ports-monitor='port-monitor'
