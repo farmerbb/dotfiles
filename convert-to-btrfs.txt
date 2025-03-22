@@ -1,0 +1,93 @@
+Based on https://fedoramagazine.org/convert-your-filesystem-to-btrfs/
+Documentation uses `/dev/nvme0n1p2` as an example for your root filesystem
+
+* Reboot into Ubuntu installer
+
+* Check existing filesystem
+
+  sudo fsck.ext4 -fyv /dev/nvme0n1p2
+
+* Convert to btrfs (may take a while)
+
+  sudo btrfs-convert /dev/nvme0n1p2
+
+* Mount & check
+
+  mkdir -p ~/mnt
+  sudo mount /dev/nvme0n1p2 ~/mnt
+  sudo btrfs subvolume list ~/mnt  # Verify that `ext2_saved` subvolume exists
+
+* Create subvolumes for root and home
+
+  cd ~/mnt
+  sudo btrfs subvolume snapshot ./ ./@
+  sudo btrfs subvolume create @home
+  sudo cp -a home/* @home/
+
+* Create additional device-specific subvolumes (see bottom)
+
+  sudo btrfs subvolume create @files
+  sudo btrfs subvolume create @VMs
+
+* Delete files from old root
+  * In ~/mnt (the top-level subvolume) delete everything except `@`, `@home`, and `ext2_saved`.
+  * Inside `@` subvolume, empty the contents of the `home` folder.
+
+* Modify ~/mnt/@/etc/fstab
+  * Run `sudo gparted` and copy the UUID for /dev/nvme0n1p2
+
+  UUID=<uuid> /     btrfs subvol=@     0 1
+  UUID=<uuid> /home btrfs subvol=@home 0 1
+
+* Chroot into your system
+
+  sudo umount ~/mnt
+  sudo mount -o subvol=@ /dev/nvme0n1p2 ~/mnt
+  sudo mount /dev/nvme0n1p1 ~/mnt/boot/efi  # if needed
+
+  sudo mount -t proc /proc ~/mnt/proc
+  sudo mount --rbind /dev ~/mnt/dev
+  sudo mount --make-rslave ~/mnt/dev
+  sudo mount --rbind /sys ~/mnt/sys
+  sudo mount --make-rslave ~/mnt/sys
+  sudo cp ~/mnt/etc/resolv.conf ~/mnt/etc/resolv.conf.chroot
+  sudo cp -L /etc/resolv.conf ~/mnt/etc
+  sudo chroot ~/mnt /bin/bash
+
+* Verify network connection inside the chroot (not sure if this is necessary?)
+
+  ping 8.8.8.8
+
+* Reinstall GRUB inside the chroot
+
+  update-grub
+  grub-install /dev/nvme0n1
+  update-grub  # not sure if both `update-grub` commands are actually needed?
+
+* Verify that GRUB was installed correctly with btrfs support
+  * You should have proper partition UUIDs or references to the `/@/` subvolume in grub.cfg,
+  * and see `insmod btrfs` in grub.cfg and `btrfs` module in your initramfs image.
+
+  cat /boot/grub/grub.cfg
+  lsinitramfs /boot/initrd.img-<kernel version> | grep btrfs
+
+* Reboot, verify that the system is working correctly, reconfigure Timeshift, etc.
+
+-------------------------------------------------------------------------------------------
+
+Standard btrfs setup:
+
+NUC:
+
+* @ subvol mounted on /
+* @home subvol mounted on /home
+* @VMs subvol mounted on /mnt/VMs
+
+Dell XPS 13:
+
+* @ subvol mounted on /
+* @home subvol mounted on /home
+* @files subvol mounted on /mnt/files
+* @VMs subvol mounted on /mnt/VMs
+* ~/AndroidStudioProjects directory set to nocow
+* ~/.gradle directory set to nocow

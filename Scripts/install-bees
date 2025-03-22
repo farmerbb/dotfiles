@@ -11,3 +11,6 @@ sudo make install
 
 cd ..
 sudo rm -rf bees
+
+echo "UUID=$(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5)" | sudo tee /etc/bees/beesd.conf > /dev/null
+echo 'DB_SIZE=$((128*1024*1024))' | sudo tee -a /etc/bees/beesd.conf > /dev/null

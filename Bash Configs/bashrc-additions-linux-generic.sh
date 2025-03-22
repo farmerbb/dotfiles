@@ -70,8 +70,8 @@ alias usbtop="sudo modprobe usbmon; sudo usbtop"
 alias wine="winecmd wine"
 alias winecfg="winecmd winecfg"
 alias wineserver="winecmd wineserver"
-alias wireguard-up="ssh -q -O stop nuc; sudo wg-quick up wg0 && timeout 10 mount-sshfs nuc /mnt/NUC"
-alias wireguard-down="ssh -q -O stop nuc; sudo wg-quick down wg0 && timeout 10 mount-sshfs nuc /mnt/NUC"
+alias wireguard-up="sudo wg-quick up wg0 && touch /tmp/.wg-force-up && stop-nuc && timeout 10 bash -i -c mount-nuc; true"
+alias wireguard-down="sudo wg-quick down wg0 && rm -f /tmp/.wg-force-up && stop-nuc && timeout 10 bash -i -c mount-nuc; true"
 alias youtube-dl="python3 ~/Other\ Stuff/Audio\ \&\ Video\ Tools/youtube-dl"
 
 alias am="adb shell am"
@@ -99,7 +99,7 @@ btrfs-defrag() {
   touch /tmp/.btrfs-maintenance
   sudo pkill bees
 
-  for i in $BTRFS_MNT $BTRFS_HOME_MNT; do
+  for i in $BTRFS_MNT $BTRFS_HOME_MNT $BTRFS_FILES_MNT $BTRFS_VMS_MNT; do
     [[ ! -z $i ]] && sudo btrfs filesystem defrag -rfv -czstd $i || true
   done
 
@@ -108,8 +108,18 @@ btrfs-defrag() {
 
 btrfs-stats() {
   sudo btrfs filesystem usage -T $BTRFS_MNT 2>/dev/null
+
   echo
-  sudo compsize $BTRFS_MNT
+  printf "Run compsize? (Yes: ENTER, No: CTRL+C)"
+  read _
+
+  echo "Running compsize..."
+  echo
+
+  mkdir -p /tmp/compsize-mnt
+  sudo mount UUID=$(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5) /tmp/compsize-mnt
+  sudo compsize /tmp/compsize-mnt
+  sudo umount /tmp/compsize-mnt
 }
 
 btrfs-check() {

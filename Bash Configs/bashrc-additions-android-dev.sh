@@ -41,6 +41,7 @@ gradle-deep-clean() {
 
   mv ~/.gradle ~/.gradle-delete
   mkdir ~/.gradle
+  [[ ! -z $BTRFS_HOME_MNT ]] && chattr +C ~/.gradle
   mv ~/.gradle-delete/init.d ~/.gradle >/dev/null 2>&1
   mv ~/.gradle-delete/gradle.properties ~/.gradle >/dev/null 2>&1
 
@@ -90,7 +91,10 @@ gradle-idle-stop() (
 )
 
 init-android-dev-environment() {
-  mkdir -p ~/AndroidStudioProjects ~/.gradle
+  for i in AndroidStudioProjects .gradle; do
+    mkdir -p ~/$i
+    [[ ! -z $BTRFS_HOME_MNT ]] && chattr +C ~/$i
+  done
 
   cp ~/OneDrive/Android/Development/*.sh ~/AndroidStudioProjects/
   cp ~/OneDrive/Android/Development/gradle.properties ~/.gradle/

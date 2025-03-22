@@ -12,7 +12,7 @@ for a in jpg mp4; do
   [[ $a == jpg ]] && BASEDIR=Unsorted\ Pictures
   [[ $a == mp4 ]] && BASEDIR=Unsorted\ Videos
 
-  for b in 2022 2023 2024; do
+  for b in 2025; do
     for c in 01 02 03 04 05 06 07 08 09 10 11 12; do
       mkdir -p "Media/$BASEDIR/$b/$c"
       mv -v PXL_$b$c*.$a "Media/$BASEDIR/$b/$c"

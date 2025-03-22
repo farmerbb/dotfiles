@@ -20,7 +20,6 @@ ALL_EXTENSIONS=(
 )
 
 EXTENSIONS_WEB=(
-  1160 # dash-to-panel@jderose9.github.com
   4928 # mprisLabel@moon-0xff.github.com
   19   # user-theme@gnome-shell-extensions.gcampax.github.com
   5410 # grand-theft-focus@zalckos.github.com
@@ -33,6 +32,7 @@ EXTENSIONS_WEB=(
   1446 # transparent-window-moving@noobsai.github.com
   5090 # space-bar@luchrioh
   4788 # workspace-switcher-manager@G-dH.github.com
+# 1160 # dash-to-panel@jderose9.github.com
 # 4245 # gestureImprovements@gestures
 # 5446 # quick-settings-tweaks@qwreey
 )

@@ -18,8 +18,8 @@ organize-camera-roll-internal() {
 YEAR=$(date +%Y)
 MONTH=$(date +%m)
 
-[[ -d ~/OneDrive/Media/Camera\ Roll ]] && create-dirs ~/OneDrive && organize-camera-roll-internal ~/OneDrive
-[[ -d ~/Media/Camera\ Roll ]] && create-dirs ~ && organize-camera-roll-internal ~
+[[ -d /mnt/OneDrive/Media/Camera\ Roll ]] && create-dirs /mnt/OneDrive && organize-camera-roll-internal /mnt/OneDrive
+[[ -d /mnt/files/Media/Camera\ Roll ]] && create-dirs /mnt/files && organize-camera-roll-internal /mnt/files
 
 ##############################################################
 

@@ -15,6 +15,8 @@ handle-wireguard() {
     [[ -z $PUBLIC_IP ]] && return 0
     [[ $PUBLIC_IP == [REDACTED] ]] && return 0
     sudo wg-quick up wg0
+  elif [[ -f /tmp/.wg-force-up ]]; then
+    return 0
   else
     [[ $PUBLIC_IP == [REDACTED] ]] && sudo wg-quick down wg0
     return 0

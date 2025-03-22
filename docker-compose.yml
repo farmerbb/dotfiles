@@ -17,13 +17,15 @@ services:
     emby:
         image: emby/embyserver
         container_name: emby
-        network_mode: host
         environment:
             - UID=1000
             - GID=1000
         volumes:
             - /home/farmerbb/Docker/emby:/config
             - /mnt/files:/mnt/files
+        ports:
+            - 8096:8096
+            - 8920:8920
         devices:
             - /dev/dri:/dev/dri
         restart: unless-stopped
