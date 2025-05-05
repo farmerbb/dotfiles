@@ -9,7 +9,7 @@ GRUB_TIMEOUT=0
 GRUB_RECORDFAIL_TIMEOUT=0
 GRUB_DISTRIBUTOR=`( . /etc/os-release; echo ${NAME:-Ubuntu} ) 2>/dev/null || echo Ubuntu`
 GRUB_CMDLINE_LINUX_DEFAULT="quiet splash intel_iommu=on iommu=pt mitigations=off sysrq_always_enabled=1"
-GRUB_CMDLINE_LINUX=""
+GRUB_CMDLINE_LINUX="cryptdevice=UUID=d34fb14b-8455-454b-9b4a-13a546921a6f:rootfs root=/dev/mapper/rootfs"
 
 # If your computer has multiple operating systems installed, then you
 # probably want to run os-prober. However, if your computer is a host

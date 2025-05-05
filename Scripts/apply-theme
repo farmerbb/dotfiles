@@ -1,16 +1,16 @@
 #!/bin/bash
 
 sudo apt-get update
-sudo apt-get install -y git wget libglib2.0-bin gtk2-engines-murrine gtk2-engines-pixbuf qt5-style-kvantum qt5-style-kvantum-themes qt5ct sassc imagemagick npm
+sudo apt-get install -y git wget libglib2.0-bin gtk2-engines-murrine gtk2-engines-pixbuf qt5-style-kvantum qt5-style-kvantum-themes qt5ct sassc imagemagick
 
-if [[ -z $(which set-gdm-theme) ]]; then
-  git clone --depth=1 --single-branch https://github.com/realmazharhussain/gdm-tools.git
-  cd gdm-tools
-  ./install.sh
-
-  cd ..
-  sudo rm -r gdm-tools
-fi
+# if [[ -z $(which set-gdm-theme) ]]; then
+#   git clone --depth=1 --single-branch https://github.com/realmazharhussain/gdm-tools.git
+#   cd gdm-tools
+#   ./install.sh
+#
+#   cd ..
+#   sudo rm -r gdm-tools
+# fi
 
 rm -rf ~/.themes/Qogir*
 rm -rf ~/.local/share/icons/Qogir*
@@ -128,10 +128,10 @@ echo 'QT_QPA_PLATFORM=xcb' > ~/.config/environment.d/envvars.conf
 echo 'QT_QPA_PLATFORMTHEME=qt5ct' >> ~/.config/environment.d/envvars.conf
 echo 'XCURSOR_THEME=Qogir' >> ~/.config/environment.d/envvars.conf
 
-npm list file-uri-to-path >/dev/null || npm install file-uri-to-path && rm -f package*.json
-convert "$(echo "var uri2path = require('file-uri-to-path'); console.log(uri2path($(gsettings get org.gnome.desktop.background picture-uri)));" | node)" -scale 10% -blur 0x7.5 -resize 1000% ~/.gdm-background.png
-set-gdm-theme -s Yaru-blue ~/.gdm-background.png
-gnomeconf2gdm
+# npm list file-uri-to-path >/dev/null || npm install file-uri-to-path && rm -f package*.json
+# convert "$(echo "var uri2path = require('file-uri-to-path'); console.log(uri2path($(gsettings get org.gnome.desktop.background picture-uri)));" | node)" -scale 10% -blur 0x7.5 -resize 1000% ~/.gdm-background.png
+# set-gdm-theme -s Yaru-blue ~/.gdm-background.png
+# gnomeconf2gdm
 
 # set-window-color 282a33 || \
 # xfconf-query -c xsettings -p /Net/ThemeName -s "Qogir" && \

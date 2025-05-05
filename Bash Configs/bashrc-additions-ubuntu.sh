@@ -375,6 +375,15 @@ install-k6() {
   rm ./$FILENAME
 }
 
+install-rclone() {
+  TAG=$(curl --silent "https://api.github.com/repos/rclone/rclone/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+  FILENAME=rclone-${TAG}-linux-amd64.deb
+
+  curl -LO https://github.com/rclone/rclone/releases/download/$TAG/$FILENAME
+  install-deb ./$FILENAME
+  rm ./$FILENAME
+}
+
 export -f virtualhere-client
 export -f allow-all-usb
 export -f make-trackpad-great-again
@@ -406,3 +415,4 @@ export -f install-tvhplayer
 export -f enable-backports
 export -f install-sayonara
 export -f install-k6
+export -f install-rclone

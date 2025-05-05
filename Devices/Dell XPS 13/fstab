@@ -6,8 +6,9 @@
 #
 # <file system>                               <mount point>    <type>  <options>                                                        <dump>  <pass>
 
-UUID=5774a775-0702-45a9-bef8-717d6388f247     /                btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=@        0   1
-UUID=5774a775-0702-45a9-bef8-717d6388f247     /home            btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=@home    0   1
-UUID=5774a775-0702-45a9-bef8-717d6388f247     /mnt/files       btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=@files   0   1
-UUID=5774a775-0702-45a9-bef8-717d6388f247     /mnt/VMs         btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=@VMs     0   1
-UUID=910E-D763                                /boot/efi        vfat    defaults                                                             0   1
+/dev/mapper/rootfs                            /                btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=@        0   1
+/dev/mapper/rootfs                            /home            btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=@home    0   1
+/dev/mapper/rootfs                            /mnt/files       btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=@files   0   1
+/dev/mapper/rootfs                            /mnt/VMs         btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=@VMs     0   1
+UUID=dd154f00-5a53-44de-a3fa-401e00584ba2     /boot            ext4    defaults,noatime,discard                                             0   1
+UUID=41FD-A3E2                                /boot/efi        vfat    defaults                                                             0   1

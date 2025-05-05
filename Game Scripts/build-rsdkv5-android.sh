@@ -1,5 +1,5 @@
 #!/bin/bash
-# Adapted from https://github.com/Kiaru-the-Fox/Sonic-Mania-Android-Build-Guide/blob/main/ManiaAndroidBuildHelper_2.0.bat
+# Adapted from https://github.com/RSDKModding/RSDKv5-Decompilation/blob/master/.github/workflows/build.yml
 
 CURRENT_DIR=$(pwd)
 
@@ -7,48 +7,34 @@ sudo rm -rf ~/sonicmania
 mkdir ~/sonicmania
 cd ~/sonicmania
 
-git clone https://github.com/Rubberduckycooly/Sonic-Mania-Decompilation.git --recursive
-git clone https://github.com/Rubberduckycooly/RSDKv5-Example-Mods.git
-git clone https://github.com/Rubberduckycooly/GameAPI.git
+git clone https://github.com/RSDKModding/RSDKv5-Decompilation.git --recursive
+cd RSDKv5-Decompilation
 
-cd Sonic-Mania-Decompilation/dependencies/RSDKv5
-for i in RSDKv5/main.cpp RSDKv5/RSDK/Graphics/EGL/EGLRenderDevice.cpp; do
-  sed -i 's/SwappyGL_setAutoSwapInterval(false);/SwappyGL_setMaxAutoSwapIntervalNS(SWAPPY_SWAP_60FPS);/g' $i
-done
+git clone https://github.com/RSDKModding/Sonic-Mania-Decompilation.git
+git clone https://github.com/RSDKModding/RSDKv5-Example-Mods.git
+git clone https://github.com/RSDKModding/RSDKv5-GameAPI.git
 
 cd dependencies/android
-curl -L http://downloads.xiph.org/releases/theora/libtheora-1.1.1.zip --output libtheora.zip
-curl -L http://downloads.xiph.org/releases/ogg/libogg-1.3.5.zip --output libogg.zip
-unzip libtheora.zip
-unzip libogg.zip
+curl -L -O https://downloads.xiph.org/releases/ogg/libogg-1.3.5.zip
+curl -L -O https://downloads.xiph.org/releases/theora/libtheora-1.1.1.zip
+unzip \*.zip
+rm *.zip
+rsync -ar libogg-*/* libogg
+mv libtheora-* libtheora
 
-mv libtheora-1.1.1 libtheora
-mv libogg/include/ogg/config_types.h libogg-1.3.5/include/ogg
-rm -rf libogg
-mv libogg-1.3.5 libogg
+cd -
+rm Game
+rmdir $PWD/Sonic-Mania-Decompilation/dependencies/RSDKv5
+ln -s $PWD $PWD/Sonic-Mania-Decompilation/dependencies/RSDKv5
+ln -s $PWD/RSDKv5-GameAPI RSDKv5-Example-Mods/ManiaTouchControls/GameAPI
+ln -s $PWD/RSDKv5-GameAPI RSDKv5-Example-Mods/UltrawideMania/GameAPI
+ln -s $PWD/Sonic-Mania-Decompilation ./android/app/jni/Game
+ln -s $PWD/RSDKv5-Example-Mods/ManiaTouchControls ./android/app/jni/MTC
+ln -s $PWD/RSDKv5-Example-Mods/UltrawideMania ./android/app/jni/UWM
 
-rm libtheora.zip
-rm libogg.zip
-
-cp -r libtheora ../windows
-cp -r libogg ../windows
-
-cd ~/sonicmania
-cp -r GameAPI RSDKv5-Example-Mods/ManiaTouchControls/GameAPI
-cp -r GameAPI RSDKv5-Example-Mods/UltrawideMania/GameAPI
-
-cd Sonic-Mania-Decompilation/dependencies/RSDKv5/android/app/jni
-ln -s ~/sonicmania/Sonic-Mania-Decompilation Game
-ln -s ~/sonicmania/GameAPI GameAPI
-ln -s ~/sonicmania/RSDKv5-Example-Mods/ManiaTouchControls MTouchCtrl
-ln -s ~/sonicmania/RSDKv5-Example-Mods/UltrawideMania UWMania
-
-cd ../..
-chmod +x gradlew
+cd android
 ./gradlew assembleRelease
-
-apksigner sign --ks release-key.jks --ks-key-alias key0 --ks-pass pass:retroengine --key-pass pass:retroengine --in app/build/outputs/apk/release/app-release-unsigned.apk --out "$CURRENT_DIR/RSDKv5.apk"
+mv app/build/outputs/apk/release/app-release.apk "$CURRENT_DIR/RSDKv5.apk"
 
 cd "$CURRENT_DIR"
 sudo rm -rf ~/sonicmania
-rm -f RSDKv5.apk.idsig

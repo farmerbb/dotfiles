@@ -372,9 +372,9 @@ qcow2-create() {
     return 1
   fi
 
-# touch "$1"
-# chattr +C "$1"
-  qemu-img create -f qcow2 -o cluster_size=2M,compression_type=zstd "$1" "$2"
+  touch "$1"
+  chattr +C "$1"
+  qemu-img create -f qcow2 -o cluster_size=2M "$1" "$2"
 }
 
 qcow2-optimize() {
@@ -382,10 +382,10 @@ qcow2-optimize() {
 
   mv "$1" "$1".old
 
-# touch "$1"
-# chattr +C "$1"
+  touch "$1"
+  chattr +C "$1"
 
-  qemu-img convert -p -c -f qcow2 -O qcow2 -o cluster_size=2M,compression_type=zstd "$1".old "$1" || mv "$1".old "$1"
+  qemu-img convert -p -c -f qcow2 -O qcow2 -o cluster_size=2M "$1".old "$1" || mv "$1".old "$1"
   rm -f "$1".old
 }
 
@@ -406,7 +406,7 @@ raw-to-qcow2() {
   NEW_FILENAME=$(echo "$1" | sed "s/.img/.qcow2/g")
   [[ "$1" = "$NEW_FILENAME" ]] && NEW_FILENAME="$1.qcow2"
 
-  qemu-img convert -p -c -f raw -O qcow2 -o cluster_size=2M,compression_type=zstd "$1" "$NEW_FILENAME" || rm "$NEW_FILENAME"
+  qemu-img convert -p -c -f raw -O qcow2 -o cluster_size=2M "$1" "$NEW_FILENAME" || rm "$NEW_FILENAME"
 }
 
 set-default-filemanager() {
@@ -521,6 +521,7 @@ install-pip2() {
 
 git-deep-clean() {
   [[ -f local.properties ]] && mv local.properties /tmp
+  [[ -d .idea ]] && mv .idea /tmp
 
   sudo git clean -xfd && git reset --hard
 
@@ -528,6 +529,11 @@ git-deep-clean() {
     mv /tmp/local.properties . && \
     echo && \
     echo "NOTE: local.properties file has been kept"
+
+  [[ -d /tmp/.idea ]] && \
+    mv /tmp/.idea . && \
+    echo && \
+    echo "NOTE: .idea directory has been kept"
 }
 
 install-deb() {
@@ -578,11 +584,9 @@ robomirror() {
   if [[ -z $IS_WSL ]]; then
     RSYNC=rsync
     RSYNC_DEST_ROOT=/mnt/files
-  # RSYNC_DEST_ROOT=/home/$USER
 
     RCLONE=rclone
     RCLONE_DEST_ROOT=/mnt/files
-  # RCLONE_DEST_ROOT=/home/$USER
   else
     RSYNC=/mnt/z/Other\ Stuff/Utilities/cwRsync/bin/rsync.exe
     RSYNC_DEST_ROOT=/cygdrive/z
@@ -627,7 +631,7 @@ robomirror() {
 
     if [[ $SOURCE = nuc ]]; then
       echo "Mirroring $DIR from NUC using rsync..."
-      if [[ -d "$RSYNC_DEST_ROOT/$DIR" ]]; then
+      if [[ -z $IS_WSL ]] || [[ -d "$RSYNC_DEST_ROOT/$DIR" ]]; then
         echo
         "$RSYNC" -avz --no-perms --delete --inplace --compress-choice=zstd --compress-level=1 "192.168.86.10::Files/$DIR/" "$RSYNC_DEST_ROOT/$DIR"
       else
@@ -1082,6 +1086,26 @@ network-monitor() {
   watch -e -n1 ip -h -s link show $1 || echo -e "\033[1mDevices:\033[0m\n$(ip -br link | cut -d' ' -f1)"
 }
 
+twingate-up() {
+  sudo ufw enable
+
+  sudo sed -i 's/DNS=/#DNS=/' /etc/systemd/resolved.conf
+  sudo sed -i 's/DNSOverTLS=/#DNSOverTLS=/' /etc/systemd/resolved.conf
+  sudo systemctl restart systemd-resolved
+
+  twingate start
+}
+
+twingate-down() {
+  twingate stop
+
+  sudo sed -i 's/#DNS=/DNS=/' /etc/systemd/resolved.conf
+  sudo sed -i 's/#DNSOverTLS=/DNSOverTLS=/' /etc/systemd/resolved.conf
+  sudo systemctl restart systemd-resolved
+
+  sudo ufw disable
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -1163,3 +1187,5 @@ export -f tinytuya
 export -f stop-nuc
 export -f install-python2
 export -f network-monitor
+export -f twingate-up
+export -f twingate-down

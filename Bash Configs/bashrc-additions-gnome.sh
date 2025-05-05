@@ -17,6 +17,7 @@ ALL_EXTENSIONS=(
   custom-command-toggle@storageb.github.com
   space-bar@luchrioh
   workspace-switcher-manager@G-dH.github.com
+  time-in-date-menu@knedme
 )
 
 EXTENSIONS_WEB=(
@@ -32,7 +33,8 @@ EXTENSIONS_WEB=(
   1446 # transparent-window-moving@noobsai.github.com
   5090 # space-bar@luchrioh
   4788 # workspace-switcher-manager@G-dH.github.com
-# 1160 # dash-to-panel@jderose9.github.com
+  5204 # time-in-date-menu@knedme
+  1160 # dash-to-panel@jderose9.github.com
 # 4245 # gestureImprovements@gestures
 # 5446 # quick-settings-tweaks@qwreey
 )
@@ -97,7 +99,8 @@ import-extension-config() {
 }
 
 fix-extensions() {
-  dconf write /org/gnome/shell/disable-user-extensions false
+  gsettings set org.gnome.shell disable-user-extensions false
+  gsettings set org.gnome.shell disable-extension-version-validation true
 
   for i in $(gnome-extensions list); do
     echo ${ALL_EXTENSIONS[@]} | grep -owq $i && EXT_COMMAND=enable || EXT_COMMAND=disable

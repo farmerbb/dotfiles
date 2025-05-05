@@ -1,16 +1,15 @@
 #!/bin/bash
 
-verify-command() {
-  if [[ -z $(which $1) ]]; then
-    sudo apt-get update
-    sudo apt-get install guestfs-tools
-  fi
-}
-
 list-filesystems() {
   if [[ ! -z "$1" ]]; then
-    verify-command virt-filesystems
-    virt-filesystems -lha "$1"
+    sudo modprobe nbd max_part=8
+    sudo qemu-nbd --connect=/dev/nbd0 "$1" >/dev/null 2>&1
+    sleep 1
+
+    sudo fdisk /dev/nbd0 -l
+    sudo qemu-nbd --disconnect /dev/nbd0 >/dev/null
+    sudo rmmod nbd
+
     echo
   fi
 }
@@ -19,14 +18,26 @@ print-usage() {
   list-filesystems "$1"
 
   BASENAME=$(basename "$0")
-  echo "Usage: $BASENAME <img-name> <partition-name> <mountpoint>"
+  echo "Usage: $BASENAME <img-name> <partition-name>"
   exit 1
 }
 
-if [[ $# -gt 2 ]]; then
-  verify-command guestmount
-  guestmount -a "$1" -m "$2" --ro "$3" && exit 0
-  echo
+if [[ $# -gt 1 ]]; then
+  sudo modprobe nbd max_part=8
+  sudo qemu-nbd --connect=/dev/nbd0 "$1" >/dev/null 2>&1
+  sleep 1
+
+  mkdir -p /tmp/mnt
+  sudo mount -o ro "$2" /tmp/mnt
+  open /tmp/mnt >/dev/null 2>&1
+
+  printf "Press Enter to unmount the disk image..."
+  read _
+
+  sudo umount /tmp/mnt
+  sudo qemu-nbd --disconnect /dev/nbd0 >/dev/null
+  sudo rmmod nbd
+  exit 0
 fi
 
 print-usage "$1"

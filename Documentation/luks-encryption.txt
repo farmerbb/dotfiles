@@ -1,0 +1,81 @@
+Based on https://superuser.com/a/1774104
+Documentation uses `/dev/nvme0n1p2` as an example for your root filesystem
+Documentation uses `/dev/nvme0n1p3` as an example for your boot partition
+
+* Reboot into Ubuntu installer
+
+* Prepare boot partition
+
+  - Copy all files from /boot/efi to a safe place
+  - Unmount /boot/efi
+  - Rename existing /boot folder and create a new, empty /boot
+
+  - Delete /boot/efi partition
+  - Create new fat32 partition for /boot/efi, must be at least 260MB if on a disk with 4K sectors
+  - Apply boot and esp flags to new EFI partition
+  - Create new ext4 partition for /boot
+
+  - Add mount point for /boot to fstab
+  - Move files from old /boot folder to new /boot partition
+  - Add mount point for /boot/efi to fstab
+  - Move files from old /boot/efi to new /boot/efi
+
+* Resize existing root filesystem
+
+  mkdir -p ~/mnt
+  sudo mount -o subvol=@ /dev/nvme0n1p2 ~/mnt
+  sudo btrfs fi resize -32m ~/mnt
+  sudo umount ~/mnt
+
+* Encrypt the partition
+
+  sudo cryptsetup reencrypt --encrypt --type luks2 --reduce-device-size 32m /dev/nvme0n1p2
+ 
+* Mount newly encrypted filesystem
+
+  sudo cryptsetup luksOpen /dev/nvme0n1p2 <name>
+  sudo mount -o subvol=@ /dev/mapper/<name> ~/mnt
+  sudo btrfs fi resize max ~/mnt
+
+* Create ~/mnt/etc/crypttab
+  * Run `sudo gparted` and copy the Encryption UUID for /dev/nvme0n1p2
+
+  <name> UUID=<uuid> none luks,discard
+
+* Modify ~/mnt/etc/fstab
+
+  /dev/mapper/<name> /     btrfs subvol=@     0 1
+  /dev/mapper/<name> /home btrfs subvol=@home 0 1
+  /dev/nvme0n1p3     /boot ext4  defaults     0 1
+
+* Modify ~/mnt/etc/default/grub
+
+  GRUB_CMDLINE_LINUX="cryptdevice=UUID=<uuid>:<name> root=/dev/mapper/<name>"
+
+* Chroot into your system
+
+  sudo mount /dev/nvme0n1p3 ~/mnt/boot
+  sudo mount /dev/nvme0n1p1 ~/mnt/boot/efi
+
+  sudo mount -t proc /proc ~/mnt/proc
+  sudo mount --rbind /dev ~/mnt/dev
+  sudo mount --make-rslave ~/mnt/dev
+  sudo mount --rbind /sys ~/mnt/sys
+  sudo mount --make-rslave ~/mnt/sys
+  sudo chroot ~/mnt /bin/bash
+
+* Install necessary packages inside the chroot
+
+  apt install cryptsetup initramfs-tools
+
+* Rebuild the initramfs
+
+  update-initramfs -u -k all
+
+* Reinstall GRUB inside the chroot
+
+  update-grub
+  grub-install /dev/nvme0n1
+  update-grub  # not sure if both `update-grub` commands are actually needed?
+
+* Reboot, verify that the system is working correctly
