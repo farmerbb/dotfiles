@@ -11,7 +11,7 @@ ALL_EXTENSIONS=(
   gsconnect@andyholmes.github.io
   tiling-assistant@leleat-on-github
   compiz-windows-effect@hermes83.github.com
-  notification-banner-reloaded@marcinjakubowski.github.com
+  notification-position@drugo.dev
   transparent-window-moving@noobsai.github.com
   auto-power-profile@dmy3k.github.io
   custom-command-toggle@storageb.github.com
@@ -26,7 +26,7 @@ EXTENSIONS_WEB=(
   5410 # grand-theft-focus@zalckos.github.com
   3628 # arcmenu@arcmenu.com
   3210 # compiz-windows-effect@hermes83.github.com
-  4651 # notification-banner-reloaded@marcinjakubowski.github.com
+  4105 # notification-position@drugo.dev
   3733 # tiling-assistant@leleat-on-github
   6583 # auto-power-profile@dmy3k.github.io
   7012 # custom-command-toggle@storageb.github.com

@@ -55,6 +55,7 @@ start() {
 # echo "Waiting for Raspberry Pi to boot..."
 
   while true; do
+    "$VHCLIENT_PATH" -t "MANUAL HUB ADD,192.168.86.29:11"
     "$VHCLIENT_PATH" -t "USE,octopi.11" # >/dev/null
     [[ $? != 2 ]] && return || sleep 1
   done
