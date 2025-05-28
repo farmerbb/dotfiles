@@ -18,6 +18,7 @@ ALL_EXTENSIONS=(
   space-bar@luchrioh
   workspace-switcher-manager@G-dH.github.com
   time-in-date-menu@knedme
+  window-state-manager@kishorv06.github.io
 )
 
 EXTENSIONS_WEB=(
@@ -35,6 +36,7 @@ EXTENSIONS_WEB=(
   4788 # workspace-switcher-manager@G-dH.github.com
   5204 # time-in-date-menu@knedme
   1160 # dash-to-panel@jderose9.github.com
+  5353 # window-state-manager@kishorv06.github.io
 # 4245 # gestureImprovements@gestures
 # 5446 # quick-settings-tweaks@qwreey
 )

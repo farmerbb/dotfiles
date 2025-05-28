@@ -1,4 +1,10 @@
 #!/bin/bash
+unset HISTFILE
+
+[[ -f /tmp/run-bees.running ]] && exit 1
+touch /tmp/run-bees.running
+
+##################################################
 
 start-bees() {
   [[ ! -z $(pidof bees) ]] && exit 1
@@ -20,5 +26,10 @@ BATTERY=$(cat /sys/class/power_supply/BAT0/capacity)
 if [[ $CHARGING != 0 && $BATTERY > 90 || $BATTERY = 100 ]]; then
   start-bees
 else
-  sudo pkill bees
+  sudo pkill bees || true
 fi
+
+##################################################
+
+[[ $? -eq 0 ]] && touch ~/.lastrun/run-bees.lastrun
+rm -f /tmp/run-bees.running

@@ -1,0 +1,11 @@
+wget https://download.qemu.org/qemu-10.0.0.tar.xz
+tar xvJf qemu-10.0.0.tar.xz
+
+cd qemu-10.0.0/
+wget https://sources.debian.org/data/main/q/qemu/1%3A10.0.0%2Bds-2/debian/patches/hw-display-qxl-render.c-fix-qxl_unpack_chunks-chunk-.patch
+patch -Np1 -i hw-display-qxl-render.c-fix-qxl_unpack_chunks-chunk-.patch
+
+sudo apt install libspice-* libvirglrenderer*
+./configure --target-list=x86_64-softmmu
+make -j8
+sudo make install

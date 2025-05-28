@@ -27,3 +27,4 @@
 
 * * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/wireguard-connect.sh
 * * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/ubuntu-mounts.sh
+* * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/run-bees.sh

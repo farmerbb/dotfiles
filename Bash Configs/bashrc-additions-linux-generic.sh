@@ -87,10 +87,12 @@ btrfs-dedupe() {
   touch /tmp/.btrfs-maintenance
   sudo pkill bees
 
-  sudo jdupes -r1BQ $BTRFS_MNT
-  gunzip ~/.hashfile
-  sudo duperemove -drh --hashfile=/home/$USER/.hashfile $BTRFS_MNT
-  gzip ~/.hashfile
+  sudo beesd $(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5)
+
+# sudo jdupes -r1BQ $BTRFS_MNT
+# gunzip ~/.hashfile
+# sudo duperemove -drh --hashfile=/home/$USER/.hashfile $BTRFS_MNT
+# gzip ~/.hashfile
 
   rm /tmp/.btrfs-maintenance
 }
@@ -780,9 +782,12 @@ folder2iso() {
 }
 
 video-capture() {
-  if [[ -z $(which v4l2-ctl) || -z $(which guvcview) ]]; then
+  OUTPUT="$1"
+  [[ -z $OUTPUT ]] && OUTPUT=/dev/null
+
+  if [[ -z $(which v4l2-ctl) || -z $(which ffmpeg) ]]; then
     sudo apt-get update
-    sudo apt-get install -y v4l-utils guvcview
+    sudo apt-get install -y v4l-utils ffmpeg
   fi
 
   DEVICE=$(v4l2-ctl --list-devices | grep -A1 "USB Video" | tail -n1 | xargs)
@@ -791,12 +796,19 @@ video-capture() {
   v4l2-ctl -d $DEVICE -c saturation=128
   v4l2-ctl -d $DEVICE -c hue=0
 
-  arecord -D sysdefault:CARD=MS2109 -f cd - | aplay - &
-  disown
+  AUDIO_DEVICE=$(arecord -l | grep MS2109 | sed -n 's/^card \([0-9]\+\):.*device \([0-9]\+\):.*/hw:\1,\2/p')
 
-  guvcview --device=$DEVICE > /dev/null 2>&1
+# arecord -D sysdefault:CARD=MS2109 -f cd - | aplay - &
+# disown
 
-  sudo pkill arecord
+# guvcview --device=$DEVICE > /dev/null 2>&1
+
+  ffmpeg \
+    -f v4l2 -input_format mjpeg -video_size 1920x1080 -i $DEVICE \
+    -f alsa -i $AUDIO_DEVICE -map 0:v -map 1:a -c:v copy -c:a aac -f matroska - \
+    | tee >(ffplay -fflags nobuffer -) > "$OUTPUT"
+
+# sudo pkill arecord
   echo
 }
 
