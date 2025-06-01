@@ -14,21 +14,6 @@ services:
             - 1443:1443/udp
             - 853:853/tcp
         image: adguard/adguardhome:latest
-    emby:
-        image: emby/embyserver
-        container_name: emby
-        environment:
-            - UID=1000
-            - GID=1000
-        volumes:
-            - /home/farmerbb/Docker/emby:/config
-            - /mnt/files:/mnt/files
-        ports:
-            - 8096:8096
-            - 8920:8920
-        devices:
-            - /dev/dri:/dev/dri
-        restart: unless-stopped
     esphome:
         container_name: esphome
         image: esphome/esphome
