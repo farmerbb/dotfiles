@@ -13,7 +13,7 @@ perform-installs() {
       done
     fi
   else
-    $(which adb) $DASH_S $DEVICE install -r "$(ls *.apk)"
+    $(which adb) $DASH_S $DEVICE install --bypass-low-target-sdk-block -r "$(ls *.apk)"
   fi
 }
 

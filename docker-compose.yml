@@ -10,6 +10,8 @@ services:
         ports:
             - 192.168.86.10:53:53/tcp
             - 192.168.86.10:53:53/udp
+            - "[::]:53:53/tcp"
+            - "[::]:53:53/udp"
             - 1443:1443/tcp
             - 1443:1443/udp
             - 853:853/tcp
@@ -68,8 +70,8 @@ services:
             - ALLOWED_NETWORKS=192.168.86.0/24,10.13.13.0/24
         network_mode: host
         volumes:
-            - /home/farmerbb/Docker/plex/config:/config
-            - /home/farmerbb/Docker/plex/transcode:/transcode
+            - /home/farmerbb/Docker/plex:/config
+            - /dev/shm:/transcode
             - /mnt/files:/mnt/files
         devices:
             - /dev/dri:/dev/dri
@@ -85,7 +87,7 @@ services:
             - SERVERURL=[REDACTED]
             - PEERS=5
             - PEERDNS=none
-            - ALLOWEDIPS=192.168.86.0/24,10.13.13.0/24
+            - ALLOWEDIPS=192.168.86.10/32,10.13.13.0/24
             - LOG_CONFS=true
         volumes:
             - /home/farmerbb/Docker/wireguard:/config

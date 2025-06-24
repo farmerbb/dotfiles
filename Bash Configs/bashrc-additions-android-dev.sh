@@ -26,6 +26,7 @@ export PATH="$PLUGINS_DIR:$PLATFORM_TOOLS_DIR:$TOOLS_DIR:$CMDLINE_TOOLS_DIR:$TOO
 alias clear-emulator-lockfiles="rm ~/.android/avd/*.avd/*.lock"
 alias gradle-stop="pkill -f '.*GradleDaemon.*'"
 alias kill-android-studio="pkill -f '.*com.intellij.idea.Main.*' -9"
+alias kill-intellij="pkill idea -9"
 alias reset-android-studio='for i in ~/.cache ~/.local/share ~/.config; do rm -rf $i/Google; done'
 alias sdb="~/tizen-studio/tools/sdb"
 alias tizen="~/tizen-studio/tools/ide/bin/tizen"
@@ -104,19 +105,14 @@ init-android-dev-environment() {
   chmod +x *.sh
 
   PROJECTS=( "$@" )
-  [[ -z $PROJECTS ]] && PROJECTS=(
-    AppNotifier
-    Notepad
-    SecondScreen
-    Taskbar
-  )
-
-  for i in ${!PROJECTS[@]}; do
-    REPO="${PROJECTS[$i]}"
-    [[ ! -d $REPO ]] && \
-      git-clone $REPO && \
-      echo 'sdk.dir=/home/farmerbb/Android/Sdk' > $REPO/local.properties
-  done
+  if [[ -z $PROJECTS ]]; then
+    for i in ${!PROJECTS[@]}; do
+      REPO="${PROJECTS[$i]}"
+      [[ ! -d $REPO ]] && \
+        git-clone $REPO && \
+        echo 'sdk.dir=/home/farmerbb/Android/Sdk' > $REPO/local.properties
+    done
+  fi
 
   cd - >/dev/null
 }
@@ -134,8 +130,19 @@ project-root() {
   cd $GRADLE_ROOT
 }
 
+sign-apk() {
+  if [[ -z "$2" ]]; then
+    echo "Usage: sign-apk <input-filename> <output-filename>"
+    return 1
+  fi
+
+  PASSWORD=$(base64 -d <<< [REDACTED])
+  apksigner sign --ks ~/AndroidStudioProjects/Keystore --ks-key-alias farmerbb --ks-pass pass:$PASSWORD --key-pass pass:$PASSWORD --in "$1" --out "$2"
+}
+
 export -f gradle-deep-clean
 export -f emulator
 export -f gradle-idle-stop
 export -f init-android-dev-environment
 export -f project-root
+export -f sign-apk

@@ -12,6 +12,7 @@ PACKAGES=(
   gzdoom:org.zdoom.GZDoom
   heroic:com.heroicgameslauncher.hgl
   jazz2:tk.deat.Jazz2Resurrection
+  moonlight:com.moonlight_stream.Moonlight
   pegasus:org.pegasus_frontend.Pegasus
   pysol:io.sourceforge.pysolfc.PySolFC
   retroarch:org.libretro.RetroArch

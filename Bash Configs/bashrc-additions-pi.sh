@@ -3,6 +3,7 @@ export DEVICE_DIR_PREFIX="$(realpath ~/Other\ Stuff/Linux/Devices/Raspberry\ Pi\
 export OD_LINUX_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Linux"
 export OD_DEVICE_DIR_PREFIX="/home/$USER/OneDrive/Other Stuff/Linux/Devices/Raspberry Pi 3B+"
 export PATH="$PATH:$LINUX_DIR_PREFIX/Scripts"
+export HEALTHCHECK_ID="[REDACTED]"
 
 export SYNC_DIRS=(
   "Other Stuff/Linux"

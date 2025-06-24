@@ -42,6 +42,7 @@ alias mount-all="sudo mount -a && mount-adbfs"
 alias mount-iso="mount-chd"
 alias mount-nuc="mount-cifs 192.168.86.10 Files /mnt/NUC farmerbb"
 alias nano='MICRO_TRUECOLOR=1 micro'
+alias network-monitor='ssh basement-ap -o LogLevel=QUIET -t iftop -i br-lan'
 alias port-monitor='watch -n1 "sudo lsof -i -P -n | grep LISTEN"'
 alias ports-monitor='port-monitor'
 alias public-ip="dig @resolver4.opendns.com myip.opendns.com +short"
@@ -70,8 +71,8 @@ alias usbtop="sudo modprobe usbmon; sudo usbtop"
 alias wine="winecmd wine"
 alias winecfg="winecmd winecfg"
 alias wineserver="winecmd wineserver"
-alias wireguard-up="sudo wg-quick up wg0 && touch /tmp/.wg-force-up && stop-nuc && timeout 10 bash -i -c mount-nuc; true"
-alias wireguard-down="sudo wg-quick down wg0 && rm -f /tmp/.wg-force-up && stop-nuc && timeout 10 bash -i -c mount-nuc; true"
+alias wireguard-up="sudo wg-quick up wg0 && stop-nuc && timeout 10 bash -i -c mount-nuc; true"
+alias wireguard-down="sudo wg-quick down wg0 && stop-nuc && timeout 10 bash -i -c mount-nuc; true"
 alias youtube-dl="python3 ~/Other\ Stuff/Audio\ \&\ Video\ Tools/youtube-dl"
 
 alias am="adb shell am"
@@ -129,6 +130,15 @@ btrfs-check() {
   for i in "${DEVICES[@]}"; do
     sudo btrfs check --force $i
   done
+}
+
+btrfs-balance() {
+  if [[ -z $1 ]]; then
+    echo "Usage: btrfs-balance <percentage>"
+    return 1
+  fi
+
+  sudo btrfs balance start -dusage=$1 $BTRFS_MNT
 }
 
 find-files() {
@@ -702,6 +712,9 @@ install-wireguard-client() {
   sudo apt-get update
   sudo apt-get -y install wireguard resolvconf
   sudo cp ~/Other\ Stuff/Docker/wireguard/$1/$1.conf /etc/wireguard/wg0.conf
+
+  sudo systemctl enable wg-quick@wg0
+  sudo systemctl start wg-quick@wg0
 }
 
 wireguard-run() {
@@ -782,9 +795,6 @@ folder2iso() {
 }
 
 video-capture() {
-  OUTPUT="$1"
-  [[ -z $OUTPUT ]] && OUTPUT=/dev/null
-
   if [[ -z $(which v4l2-ctl) || -z $(which ffmpeg) ]]; then
     sudo apt-get update
     sudo apt-get install -y v4l-utils ffmpeg
@@ -803,10 +813,24 @@ video-capture() {
 
 # guvcview --device=$DEVICE > /dev/null 2>&1
 
-  ffmpeg \
+  SHARED_ARGS=(
+    -loglevel error -fflags nobuffer -flags low_delay
+  )
+
+  FFMPEG_ARGS=(
+    -probesize 32 -analyzeduration 0 \
     -f v4l2 -input_format mjpeg -video_size 1920x1080 -i $DEVICE \
-    -f alsa -i $AUDIO_DEVICE -map 0:v -map 1:a -c:v copy -c:a aac -f matroska - \
-    | tee >(ffplay -fflags nobuffer -) > "$OUTPUT"
+    -f alsa -i $AUDIO_DEVICE \
+    -map 0:v -map 1:a -c:v copy -c:a aac -flush_packets 1 \
+  )
+
+  if [[ -z "$1" ]]; then
+	OUTPUT_SPEC="-f nut -"
+  else
+    OUTPUT_SPEC="-f tee [f=matroska]$1|[f=nut]pipe:"
+  fi
+
+  ffmpeg "${SHARED_ARGS[@]}" "${FFMPEG_ARGS[@]}" $OUTPUT_SPEC | ffplay "${SHARED_ARGS[@]}" -
 
 # sudo pkill arecord
   echo
@@ -1010,10 +1034,14 @@ install-mosquitto() {
   sudo apt-get update
   sudo apt-get install -y mosquitto mosquitto-clients
 
+  sudo mosquitto_passwd -c /etc/mosquitto/passwd farmerbb
+  sudo chmod 644 /etc/mosquitto/passwd
+
   echo 'listener 1883 0.0.0.0' | sudo tee -a /etc/mosquitto/mosquitto.conf > /dev/null
   echo 'allow_anonymous true' | sudo tee -a /etc/mosquitto/mosquitto.conf > /dev/null
+  echo 'password_file /etc/mosquitto/passwd' | sudo tee -a /etc/mosquitto/mosquitto.conf > /dev/null
 
-  sudo systemctl restart mosquitto
+  sudo kill -HUP $(pidof mosquitto)
 }
 
 install-caddy() {
@@ -1094,10 +1122,6 @@ install-python2() {
   sudo rm -r Python-2.7.18*
 }
 
-network-monitor() {
-  watch -e -n1 ip -h -s link show $1 || echo -e "\033[1mDevices:\033[0m\n$(ip -br link | cut -d' ' -f1)"
-}
-
 twingate-up() {
   sudo ufw enable
 
@@ -1116,6 +1140,17 @@ twingate-down() {
   sudo systemctl restart systemd-resolved
 
   sudo ufw disable
+}
+
+restart-network() {
+  for i in {3..1}; do
+    ssh root@192.168.86.$i 'sh -c "reboot -d 5 > /dev/null 2>&1 &"'
+  done
+}
+
+x86_energy_perf_policy() {
+  FILENAME=$(find /usr -type f -name x86_energy_perf_policy | grep $(uname -r | cut -d'-' -f1))
+  sudo "$FILENAME" "$@"
 }
 
 export -f btrfs-dedupe
@@ -1198,6 +1233,7 @@ export -f upgrade-caddy
 export -f tinytuya
 export -f stop-nuc
 export -f install-python2
-export -f network-monitor
 export -f twingate-up
 export -f twingate-down
+export -f restart-network
+export -f x86_energy_perf_policy

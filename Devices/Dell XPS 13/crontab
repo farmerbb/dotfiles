@@ -22,9 +22,9 @@
 # 
 # m h  dom mon dow   command
 
-@reboot bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/wireguard-connect.sh
 @reboot bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/ubuntu-mounts.sh
+@reboot bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/btrfs-configure-reclaim.sh
+@reboot bash -i -c "x86_energy_perf_policy --all performance"
 
-* * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/wireguard-connect.sh
 * * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/ubuntu-mounts.sh
 * * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/run-bees.sh

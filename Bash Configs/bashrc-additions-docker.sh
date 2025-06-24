@@ -17,7 +17,7 @@ plex-backup() {
   echo "Temporarily stopping Plex server..."
   docker stop plex
 
-  PLEX_DIR="/home/farmerbb/Docker/plex/config"
+  PLEX_DIR="/home/farmerbb/Docker/plex"
   BACKUP_DIR="/mnt/files/Local/plex-backup"
   mkdir -p "$BACKUP_DIR"
 
@@ -30,7 +30,7 @@ plex-restore() {
   echo "Temporarily stopping Plex server..."
   docker stop plex
 
-  PLEX_DIR="/home/farmerbb/Docker/plex/config"
+  PLEX_DIR="/home/farmerbb/Docker/plex"
   BACKUP_DIR="/mnt/files/Local/plex-backup"
   mkdir -p "$BACKUP_DIR"
 

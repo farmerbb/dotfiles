@@ -6,6 +6,7 @@ export BTRFS_MNT="/"
 export BTRFS_HOME_MNT="/home"
 export BTRFS_VMS_MNT="/mnt/VMs"
 export PATH="$PATH:$LINUX_DIR_PREFIX/Scripts"
+export HEALTHCHECK_ID="[REDACTED]"
 
 export SYNC_DIRS=(
   "Android"

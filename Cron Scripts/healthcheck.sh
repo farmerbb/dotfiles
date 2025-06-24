@@ -6,7 +6,7 @@ touch /tmp/healthcheck.running
 
 ##################################################
 
-curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/[REDACTED]
+curl -fsS -m 10 --retry 5 -o /dev/null https://hc-ping.com/$HEALTHCHECK_ID
 
 ##################################################
 
