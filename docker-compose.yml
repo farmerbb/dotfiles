@@ -1,119 +1,164 @@
 name: nuc
 services:
-    adguardhome:
-        container_name: adguardhome
-        restart: unless-stopped
-        volumes:
-            - /home/farmerbb/Docker/adguardhome/work:/opt/adguardhome/work
-            - /home/farmerbb/Docker/adguardhome/conf:/opt/adguardhome/conf
-            - /etc/letsencrypt:/etc/letsencrypt:ro
-        ports:
-            - 192.168.86.10:53:53/tcp
-            - 192.168.86.10:53:53/udp
-            - "[::]:53:53/tcp"
-            - "[::]:53:53/udp"
-            - 1443:1443/tcp
-            - 1443:1443/udp
-            - 853:853/tcp
-        image: adguard/adguardhome:latest
-    esphome:
-        container_name: esphome
-        image: esphome/esphome
-        volumes:
-            - /home/farmerbb/Docker/esphome:/config
-            - /etc/localtime:/etc/localtime:ro
-        restart: unless-stopped
-        privileged: true
-        network_mode: host
-    homeassistant:
-        container_name: homeassistant
-        privileged: true
-        restart: unless-stopped
-        environment:
-            - TZ=America/Denver
-        volumes:
-            - /home/farmerbb/Docker/homeassistant:/config
-            - /etc/letsencrypt:/etc/letsencrypt:ro
-        network_mode: host
-        image: ghcr.io/home-assistant/home-assistant:stable
-    netalertx:
-        container_name: netalertx
-        image: jokobsk/netalertx:latest
-        network_mode: host
-        restart: unless-stopped
-        volumes:
-            - /home/farmerbb/Docker/netalertx/config:/app/config
-            - /home/farmerbb/Docker/netalertx/db:/app/db
-            - /home/farmerbb/Docker/netalertx/logs:/app/front/log
-        environment:
-            - TZ=America/Denver
-            - PORT=20211
-    octoprint:
-        container_name: octoprint
-        privileged: true
-        volumes:
-            - octoprint:/octoprint
-            - /dev:/dev
-        ports:
-            - 8080:80
-        restart: unless-stopped
-        image: octoprint/octoprint:latest
-        environment:
-            - TZ=America/Denver
-    plex:
-        container_name: plex
-        image: plexinc/pms-docker
-        restart: unless-stopped
-        environment:
-            - TZ=America/Denver
-            - PLEX_CLAIM=[REDACTED]
-            - ALLOWED_NETWORKS=192.168.86.0/24,10.13.13.0/24
-        network_mode: host
-        volumes:
-            - /home/farmerbb/Docker/plex:/config
-            - /dev/shm:/transcode
-            - /mnt/files:/mnt/files
-        devices:
-            - /dev/dri:/dev/dri
-    wireguard:
-        container_name: wireguard
-        cap_add:
-            - NET_ADMIN
-        network_mode: host
-        environment:
-            - PUID=1000
-            - PGID=1000
-            - TZ=America/Denver
-            - SERVERURL=[REDACTED]
-            - PEERS=5
-            - PEERDNS=none
-            - ALLOWEDIPS=192.168.86.10/32,10.13.13.0/24
-            - LOG_CONFS=true
-        volumes:
-            - /home/farmerbb/Docker/wireguard:/config
-        restart: unless-stopped
-        image: lscr.io/linuxserver/wireguard:latest
-    wyze-bridge:
-        container_name: wyze-bridge
-        environment:
-            - WYZE_EMAIL=[REDACTED]
-            - WYZE_PASSWORD=${password}
-            - TOTP_KEY=[REDACTED]
-            - API_ID=[REDACTED]
-            - API_KEY=[REDACTED]
-            - WB_API=[REDACTED]
-            - WB_IP=192.168.86.10
-            - WB_USERNAME=farmerbb
-            - WB_PASSWORD=${password}
-            - ENABLE_AUDIO=true
-        ports:
-            - 1935:1935
-            - 8554:8554
-            - 8888:8888
-            - 5000:5000
-            - 8889:8889
-            - 8189:8189/udp
-        restart: unless-stopped
-        image: mrlt8/wyze-bridge:latest
+  adguardhome:
+    container_name: adguardhome
+    restart: unless-stopped
+    volumes:
+      - ./adguardhome/work:/opt/adguardhome/work
+      - ./adguardhome/conf:/opt/adguardhome/conf
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    ports:
+      - 192.168.86.10:53:53/tcp
+      - 192.168.86.10:53:53/udp
+      - "[::]:53:53/tcp"
+      - "[::]:53:53/udp"
+      - 1443:1443/tcp
+      - 1443:1443/udp
+      - 853:853/tcp
+    image: adguard/adguardhome:latest
+    logging:
+      driver: local
+  esphome:
+    container_name: esphome
+    image: esphome/esphome
+    volumes:
+      - ./esphome:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+    logging:
+      driver: local
+  goaccess:
+    container_name: goaccess
+    image: allinurl/goaccess:latest
+    restart: unless-stopped
+    volumes:
+      - /var/log/caddy:/var/log/caddy:ro
+      - ./goaccess:/var/www/goaccess
+    ports:
+      - 7890:7890
+    command: /var/log/caddy/access.log --log-format=CADDY -o /var/www/goaccess/index.html --real-time-html --ws-url=wss://goaccess.[REDACTED]:443/ws --port=7890
+    logging:
+      driver: local
+  handbrake:
+    container_name: handbrake
+    image: jlesage/handbrake:latest
+    restart: unless-stopped
+    volumes:
+      - ./handbrake:/config
+      - /mnt/handbrake/output:/output
+      - /mnt/handbrake/storage:/storage
+    devices:
+      - /dev/dri:/dev/dri
+    deploy:
+      resources:
+        limits:
+          cpus: 8.0
+    environment:
+      - APP_NICENESS=19
+      - AUTOMATED_CONVERSION=0
+      - DARK_MODE=1
+      - KEEP_APP_RUNNING=1
+      - TZ=America/Denver
+    ports:
+      - 5800:5800
+    logging:
+      driver: local
+  homeassistant:
+    container_name: homeassistant
+    privileged: true
+    restart: unless-stopped
+    environment:
+      - TZ=America/Denver
+    volumes:
+      - ./homeassistant:/config
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+    network_mode: host
+    image: ghcr.io/home-assistant/home-assistant:stable
+    logging:
+      driver: local
+  netalertx:
+    container_name: netalertx
+    image: jokobsk/netalertx:latest
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - ./netalertx/config:/app/config
+      - ./netalertx/db:/app/db
+      - ./netalertx/logs:/app/front/log
+    environment:
+      - TZ=America/Denver
+      - PORT=20211
+    logging:
+      driver: local
+  octoprint:
+    container_name: octoprint
+    privileged: true
+    volumes:
+      - octoprint:/octoprint
+      - /dev:/dev
+    ports:
+      - 8080:80
+    restart: unless-stopped
+    image: octoprint/octoprint:latest
+    environment:
+      - TZ=America/Denver
+    logging:
+      driver: local
+  plex:
+    container_name: plex
+    image: plexinc/pms-docker
+    restart: unless-stopped
+    environment:
+      - TZ=America/Denver
+      - PLEX_CLAIM=[REDACTED]
+      - ALLOWED_NETWORKS=192.168.86.0/24,10.13.13.0/24
+    network_mode: host
+    volumes:
+      - ./plex:/config
+      - /dev/shm:/transcode
+      - /mnt/files:/mnt/files
+    devices:
+      - /dev/dri:/dev/dri
+    logging:
+      driver: local
+  wireguard:
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Denver
+      - SERVERURL=[REDACTED]
+      - PEERS=5
+      - PEERDNS=none
+      - ALLOWEDIPS=192.168.86.10/32,10.13.13.0/24
+      - LOG_CONFS=true
+    volumes:
+      - ./wireguard:/config
+    restart: unless-stopped
+    image: lscr.io/linuxserver/wireguard:latest
+    logging:
+      driver: local
+  wyze-bridge:
+    container_name: wyze-bridge
+    environment:
+      - WYZE_EMAIL=[REDACTED]
+      - WYZE_PASSWORD=${password}
+      - TOTP_KEY=[REDACTED]
+      - API_ID=258afa7a-1aed-4dfc-b519-27c32ea28599
+      - API_KEY=AGJdlNFJZ5AI1oKXQVmvxSGK1MImwrZIDQHYxsER7SleEmSXW0LL4stvSnAs # expires July 11, 2026
+      - WB_API=[REDACTED]
+      - WB_IP=192.168.86.10
+      - WB_AUTH=false
+      - ENABLE_AUDIO=true
+    network_mode: host
+    restart: unless-stopped
+    image: mrlt8/wyze-bridge:latest
+    logging:
+      driver: local
 volumes:
-    octoprint:
+  octoprint:

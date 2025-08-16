@@ -30,8 +30,8 @@
       <feature enabled='yes' name='enrolled-keys'/>
       <feature enabled='yes' name='secure-boot'/>
     </firmware>
-    <loader readonly='yes' secure='yes' type='pflash'>/usr/share/OVMF/OVMF_CODE_4M.ms.fd</loader>
-    <nvram template='/usr/share/OVMF/OVMF_VARS_4M.ms.fd'>/var/lib/libvirt/qemu/nvram/win11_VARS.fd</nvram>
+    <loader readonly='yes' secure='yes' type='pflash' format='raw'>/usr/share/OVMF/OVMF_CODE_4M.ms.fd</loader>
+    <nvram template='/usr/share/OVMF/OVMF_VARS_4M.ms.fd' templateFormat='raw' format='raw'>/var/lib/libvirt/qemu/nvram/win11_VARS.fd</nvram>
     <bootmenu enable='no'/>
     <smbios mode='host'/>
   </os>
@@ -57,7 +57,7 @@
     <smm state='on'/>
   </features>
   <cpu mode='maximum' check='none' migratable='off'>
-    <topology sockets='1' dies='1' cores='3' threads='2'/>
+    <topology sockets='1' dies='1' clusters='1' cores='3' threads='2'/>
     <cache mode='passthrough'/>
     <feature policy='require' name='invtsc'/>
     <numa>
@@ -182,38 +182,6 @@
     </video>
     <hostdev mode='subsystem' type='usb' managed='yes'>
       <source startupPolicy='optional'>
-        <vendor id='0x174c'/>
-        <product id='0x7720'/>
-        <address bus='2' device='3'/>
-      </source>
-      <address type='usb' bus='0' port='1'/>
-    </hostdev>
-    <hostdev mode='subsystem' type='usb' managed='yes'>
-      <source startupPolicy='optional'>
-        <vendor id='0x174c'/>
-        <product id='0x7720'/>
-        <address bus='2' device='4'/>
-      </source>
-      <address type='usb' bus='0' port='2'/>
-    </hostdev>
-    <hostdev mode='subsystem' type='usb' managed='yes'>
-      <source startupPolicy='optional'>
-        <vendor id='0x174c'/>
-        <product id='0x7720'/>
-        <address bus='4' device='3'/>
-      </source>
-      <address type='usb' bus='0' port='3'/>
-    </hostdev>
-    <hostdev mode='subsystem' type='usb' managed='yes'>
-      <source startupPolicy='optional'>
-        <vendor id='0x174c'/>
-        <product id='0x7720'/>
-        <address bus='4' device='4'/>
-      </source>
-      <address type='usb' bus='0' port='4'/>
-    </hostdev>
-    <hostdev mode='subsystem' type='usb' managed='yes'>
-      <source startupPolicy='optional'>
         <vendor id='0x1058'/>
         <product id='0x0827'/>
       </source>
@@ -225,6 +193,22 @@
         <product id='0x1887'/>
       </source>
       <address type='usb' bus='0' port='6'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='usb' managed='yes'>
+      <source>
+        <vendor id='0x174c'/>
+        <product id='0x7720'/>
+        <address bus='2' device='3'/>
+      </source>
+      <address type='usb' bus='0' port='1'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='usb' managed='yes'>
+      <source>
+        <vendor id='0x174c'/>
+        <product id='0x7720'/>
+        <address bus='2' device='4'/>
+      </source>
+      <address type='usb' bus='0' port='2'/>
     </hostdev>
     <watchdog model='itco' action='reset'/>
     <memballoon model='none'/>

@@ -1,0 +1,15 @@
+#!/bin/bash
+# Install as /etc/NetworkManager/dispatcher.d/10-ignore-dhcp-dns
+
+IFACE="$1"
+STATUS="$2"
+
+# Only act on "up" events
+if [ "$STATUS" = "up" ]; then
+    # Get the connection name for the interface
+    CONN_NAME=$(nmcli -t -f NAME,DEVICE connection show --active | grep ":$IFACE" | cut -d: -f1)
+    if [ -n "$CONN_NAME" ]; then
+        # Set both IPv4 and IPv6 to ignore DHCP-provided DNS
+        nmcli connection modify "$CONN_NAME" ipv4.ignore-auto-dns yes ipv6.ignore-auto-dns yes
+    fi
+fi

@@ -13,7 +13,7 @@ fi
 
 CERT_DIR=/etc/letsencrypt
 CREDS=$CERT_DIR/cloudflare.ini
-PFX_PATH=/home/farmerbb/Docker/plex/config/cert.pfx
+PFX_PATH=/home/farmerbb/Docker/plex/cert.pfx
 
 sudo mkdir -p $CERT_DIR
 echo 'dns_cloudflare_api_token = [REDACTED]' | sudo tee $CREDS > /dev/null

@@ -1,0 +1,41 @@
+#!/bin/bash
+
+[[ ! -f "$1" ]] && [[ ! -d "$1" ]] && \
+  echo "Usage: $(basename "$0") <path-to-chd | path-to-dir>" && \
+  exit 1
+
+if [[ -f "$1" ]]; then
+  extract-chd "$1" || exit 1
+elif [[ -d "$1" ]]; then
+  folder2iso "$1" || exit 1
+fi
+
+DIR_NAME="$(basename "$1" | sed 's/.chd//')"
+
+if [[ -f "${DIR_NAME}.iso" ]]; then
+  7z a "${DIR_NAME}.zip" "${DIR_NAME}.iso"
+  rm "${DIR_NAME}.iso"
+  exit 0
+fi
+
+[[ ! -d "$DIR_NAME" ]] && exit 1
+cd "$DIR_NAME"
+
+[[ -z $(which parallel) ]] && INSTALL_DEPENDENCIES=true
+[[ -z $(which ffmpeg) ]] && INSTALL_DEPENDENCIES=true
+
+if [[ ! -z $INSTALL_DEPENDENCIES ]]; then
+  sudo apt-get update
+  sudo apt-get -y install parallel ffmpeg
+fi
+
+parallel -j$(nproc) ffmpeg -y -i '{}' -c:a libvorbis -qscale:a 9 '{.}.ogg' ::: *.wav
+rm *.wav
+
+sed -i "s/WAVE/OGG/" "${DIR_NAME}.cue"
+sed -i "s/.wav/.ogg/" "${DIR_NAME}.cue"
+
+7z a "${DIR_NAME}.zip" *
+mv "${DIR_NAME}.zip" ..
+cd ..
+rm -r "${DIR_NAME}"

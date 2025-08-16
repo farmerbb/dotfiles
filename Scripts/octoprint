@@ -46,7 +46,7 @@ toggle-switch() {
 }
 
 start() {
-  toggle-switch on
+# toggle-switch on
 
   sudo daemonize "$VHCLIENT_PATH"
   sleep 2
@@ -63,7 +63,7 @@ start() {
 
 stop() {
   "$VHCLIENT_PATH" -t "EXIT"
-  toggle-switch off
+# toggle-switch off
 }
 
 print-usage() {

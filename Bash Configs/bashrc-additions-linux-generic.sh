@@ -66,6 +66,8 @@ alias starwars="telnet towel.blinkenlights.nl"
 alias sudo="sudo "
 alias trim="sudo fstrim -av"
 alias turn-off-tv="curl -X POST http://192.168.86.44:8060/keypress/PowerOff"
+alias twingate-up="twingate-util up"
+alias twingate-down="twingate-util down"
 alias usb-monitor="clear; sudo udevadm monitor --subsystem-match=usb --property"
 alias usbtop="sudo modprobe usbmon; sudo usbtop"
 alias wine="winecmd wine"
@@ -639,7 +641,9 @@ robomirror() {
   touch $LOCKFILE
 
   for i in ${!SYNC_DIRS[@]}; do
-    DIR="${SYNC_DIRS[$i]}"
+    SYNC_DIR_ENTRY="${SYNC_DIRS[$i]}:OneDrive"
+    DIR=$(echo "$SYNC_DIR_ENTRY" | cut -d':' -f1)
+    RCLONE_MNT=$(echo "$SYNC_DIR_ENTRY" | cut -d':' -f2)
 
     if [[ $SOURCE = nuc ]]; then
       echo "Mirroring $DIR from NUC using rsync..."
@@ -652,10 +656,10 @@ robomirror() {
     fi
 
     if [[ $SOURCE = onedrive ]]; then
-      echo "Mirroring $DIR from OneDrive using rclone..."
+      echo "Mirroring $DIR from $RCLONE_MNT using rclone..."
       if [[ -d "$RCLONE_DEST_ROOT/$DIR" ]]; then
         echo
-        "$RCLONE" sync -v "OneDrive:$DIR" "$RCLONE_DEST_ROOT/$DIR"
+        "$RCLONE" sync -v "${RCLONE_MNT}:$DIR" "$RCLONE_DEST_ROOT/$DIR"
       else
         echo "Directory \"$RCLONE_DEST_ROOT/$DIR\" does not exist; aborting"
       fi
@@ -1122,26 +1126,6 @@ install-python2() {
   sudo rm -r Python-2.7.18*
 }
 
-twingate-up() {
-  sudo ufw enable
-
-  sudo sed -i 's/DNS=/#DNS=/' /etc/systemd/resolved.conf
-  sudo sed -i 's/DNSOverTLS=/#DNSOverTLS=/' /etc/systemd/resolved.conf
-  sudo systemctl restart systemd-resolved
-
-  twingate start
-}
-
-twingate-down() {
-  twingate stop
-
-  sudo sed -i 's/#DNS=/DNS=/' /etc/systemd/resolved.conf
-  sudo sed -i 's/#DNSOverTLS=/DNSOverTLS=/' /etc/systemd/resolved.conf
-  sudo systemctl restart systemd-resolved
-
-  sudo ufw disable
-}
-
 restart-network() {
   for i in {3..1}; do
     ssh root@192.168.86.$i 'sh -c "reboot -d 5 > /dev/null 2>&1 &"'
@@ -1151,6 +1135,20 @@ restart-network() {
 x86_energy_perf_policy() {
   FILENAME=$(find /usr -type f -name x86_energy_perf_policy | grep $(uname -r | cut -d'-' -f1))
   sudo "$FILENAME" "$@"
+}
+
+cpupower() {
+  FILENAME=$(find /usr -type f -name cpupower | grep $(uname -r | cut -d'-' -f1))
+  sudo "$FILENAME" "$@"
+}
+
+caddy-logs() {
+  if [[ -z $(which fx) ]]; then
+    go install github.com/antonmedv/fx@latest
+    sudo cp ~/go/bin/fx /usr/local/bin
+  fi
+
+  cat /var/log/caddy/access.log | grep "$1" | fx
 }
 
 export -f btrfs-dedupe
@@ -1233,7 +1231,7 @@ export -f upgrade-caddy
 export -f tinytuya
 export -f stop-nuc
 export -f install-python2
-export -f twingate-up
-export -f twingate-down
 export -f restart-network
 export -f x86_energy_perf_policy
+export -f cpupower
+export -f caddy-logs

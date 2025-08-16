@@ -64,33 +64,6 @@ emulator() {
   cd "$PWD"
 }
 
-gradle-idle-stop() (
-  # From https://superuser.com/a/784102
-  pidtree() {
-    declare -A CHILDS
-    while read P PP;do
-      CHILDS[$PP]+=" $P"
-    done < <(ps -e -o pid= -o ppid=)
-
-    walk() {
-      echo $1
-      for i in ${CHILDS[$1]};do
-        walk $i
-      done
-    }
-
-    for i in "$@";do
-      walk $i
-    done
-  }
-
-  for i in $(pgrep -f '.*KotlinCompileDaemon.*') $(pgrep -f '.*GradleDaemon.*'); do
-    [[ $(pidtree $i | wc -l ) = 1 ]] && \
-    [[ $(echo "$(top -b -n 2 -d 0.2 -p $i | tail -1 | awk '{print $9}') == 0.0" | bc -l) = 1 ]] && \
-    kill $i
-  done
-)
-
 init-android-dev-environment() {
   for i in AndroidStudioProjects .gradle; do
     mkdir -p ~/$i
@@ -142,7 +115,6 @@ sign-apk() {
 
 export -f gradle-deep-clean
 export -f emulator
-export -f gradle-idle-stop
 export -f init-android-dev-environment
 export -f project-root
 export -f sign-apk

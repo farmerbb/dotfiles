@@ -13,8 +13,8 @@ export SYNC_DIRS=(
   "Documents"
   "Games"
   "Media"
-  "Media 2"
-  "Media 3"
+  "Media 2:OneDrive-2"
+  "Media 3:OneDrive-3"
   "Other Stuff"
 )
 

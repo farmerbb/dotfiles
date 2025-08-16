@@ -1,0 +1,51 @@
+#!/bin/bash
+
+print-usage() {
+  BASENAME=$(basename "$0")
+  echo "Usage: $BASENAME <up | down>"
+  exit 1
+}
+
+reset-caddyfile-hosts() {
+  MARKER="######## Hosts imported from Caddyfile ########"
+
+  if [[ ! $(cat /etc/hosts | grep "$MARKER") ]]; then
+    echo '' | sudo tee -a /etc/hosts > /dev/null
+    echo "$MARKER" | sudo tee -a /etc/hosts > /dev/null
+  fi
+
+  MARKER_LINE=$(cat /etc/hosts | grep -n "$MARKER" | cut -d':' -f1)
+  sudo sed -i "1, $MARKER_LINE ! d" /etc/hosts
+}
+
+up() {
+  sudo ufw allow 9001/tcp
+  sudo ufw enable
+
+  sudo sed -i 's/DNS=/#DNS=/' /etc/systemd/resolved.conf
+  sudo sed -i 's/DNSOverTLS=/#DNSOverTLS=/' /etc/systemd/resolved.conf
+  sudo systemctl restart systemd-resolved
+
+  reset-caddyfile-hosts
+  cat ~/Other\ Stuff/Linux/Network\ Config/Caddyfile | grep "host" | sed -n 's/.*host /192.168.86.10 /p' | sudo tee -a /etc/hosts > /dev/null
+
+  yes | twingate start
+  exit 0
+}
+
+down() {
+  twingate stop
+
+  reset-caddyfile-hosts
+
+  sudo sed -i 's/#DNS=/DNS=/' /etc/systemd/resolved.conf
+  sudo sed -i 's/#DNSOverTLS=/DNSOverTLS=/' /etc/systemd/resolved.conf
+  sudo systemctl restart systemd-resolved
+
+  sudo ufw disable
+  exit 0
+}
+
+[[ "$1" == up ]] && up
+[[ "$1" == down ]] && down
+print-usage

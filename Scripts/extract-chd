@@ -35,6 +35,20 @@ if [[ $? -ne 0 ]]; then
   cd ..
   mv "$DIR_NAME/Track 01.iso" "$DIR_NAME.iso"
   rm -r "$DIR_NAME"
+else
+  CUE_FILE="$DIR_NAME.cue"
+  echo "FILE \"Track 01.iso\" BINARY" > "$CUE_FILE"
+  echo "  TRACK 01 MODE1/2048" >> "$CUE_FILE"
+  echo "    INDEX 01 00:00:00" >> "$CUE_FILE"
+
+  track_num=2
+  for wav in Track\ *.wav; do
+    track_str=$(printf "%02d" "$track_num")
+    echo "FILE \"$wav\" WAVE" >> "$CUE_FILE"
+    echo "  TRACK $track_str AUDIO" >> "$CUE_FILE"
+    echo "    INDEX 01 00:00:00" >> "$CUE_FILE"
+    ((track_num++))
+  done
 fi
 
 if [[ ! -z $IS_WSL ]]; then
