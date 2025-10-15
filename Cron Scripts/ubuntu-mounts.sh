@@ -6,6 +6,12 @@ touch /tmp/ubuntu-mounts.running
 
 ##################################################
 
+# Mount operations are placed here instead of /etc/fstab.
+
+# Before installing this in crontab, run the following commands:
+#   sudo apt install cifs-utils
+#   echo password=$(echo [REDACTED] | base64 -d) > ~/.sharelogin
+
 for i in OneDrive OneDrive-2 OneDrive-3; do
   mountpoint -q /mnt/$i || \
   daemonize $(which rclone) --vfs-cache-mode full mount ${i}: /mnt/$i

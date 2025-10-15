@@ -19,7 +19,7 @@ export SYNC_DIRS=(
 )
 
 export SOURCES=(
-  "caddy"
+# "caddy"
   "docker"
 )
 

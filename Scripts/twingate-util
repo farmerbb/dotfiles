@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#
 print-usage() {
   BASENAME=$(basename "$0")
   echo "Usage: $BASENAME <up | down>"
@@ -19,7 +19,10 @@ reset-caddyfile-hosts() {
 }
 
 up() {
-  sudo ufw allow 9001/tcp
+  for i in 8080 9001; do
+    sudo ufw allow $i/tcp
+  done
+  
   sudo ufw enable
 
   sudo sed -i 's/DNS=/#DNS=/' /etc/systemd/resolved.conf

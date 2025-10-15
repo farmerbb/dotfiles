@@ -6,7 +6,6 @@ ALL_EXTENSIONS=(
   arcmenu@arcmenu.com
   quick-settings-tweaks@qwreey
   gestureImprovements@gestures
-  ding@rastersoft.com
   ubuntu-appindicators@ubuntu.com
   gsconnect@andyholmes.github.io
   tiling-assistant@leleat-on-github

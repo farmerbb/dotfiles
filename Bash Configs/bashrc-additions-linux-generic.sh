@@ -33,7 +33,6 @@ alias flush-dns-cache="sudo systemctl restart systemd-resolved; resolvectl statu
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
 alias hibernate="sudo swapon /swapfile; sudo systemctl --no-block hibernate || sudo swapoff /swapfile"
 alias hypercalc="perl ~/Other\ Stuff/Utilities/hypercalc.txt"
-alias install-liquorix="curl -s 'https://liquorix.net/install-liquorix.sh' | sudo bash"
 alias lazydocker='~/Other\ Stuff/Utilities/lazydocker/lazydocker'
 alias local-ip="ip -o route get to 8.8.8.8 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'"
 alias make="make -j$(nproc)"
@@ -43,6 +42,7 @@ alias mount-iso="mount-chd"
 alias mount-nuc="mount-cifs 192.168.86.10 Files /mnt/NUC farmerbb"
 alias nano='MICRO_TRUECOLOR=1 micro'
 alias network-monitor='ssh basement-ap -o LogLevel=QUIET -t iftop -i br-lan'
+alias pip3="pip"
 alias port-monitor='watch -n1 "sudo lsof -i -P -n | grep LISTEN"'
 alias ports-monitor='port-monitor'
 alias public-ip="dig @resolver4.opendns.com myip.opendns.com +short"
@@ -1151,6 +1151,13 @@ caddy-logs() {
   cat /var/log/caddy/access.log | grep "$1" | fx
 }
 
+install-rclone() {
+  curl https://rclone.org/install.sh | sudo bash
+
+  mkdir -p ~/.config/rclone
+  [[ ! -f ~/.config/rclone/rclone.conf ]] && cp "$DEVICE_DIR_PREFIX/rclone.conf" ~/.config/rclone
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -1235,3 +1242,4 @@ export -f restart-network
 export -f x86_energy_perf_policy
 export -f cpupower
 export -f caddy-logs
+export -f install-rclone

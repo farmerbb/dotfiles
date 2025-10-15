@@ -22,16 +22,18 @@ Documentation uses `/dev/nvme0n1p2` as an example for your root filesystem
   cd ~/mnt
   sudo btrfs subvolume snapshot ./ ./@
   sudo btrfs subvolume create @home
-  sudo cp -a home/* @home/
+  sudo cp -a home/* @home/ # returns "No such file or directory" on a fresh Ubuntu install that hasn't been booted into (this is fine)
 
-* Create additional device-specific subvolumes (see bottom)
+* Create additional device-specific subvolumes (see bottom, example:)
 
   sudo btrfs subvolume create @files
   sudo btrfs subvolume create @VMs
 
 * Delete files from old root
-  * In ~/mnt (the top-level subvolume) delete everything except `@`, `@home`, and `ext2_saved`.
-  * Inside `@` subvolume, empty the contents of the `home` folder.
+  * In ~/mnt (the top-level subvolume) delete everything except `@`, `@home`, `ext2_saved`, and any other subvolumes
+  * Inside `@` subvolume:
+    * Empty the contents of the `home` folder
+    * Delete duplicate `ext2_saved` folder
 
 * Modify ~/mnt/@/etc/fstab
   * Run `sudo gparted` and copy the UUID for /dev/nvme0n1p2
@@ -41,9 +43,10 @@ Documentation uses `/dev/nvme0n1p2` as an example for your root filesystem
 
 * Chroot into your system
 
+  cd
   sudo umount ~/mnt
   sudo mount -o subvol=@ /dev/nvme0n1p2 ~/mnt
-  sudo mount /dev/nvme0n1p1 ~/mnt/boot/efi  # if needed
+  sudo mount /dev/nvme0n1p1 ~/mnt/boot/efi
 
   sudo mount -t proc /proc ~/mnt/proc
   sudo mount --rbind /dev ~/mnt/dev

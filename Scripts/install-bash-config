@@ -23,8 +23,8 @@ $(uname -r | grep "[m|M]icrosoft" > /dev/null) && IS_WSL=true
 [[ ! -z $IS_WSL ]] && bashrc-additions wsl
 
 case $(sudo dmidecode -s system-product-name 2>/dev/null) in
-  "XPS 13 9310")
-    bashrc-additions xps13
+  "21RVCTO1WW")
+    bashrc-additions thinkpad
   ;;
 
 # "Kled")

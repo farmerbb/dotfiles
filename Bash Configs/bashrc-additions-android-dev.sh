@@ -78,7 +78,7 @@ init-android-dev-environment() {
   chmod +x *.sh
 
   PROJECTS=( "$@" )
-  if [[ -z $PROJECTS ]]; then
+  if [[ ! -z $PROJECTS ]]; then
     for i in ${!PROJECTS[@]}; do
       REPO="${PROJECTS[$i]}"
       [[ ! -d $REPO ]] && \

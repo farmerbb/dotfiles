@@ -335,7 +335,7 @@ install-srandrd() {
 
 install-imhex() {
   TAG=$(curl --silent "https://api.github.com/repos/WerWolv/ImHex/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-  FILENAME=imhex-$(echo $TAG | sed 's/v//')-Ubuntu-24.04-x86_64.deb
+  FILENAME=imhex-$(echo $TAG | sed 's/v//')-Ubuntu-24.10-x86_64.deb
 
   curl -LO https://github.com/WerWolv/ImHex/releases/download/$TAG/$FILENAME
   install-deb ./$FILENAME

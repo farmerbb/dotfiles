@@ -135,7 +135,7 @@ services:
       - SERVERURL=[REDACTED]
       - PEERS=5
       - PEERDNS=none
-      - ALLOWEDIPS=192.168.86.10/32,10.13.13.0/24
+      - ALLOWEDIPS=192.168.86.0/24,10.13.13.0/24
       - LOG_CONFS=true
     volumes:
       - ./wireguard:/config

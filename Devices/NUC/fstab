@@ -4,11 +4,11 @@
 # device; this may be used with UUID= as a more robust way to name devices
 # that works even if disks are added and removed. See fstab(5).
 #
-# <file system>                               <mount point>    <type>  <options>                                                            <dump>  <pass>
+# <file system>                               <mount point>    <type>  <options>                                                        <dump>  <pass>
 
-UUID=e871efa9-dd0e-4ebc-9d57-136242e2011d     /                btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=@            0   1
-UUID=e871efa9-dd0e-4ebc-9d57-136242e2011d     /home            btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=@home        0   1
-UUID=e871efa9-dd0e-4ebc-9d57-136242e2011d     /mnt/VMs         btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=@VMs         0   1
-UUID=e871efa9-dd0e-4ebc-9d57-136242e2011d     /mnt/handbrake   btrfs   defaults,noatime,compress-force=zstd:1,discard=async,subvol=@handbrake   0   1
-UUID=6879-D744                                /boot/efi        vfat    defaults                                                                 0   1
-UUID=882f09c3-00c4-43d4-9754-efa93290907c     /mnt/files       ext4    defaults,noatime                                                         0   2
+UUID=e871efa9-dd0e-4ebc-9d57-136242e2011d     /                btrfs   defaults,noatime,compress-force=zstd:1,nodiscard,subvol=@            0   1
+UUID=e871efa9-dd0e-4ebc-9d57-136242e2011d     /home            btrfs   defaults,noatime,compress-force=zstd:1,nodiscard,subvol=@home        0   1
+UUID=e871efa9-dd0e-4ebc-9d57-136242e2011d     /mnt/VMs         btrfs   defaults,noatime,compress-force=zstd:1,nodiscard,subvol=@VMs         0   1
+UUID=e871efa9-dd0e-4ebc-9d57-136242e2011d     /mnt/handbrake   btrfs   defaults,noatime,compress-force=zstd:1,nodiscard,subvol=@handbrake   0   1
+UUID=6879-D744                                /boot/efi        vfat    defaults                                                             0   1
+UUID=882f09c3-00c4-43d4-9754-efa93290907c     /mnt/files       ext4    defaults,noatime                                                     0   2

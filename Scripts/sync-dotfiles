@@ -58,6 +58,7 @@ for i in ${!DOTFILE_DIRS[@]}; do
     --exclude 'Source Code' \
     --exclude 'Network Config' \
     --exclude 'Dev Tools' \
+    --exclude 'settings.zip' \
     "farmerbb@nuc:/mnt/files/$DIR" .
 done
 

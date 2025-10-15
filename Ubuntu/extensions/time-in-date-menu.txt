@@ -1,0 +1,2 @@
+[/]
+hour-format=0

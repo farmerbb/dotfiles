@@ -1,19 +1,18 @@
 #!/bin/bash
 
-[[ ! -f "$1" ]] && [[ ! -d "$1" ]] && \
-  echo "Usage: $(basename "$0") <path-to-chd | path-to-dir>" && \
+[[ ! -f "$1" ]] && \
+  echo "Usage: $(basename "$0") <path-to-chd>" && \
   exit 1
 
 if [[ -f "$1" ]]; then
   extract-chd "$1" || exit 1
-elif [[ -d "$1" ]]; then
-  folder2iso "$1" || exit 1
 fi
 
 DIR_NAME="$(basename "$1" | sed 's/.chd//')"
+SZ=~/Other\ Stuff/Utilities/7-Zip/Linux/7zz
 
 if [[ -f "${DIR_NAME}.iso" ]]; then
-  7z a "${DIR_NAME}.zip" "${DIR_NAME}.iso"
+  "$SZ" a "${DIR_NAME}.zip" "${DIR_NAME}.iso"
   rm "${DIR_NAME}.iso"
   exit 0
 fi
@@ -35,7 +34,7 @@ rm *.wav
 sed -i "s/WAVE/OGG/" "${DIR_NAME}.cue"
 sed -i "s/.wav/.ogg/" "${DIR_NAME}.cue"
 
-7z a "${DIR_NAME}.zip" *
+"$SZ" a "${DIR_NAME}.zip" *
 mv "${DIR_NAME}.zip" ..
 cd ..
 rm -r "${DIR_NAME}"

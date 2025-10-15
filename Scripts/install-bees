@@ -1,5 +1,19 @@
 #!/bin/bash
 
+get-db-size() {
+  num=$1
+  divisor=8000000000
+  multiple=64
+
+  # Divide
+  div=$(( num / divisor ))
+
+  # Round to nearest multiple of "multiple"
+  rounded=$(( ((div + multiple/2) / multiple) * multiple ))
+
+  echo "$rounded"
+}
+
 sudo rm -rf bees
 git clone https://github.com/Zygo/bees.git
 cd bees
@@ -13,4 +27,6 @@ cd ..
 sudo rm -rf bees
 
 echo "UUID=$(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5)" | sudo tee /etc/bees/beesd.conf > /dev/null
-echo 'DB_SIZE=$((128*1024*1024))' | sudo tee -a /etc/bees/beesd.conf > /dev/null
+echo 'DB_SIZE=$((<size>*1024*1024))' | sudo tee -a /etc/bees/beesd.conf > /dev/null
+
+sudo sed -i "s/<size>/$(get-db-size $(sudo blockdev --getsize64 $(sudo btrfs filesystem show -m | grep path | xargs | cut -d' ' -f8)))/" /etc/bees/beesd.conf

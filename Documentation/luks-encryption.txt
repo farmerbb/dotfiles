@@ -1,8 +1,7 @@
 Based on https://superuser.com/a/1774104
 Documentation uses `/dev/nvme0n1p2` as an example for your root filesystem
 Documentation uses `/dev/nvme0n1p3` as an example for your boot partition
-
-* Reboot into Ubuntu installer
+Documentation uses `rootfs` as an example for the name of your encrypted disk
 
 * Prepare boot partition
 
@@ -20,6 +19,8 @@ Documentation uses `/dev/nvme0n1p3` as an example for your boot partition
   - Add mount point for /boot/efi to fstab
   - Move files from old /boot/efi to new /boot/efi
 
+* Reboot into Ubuntu installer
+
 * Resize existing root filesystem
 
   mkdir -p ~/mnt
@@ -27,30 +28,30 @@ Documentation uses `/dev/nvme0n1p3` as an example for your boot partition
   sudo btrfs fi resize -32m ~/mnt
   sudo umount ~/mnt
 
-* Encrypt the partition
+* Encrypt the partition (will take a while)
 
   sudo cryptsetup reencrypt --encrypt --type luks2 --reduce-device-size 32m /dev/nvme0n1p2
  
 * Mount newly encrypted filesystem
 
-  sudo cryptsetup luksOpen /dev/nvme0n1p2 <name>
-  sudo mount -o subvol=@ /dev/mapper/<name> ~/mnt
+  sudo cryptsetup luksOpen /dev/nvme0n1p2 rootfs
+  sudo mount -o subvol=@ /dev/mapper/rootfs ~/mnt
   sudo btrfs fi resize max ~/mnt
 
 * Create ~/mnt/etc/crypttab
   * Run `sudo gparted` and copy the Encryption UUID for /dev/nvme0n1p2
 
-  <name> UUID=<uuid> none luks,discard
+  rootfs UUID=<uuid> none luks,discard
 
 * Modify ~/mnt/etc/fstab
 
-  /dev/mapper/<name> /     btrfs subvol=@     0 1
-  /dev/mapper/<name> /home btrfs subvol=@home 0 1
+  /dev/mapper/rootfs /     btrfs subvol=@     0 1
+  /dev/mapper/rootfs /home btrfs subvol=@home 0 1
   /dev/nvme0n1p3     /boot ext4  defaults     0 1
 
 * Modify ~/mnt/etc/default/grub
 
-  GRUB_CMDLINE_LINUX="cryptdevice=UUID=<uuid>:<name> root=/dev/mapper/<name>"
+  GRUB_CMDLINE_LINUX="cryptdevice=UUID=<uuid>:rootfs root=/dev/mapper/rootfs"
 
 * Chroot into your system
 
@@ -64,9 +65,15 @@ Documentation uses `/dev/nvme0n1p3` as an example for your boot partition
   sudo mount --make-rslave ~/mnt/sys
   sudo chroot ~/mnt /bin/bash
 
+* NOTE: if your chroot is not able to resolve hostnames, exit the chroot and temporarily overwrite /etc/resolv.conf on disk with the one from the live system (make sure to undo these changes before rebooting):
+
+  sudo cp ~/mnt/etc/resolv.conf ~/mnt/etc/resolv.conf.chroot
+  sudo cp -L /etc/resolv.conf ~/mnt/etc
+  ping google.com
+
 * Install necessary packages inside the chroot
 
-  apt install cryptsetup initramfs-tools
+  apt install cryptsetup initramfs-tools btrfs-progs
 
 * Rebuild the initramfs
 

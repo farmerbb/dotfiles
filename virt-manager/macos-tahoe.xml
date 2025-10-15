@@ -1,28 +1,29 @@
 <domain type='kvm' xmlns:qemu='http://libvirt.org/schemas/domain/qemu/1.0'>
-  <name>macos-sequoia</name>
+  <name>macos-tahoe</name>
   <uuid>2aca0dd6-cec9-4717-9ab2-0b7b13d111c3</uuid>
   <memory unit='KiB'>8388608</memory>
   <currentMemory unit='KiB'>8388608</currentMemory>
   <memoryBacking>
     <source type='memfd'/>
-    <access mode='shared'/>
   </memoryBacking>
-  <vcpu placement='static'>6</vcpu>
+  <vcpu placement='static'>8</vcpu>
   <iothreads>1</iothreads>
   <cputune>
-    <vcpupin vcpu='0' cpuset='1'/>
-    <vcpupin vcpu='1' cpuset='5'/>
-    <vcpupin vcpu='2' cpuset='2'/>
-    <vcpupin vcpu='3' cpuset='6'/>
-    <vcpupin vcpu='4' cpuset='3'/>
-    <vcpupin vcpu='5' cpuset='7'/>
-    <emulatorpin cpuset='0,4'/>
-    <iothreadpin iothread='1' cpuset='0,4'/>
+    <vcpupin vcpu='0' cpuset='0'/>
+    <vcpupin vcpu='1' cpuset='12'/>
+    <vcpupin vcpu='2' cpuset='1'/>
+    <vcpupin vcpu='3' cpuset='13'/>
+    <vcpupin vcpu='4' cpuset='2'/>
+    <vcpupin vcpu='5' cpuset='14'/>
+    <vcpupin vcpu='6' cpuset='3'/>
+    <vcpupin vcpu='7' cpuset='15'/>
+    <emulatorpin cpuset='4-11,16-23'/>
+    <iothreadpin iothread='1' cpuset='4-11,16-23'/>
   </cputune>
   <os>
     <type arch='x86_64' machine='pc-q35-6.0'>hvm</type>
-    <loader readonly='yes' type='pflash'>/mnt/VMs/OSX-KVM/OVMF_CODE.fd</loader>
-    <nvram>/mnt/VMs/OSX-KVM/OVMF_VARS-1920x1080.fd</nvram>
+    <loader readonly='yes' type='pflash' format='raw'>/mnt/VMs/OSX-KVM/OVMF_CODE.fd</loader>
+    <nvram format='raw'>/mnt/VMs/OSX-KVM/macos-tahoe_VARS.fd</nvram>
   </os>
   <features>
     <acpi/>
@@ -30,9 +31,9 @@
   </features>
   <cpu mode='custom' match='exact' check='none'>
     <model fallback='forbid'>qemu64</model>
-    <topology sockets='3' dies='1' cores='2' threads='1'/>
+    <topology sockets='4' dies='1' clusters='1' cores='2' threads='1'/>
     <numa>
-      <cell id='0' cpus='0-5' memory='8388608' unit='KiB' memAccess='shared'/>
+      <cell id='0' cpus='0-7' memory='8388608' unit='KiB' memAccess='shared'/>
     </numa>
   </cpu>
   <clock offset='utc'>
@@ -54,10 +55,16 @@
     </disk>
     <disk type='file' device='disk'>
       <driver name='qemu' type='raw' cache='writeback' io='threads' discard='unmap' iothread='1' queues='6'/>
-      <source file='/mnt/VMs/macos-sequoia.img'/>
+      <source file='/mnt/VMs/macos-tahoe.img'/>
       <target dev='vdb' bus='virtio'/>
       <boot order='2'/>
       <address type='pci' domain='0x0000' bus='0x04' slot='0x00' function='0x0'/>
+    </disk>
+    <disk type='file' device='disk'>
+      <driver name='qemu' type='raw' cache='writeback'/>
+      <source file='/mnt/VMs/OSX-KVM/BaseSystem.img'/>
+      <target dev='vdc' bus='virtio'/>
+      <address type='pci' domain='0x0000' bus='0x08' slot='0x00' function='0x0'/>
     </disk>
     <controller type='sata' index='0'>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x1f' function='0x2'/>
@@ -138,6 +145,9 @@
     <input type='keyboard' bus='ps2'/>
     <input type='tablet' bus='virtio'>
       <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
+    </input>
+    <input type='mouse' bus='usb'>
+      <address type='usb' bus='0' port='2'/>
     </input>
     <graphics type='spice' autoport='yes'>
       <listen type='address'/>

@@ -8,6 +8,7 @@ $(uname -r | grep "[m|M]icrosoft" > /dev/null) && IS_WSL=true
 
 if [[ ! -z $IS_WSL ]]; then
   /mnt/z/Games/Utilities/chdman/chdman.exe extractcd -i "$(wslpath -w "$1")" -o C:\\Users\\Braden\\AppData\\Local\\Temp\\temp.cue
+  /mnt/z/Games/Utilities/Game\ Scripts/fix_cue_pregap.sh C:\\Users\\Braden\\AppData\\Local\\Temp\\temp.cue
 else
 # [[ -z $(which chdman) ]] && INSTALL_DEPENDENCIES=true
   [[ -z $(which bchunk) ]] && INSTALL_DEPENDENCIES=true
@@ -18,6 +19,7 @@ else
   fi
 
   ~/Games/Utilities/chdman/chdman extractcd -i "$(realpath "$1")" -o /tmp/temp.cue
+  ~/Games/Utilities/Game\ Scripts/fix_cue_pregap.sh /tmp/temp.cue
 fi
 
 DIR_NAME="$(basename "$1" | sed 's/.chd//')"

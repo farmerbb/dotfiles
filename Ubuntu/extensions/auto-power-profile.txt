@@ -1,3 +1,4 @@
 [/]
-bat='performance'
+bat='balanced'
+performance-apps=['jetbrains-idea-5ea61c9c-2fd8-407b-84c4-7a3e90519cbf.desktop', 'virt-manager.desktop']
 threshold=0
