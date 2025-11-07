@@ -22,7 +22,6 @@
 # 
 # m h  dom mon dow   command
 
-@reboot bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/wireguard-connect.sh
-* * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/wireguard-connect.sh
+* * * * * timeout 10 nc -z 192.168.86.10 22
 * * * * * bash -i ~/Other\ Stuff/Linux/Cron\ Scripts/healthcheck.sh
 0 5 * * * sudo reboot

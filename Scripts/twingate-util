@@ -33,6 +33,7 @@ up() {
   cat ~/Other\ Stuff/Linux/Network\ Config/Caddyfile | grep "host" | sed -n 's/.*host /192.168.86.10 /p' | sudo tee -a /etc/hosts > /dev/null
 
   yes | twingate start
+  twingate auth [REDACTED]
   exit 0
 }
 

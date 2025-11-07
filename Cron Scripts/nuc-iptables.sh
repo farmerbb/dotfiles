@@ -6,10 +6,10 @@ touch /tmp/nuc-iptables.running
 
 ##################################################
 
-# Tvheadend
-for i in 9981 9982; do
-  sudo iptables -t nat -I PREROUTING -p tcp --dport $i -j DNAT --to-destination=10.13.13.4:$i
-done
+# Tvheadend HTSP
+sudo iptables -t nat -A PREROUTING -p tcp -d 192.168.86.10 --dport 9982 -j DNAT --to-destination 10.13.13.4:9982
+sudo iptables -A FORWARD -p tcp -d 10.13.13.4 --dport 9982 -j ACCEPT
+sudo iptables -t nat -A POSTROUTING -o wg0 -p tcp -d 10.13.13.4 --dport 9982 -j MASQUERADE
 
 # LAN access via WireGuard
 sudo iptables -A FORWARD -i wg0 -o eno1 -j ACCEPT

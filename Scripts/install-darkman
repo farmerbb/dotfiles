@@ -26,7 +26,7 @@ bash -i -c "reset-config-file ${CHROME_DESKTOP}"
 DARK_MODE_DIR=~/.local/share/dark-mode.d
 mkdir -p $DARK_MODE_DIR
 cp $CHROME_DESKTOP ${DARK_MODE_DIR}/google-chrome.desktop
-sed -i 's#/usr/bin/google-chrome-stable#/usr/bin/google-chrome-stable --flag-switches-begin --enable-features=WebContentsForceDark:classifier_policy/transparency_and_num_colors --flag-switches-end#' ${DARK_MODE_DIR}/google-chrome.desktop
+sed -i 's#/usr/bin/google-chrome-stable#/usr/bin/google-chrome-stable --flag-switches-begin --enable-features=WebContentsForceDark:inversion_method/cielab_based/image_behavior/none/foreground_lightness_threshold/150/background_lightness_threshold/205 --flag-switches-end#' ${DARK_MODE_DIR}/google-chrome.desktop
 sed -i 's/Name=Google Chrome/Name=Google Chrome (Dark)/' ${DARK_MODE_DIR}/google-chrome.desktop
 
 echo '#!/bin/bash' > ${DARK_MODE_DIR}/dark-theme.sh

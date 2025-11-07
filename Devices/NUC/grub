@@ -7,7 +7,7 @@ GRUB_DEFAULT=0
 GRUB_TIMEOUT_STYLE=hidden
 GRUB_TIMEOUT=0
 GRUB_RECORDFAIL_TIMEOUT=0
-GRUB_DISTRIBUTOR=`( . /etc/os-release; echo ${NAME:-Ubuntu} ) 2>/dev/null || echo Ubuntu`
+GRUB_DISTRIBUTOR=`( . /etc/os-release && echo ${NAME} )`
 GRUB_CMDLINE_LINUX_DEFAULT="quiet splash intel_iommu=on iommu=pt mitigations=off sysrq_always_enabled=1"
 GRUB_CMDLINE_LINUX=""
 
