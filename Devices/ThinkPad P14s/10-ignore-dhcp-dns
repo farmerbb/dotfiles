@@ -1,5 +1,5 @@
 #!/bin/bash
-# Install as /etc/NetworkManager/dispatcher.d/10-ignore-dhcp-dns
+# Install as /etc/NetworkManager/dispatcher.d/10-ignore-dhcp-dns (marked as executable)
 
 IFACE="$1"
 STATUS="$2"

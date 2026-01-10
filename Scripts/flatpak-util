@@ -16,7 +16,6 @@ PACKAGES=(
   moonlight:com.moonlight_stream.Moonlight
   pegasus:org.pegasus_frontend.Pegasus
   pysol:io.sourceforge.pysolfc.PySolFC
-  retroarch:org.libretro.RetroArch
   rigelengine:io.github.lethal_guitar.RigelEngine
   ryujinx:org.ryujinx.Ryujinx
   sonic3air:org.sonic3air.Sonic3AIR

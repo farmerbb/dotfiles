@@ -391,6 +391,15 @@ install-albert() {
   sudo apt-get install -y albert
 }
 
+install-yt-dlp() {
+  TAG=$(curl --silent "https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+  FILENAME=yt-dlp
+
+  curl -LO https://github.com/yt-dlp/yt-dlp/releases/download/$TAG/$FILENAME
+  chmod +x ./$FILENAME
+  sudo mv ./$FILENAME /usr/local/bin
+}
+
 export -f virtualhere-client
 export -f allow-all-usb
 export -f make-trackpad-great-again

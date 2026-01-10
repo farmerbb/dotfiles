@@ -6,8 +6,8 @@ edit-docker-compose-yml() {
     if [[ $(md5sum "$FILE") != $MD5 ]]; then
       docker compose -f "$FILE" up -d --remove-orphans
 
-      for i in OneDrive/Other\ Stuff/Docker Other\ Stuff/Docker; do
-        cp "$FILE" "/home/farmerbb/$i/docker-compose.yml"
+      for i in "$OD_DEVICE_DIR_PREFIX" "$DEVICE_DIR_PREFIX"; do
+        cp "$FILE" "$i/docker-compose.yml"
       done
     fi
   fi

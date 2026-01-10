@@ -18,17 +18,17 @@ services:
     image: adguard/adguardhome:latest
     logging:
       driver: local
-  esphome:
-    container_name: esphome
-    image: esphome/esphome
-    volumes:
-      - ./esphome:/config
-      - /etc/localtime:/etc/localtime:ro
-    restart: unless-stopped
-    privileged: true
-    network_mode: host
-    logging:
-      driver: local
+# esphome:
+#   container_name: esphome
+#   image: esphome/esphome
+#   volumes:
+#     - ./esphome:/config
+#     - /etc/localtime:/etc/localtime:ro
+#   restart: unless-stopped
+#   privileged: true
+#   network_mode: host
+#   logging:
+#     driver: local
   goaccess:
     container_name: goaccess
     image: allinurl/goaccess:latest
@@ -78,20 +78,46 @@ services:
     image: ghcr.io/home-assistant/home-assistant:stable
     logging:
       driver: local
-  netalertx:
-    container_name: netalertx
-    image: jokobsk/netalertx:latest
-    network_mode: host
+  it-tools:
+    container_name: it-tools
+    image: corentinth/it-tools:latest
     restart: unless-stopped
-    volumes:
-      - ./netalertx/config:/app/config
-      - ./netalertx/db:/app/db
-      - ./netalertx/logs:/app/front/log
-    environment:
-      - TZ=America/Denver
-      - PORT=20211
+    ports:
+      - 8082:80
     logging:
       driver: local
+  netalertx:
+    container_name: netalertx
+    image: ghcr.io/jokob-sk/netalertx:latest
+    network_mode: host
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+      - NET_BIND_SERVICE
+    restart: unless-stopped
+    volumes:
+      - netalertx:/data
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - PORT=20211
+    tmpfs:
+      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+    logging:
+      driver: local
+# nodered:
+#   container_name: nodered
+#   image: nodered/node-red:latest
+#   restart: unless-stopped
+#   environment:
+#     - TZ=America/Denver
+#   ports:
+#     - 1880:1880
+#   volumes:
+#     - ./nodered:/data
+#   logging:
+#     driver: local
   octoprint:
     container_name: octoprint
     privileged: true
@@ -121,6 +147,38 @@ services:
       - /mnt/files:/mnt/files
     devices:
       - /dev/dri:/dev/dri
+    logging:
+      driver: local
+  timelinize:
+    container_name: timelinize
+    image: ghcr.io/timelinize/timelinize
+    restart: unless-stopped
+    environment:
+        - TZ=America/Denver
+    volumes:
+        - ./timelinize/config:/app/.config/timelinize
+        - ./timelinize/repo:/repo
+        - ./timelinize/timeline:/app/timeline
+    ports:
+        - 12002:12002
+    logging:
+      driver: local
+  transmission:
+    container_name: transmission
+    image: lscr.io/linuxserver/transmission:latest
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Denver
+    volumes:
+      - ./transmission/data:/config
+      - ./transmission/downloads:/downloads #optional
+      - ./transmission/watch:/watch #optional
+    ports:
+      - 9091:9091
+      - 51413:51413
+      - 51413:51413/udp
+    restart: unless-stopped
     logging:
       driver: local
   wireguard:
@@ -162,3 +220,4 @@ services:
       driver: local
 volumes:
   octoprint:
+  netalertx:

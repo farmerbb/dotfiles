@@ -354,8 +354,11 @@ edit-caddyfile() {
   if [[ -f "$FILE" ]]; then
     MD5=$(md5sum "$FILE")
     nano "$FILE"
-    caddy reload --config ~/Other\ Stuff/Linux/Network\ Config/Caddyfile
-    [[ $(md5sum "$FILE") != $MD5 ]] && cp "$FILE" "$OD_LINUX_DIR_PREFIX/Network Config/Caddyfile"
+    sudo cp "$FILE" /etc/caddy/Caddyfile
+    if [[ $(md5sum "$FILE") != $MD5 ]]; then
+      caddy reload --config /etc/caddy/Caddyfile
+      cp "$FILE" "$OD_LINUX_DIR_PREFIX/Network Config/Caddyfile"
+    fi
   fi
 }
 
@@ -1049,21 +1052,38 @@ install-mosquitto() {
 }
 
 install-caddy() {
-  if [[ -z $(which xcaddy) ]]; then
-    sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https
-    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/xcaddy/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-xcaddy-archive-keyring.gpg
-    curl -1sLf 'https://dl.cloudsmith.io/public/caddy/xcaddy/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-xcaddy.list
+# if [[ -z $(which xcaddy) ]]; then
+#   sudo apt-get install -y debian-keyring debian-archive-keyring apt-transport-https
+#   curl -1sLf 'https://dl.cloudsmith.io/public/caddy/xcaddy/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-xcaddy-archive-keyring.gpg
+#   curl -1sLf 'https://dl.cloudsmith.io/public/caddy/xcaddy/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-xcaddy.list
 
-    sudo apt-get update
-    sudo apt-get install -y golang-go xcaddy
-  fi
+#   sudo apt-get update
+#   sudo apt-get install -y golang-go xcaddy
+# fi
 
-  xcaddy build \
-    --with github.com/caddy-dns/cloudflare \
-    --with github.com/mholt/caddy-l4
+# xcaddy build \
+#   --with github.com/caddy-dns/cloudflare \
+#   --with github.com/mholt/caddy-l4
 
-  sudo mv caddy /usr/local/bin/caddy
-  sudo rm -rf ~/go
+# sudo mv caddy /usr/local/bin/caddy
+# sudo rm -rf ~/go
+
+  sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
+  curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --yes --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+  curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+
+  sudo chmod o+r /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+  sudo chmod o+r /etc/apt/sources.list.d/caddy-stable.list
+
+  sudo apt update
+  sudo apt install caddy
+
+  echo "[Service]" | sudo tee /etc/systemd/system/caddy.service.d/override.conf > /dev/null
+  echo "User=root" | sudo tee -a /etc/systemd/system/caddy.service.d/override.conf > /dev/null
+  echo "Group=root" | sudo tee -a /etc/systemd/system/caddy.service.d/override.conf > /dev/null
+
+  sudo cp ~/Other\ Stuff/Linux/Network\ Config/Caddyfile /etc/caddy/Caddyfile
+  sudo systemctl restart caddy
 }
 
 docker-run() {
@@ -1158,6 +1178,13 @@ install-rclone() {
   [[ ! -f ~/.config/rclone/rclone.conf ]] && cp "$DEVICE_DIR_PREFIX/rclone.conf" ~/.config/rclone
 }
 
+openwrt-generate-user-file() {
+  cat ~/Other\ Stuff/Docker/netalertx/config/devices.csv | \
+  cut -d',' -f1-2 | \
+  tr -d '"' | \
+  grep -v -e '^Internet,' -e '^devMac,'
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -1243,3 +1270,4 @@ export -f x86_energy_perf_policy
 export -f cpupower
 export -f caddy-logs
 export -f install-rclone
+export -f openwrt-generate-user-file

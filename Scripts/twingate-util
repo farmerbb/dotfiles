@@ -19,7 +19,7 @@ reset-caddyfile-hosts() {
 }
 
 up() {
-  for i in 8080 9001; do
+  for i in 8080 9002; do
     sudo ufw allow $i/tcp
   done
   

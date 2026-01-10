@@ -1,0 +1,36 @@
+#!/bin/bash
+
+sudo add-apt-repository -y ppa:libretro/stable
+sudo apt-get update
+sudo apt-get install -y retroarch
+
+rm -rf ~/.config/retroarch/assets
+mkdir -p ~/.config/retroarch/assets
+cd ~/.config/retroarch/assets
+wget https://buildbot.libretro.com/assets/frontend/assets.zip
+unzip assets.zip
+rm assets.zip
+
+rm -rf ~/.config/retroarch/shaders
+mkdir -p ~/.config/retroarch/shaders
+cd ~/.config/retroarch/shaders
+wget https://buildbot.libretro.com/assets/frontend/shaders_glsl.zip
+unzip shaders_glsl.zip
+rm shaders_glsl.zip
+
+rm -rf ~/.config/retroarch/cores
+mkdir -p ~/.config/retroarch/cores
+cd ~/.config/retroarch/cores
+wget https://buildbot.libretro.com/assets/frontend/info.zip
+unzip info.zip
+rm info.zip
+
+wget https://buildbot.libretro.com/nightly/linux/x86_64/RetroArch_cores.7z
+7z e RetroArch_cores.7z
+rm RetroArch_cores.7z
+
+echo '[Desktop Entry]' > ~/.local/share/applications/retroarch.desktop
+echo 'Name=RetroArch' >> ~/.local/share/applications/retroarch.desktop
+echo 'Exec=retroarch' >> ~/.local/share/applications/retroarch.desktop
+echo 'Type=Application' >> ~/.local/share/applications/retroarch.desktop
+echo 'Icon=retroarch' >> ~/.local/share/applications/retroarch.desktop

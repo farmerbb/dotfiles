@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+# Recompute Wi-Fi state based solely on current ethernet connectivity
+# Install as /etc/NetworkManager/dispatcher.d/90-wifi-ethernet-toggle (marked as executable)
+
+# Give NetworkManager time to update device state
+sleep 2
+
+# Is any ethernet connected?
+ETH_CONNECTED=$(nmcli -t -f TYPE,STATE device | grep '^ethernet:connected' | wc -l)
+
+WIFI_STATE=$(nmcli radio wifi)
+
+if [[ "$ETH_CONNECTED" -gt 0 ]]; then
+  # Ethernet present -> Wi-Fi off
+  if [[ "$WIFI_STATE" == "enabled" ]]; then
+    nmcli radio wifi off
+  fi
+else
+  # No ethernet -> Wi-Fi on
+  if [[ "$WIFI_STATE" == "disabled" ]]; then
+    nmcli radio wifi on
+  fi
+fi
