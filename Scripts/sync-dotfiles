@@ -27,13 +27,15 @@ REDACTED_STRINGS=(
   "[REDACTED]"
   "[REDACTED]"
   "[REDACTED]"
+  "[REDACTED]"
+  "[REDACTED]"
+  "[REDACTED]"
 )
 
 DOTFILE_DIRS=(
 # "Android/Backup/Settings/Termux"
   "Android/Development"
   "Games/Utilities/Game Scripts"
-  "Other Stuff/Docker/docker-compose.yml"
   "Other Stuff/Linux/*"
   "Other Stuff/Chrome OS/Crostini"
   "Other Stuff/Utilities/Command Scripts"
@@ -68,7 +70,7 @@ shopt -s globstar
 for f in ./**/*; do
   [[ -f "$f" ]] && \
   for i in ${!REDACTED_STRINGS[@]}; do
-    sed -i "s/${REDACTED_STRINGS[$i]}/[REDACTED]/g" "$f"
+    sed -i "s#${REDACTED_STRINGS[$i]}#[REDACTED]#g" "$f"
   done
 done
 

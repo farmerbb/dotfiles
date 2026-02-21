@@ -31,8 +31,8 @@
       <feature enabled='yes' name='enrolled-keys'/>
       <feature enabled='yes' name='secure-boot'/>
     </firmware>
-    <loader readonly='yes' secure='yes' type='pflash'>/usr/share/OVMF/OVMF_CODE_4M.ms.fd</loader>
-    <nvram template='/usr/share/OVMF/OVMF_VARS_4M.ms.fd'>/var/lib/libvirt/qemu/nvram/win11_VARS.fd</nvram>
+    <loader readonly='yes' secure='yes' type='pflash' format='raw'>/usr/share/OVMF/OVMF_CODE_4M.ms.fd</loader>
+    <nvram template='/usr/share/OVMF/OVMF_VARS_4M.ms.fd' templateFormat='raw' format='raw'>/var/lib/libvirt/qemu/nvram/win11_VARS.fd</nvram>
     <bootmenu enable='no'/>
     <smbios mode='host'/>
   </os>
@@ -58,7 +58,7 @@
     <smm state='on'/>
   </features>
   <cpu mode='maximum' check='none' migratable='off'>
-    <topology sockets='1' dies='1' cores='4' threads='2'/>
+    <topology sockets='1' dies='1' clusters='1' cores='4' threads='2'/>
     <cache mode='passthrough'/>
     <feature policy='require' name='invtsc'/>
     <numa>
@@ -88,7 +88,7 @@
       <boot order='2'/>
       <address type='pci' domain='0x0000' bus='0x05' slot='0x00' function='0x0'/>
     </disk>
-    <disk type='block' device='disk'>
+    <disk type='block' device='disk' model='usb-storage'>
       <driver name='qemu' type='raw' cache='writeback' io='threads' discard='unmap'/>
       <source dev='/dev/mmcblk0' startupPolicy='optional'/>
       <target dev='sda' bus='usb' removable='on'/>
@@ -207,6 +207,13 @@
         <product id='0x0827'/>
       </source>
       <address type='usb' bus='0' port='4'/>
+    </hostdev>
+    <hostdev mode='subsystem' type='usb' managed='yes'>
+      <source startupPolicy='optional'>
+        <vendor id='0x058f'/>
+        <product id='0x6465'/>
+      </source>
+      <address type='usb' bus='0' port='5'/>
     </hostdev>
     <watchdog model='itco' action='reset'/>
     <memballoon model='none'/>

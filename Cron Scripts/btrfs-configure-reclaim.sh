@@ -6,9 +6,11 @@ touch /tmp/btrfs-configure-reclaim.running
 
 ##################################################
 
-SYSFS_PATH=/sys/fs/btrfs/$(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5)/allocation/data
-for i in dynamic_reclaim periodic_reclaim; do
-  echo 1 | sudo tee $SYSFS_PATH/$i > /dev/null
+for uuid in $(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5); do
+  SYSFS_PATH=/sys/fs/btrfs/$uuid/allocation/data
+  for i in dynamic_reclaim periodic_reclaim; do
+    echo 1 | sudo tee $SYSFS_PATH/$i > /dev/null
+  done
 done
 
 ##################################################

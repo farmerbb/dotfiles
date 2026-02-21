@@ -366,15 +366,6 @@ install-sayonara() {
   sudo apt-get install -y sayonara
 }
 
-install-k6() {
-  TAG=$(curl --silent "https://api.github.com/repos/grafana/k6/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-  FILENAME=k6-${TAG}-linux-amd64.deb
-
-  curl -LO https://github.com/grafana/k6/releases/download/$TAG/$FILENAME
-  install-deb ./$FILENAME
-  rm ./$FILENAME
-}
-
 install-rclone() {
   TAG=$(curl --silent "https://api.github.com/repos/rclone/rclone/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
   FILENAME=rclone-${TAG}-linux-amd64.deb
@@ -384,20 +375,28 @@ install-rclone() {
   rm ./$FILENAME
 }
 
-install-albert() {
-  echo 'deb http://download.opensuse.org/repositories/home:/manuelschneid3r/xUbuntu_25.04/ /' | sudo tee /etc/apt/sources.list.d/home:manuelschneid3r.list
-  curl -fsSL https://download.opensuse.org/repositories/home:manuelschneid3r/xUbuntu_25.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_manuelschneid3r.gpg > /dev/null
-  sudo apt-get update
-  sudo apt-get install -y albert
-}
-
 install-yt-dlp() {
   TAG=$(curl --silent "https://api.github.com/repos/yt-dlp/yt-dlp/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
   FILENAME=yt-dlp
 
   curl -LO https://github.com/yt-dlp/yt-dlp/releases/download/$TAG/$FILENAME
   chmod +x ./$FILENAME
-  sudo mv ./$FILENAME /usr/local/bin
+  sudo mv ./$FILENAME /usr/local/bin/yt-dlp
+}
+
+install-moonlight() {
+  TAG=$(curl --silent "https://api.github.com/repos/moonlight-stream/moonlight-qt/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+  FILENAME=Moonlight-$(echo $TAG | sed 's/v//')-x86_64.AppImage
+
+  curl -LO https://github.com/moonlight-stream/moonlight-qt/releases/download/$TAG/$FILENAME
+  chmod +x ./$FILENAME
+  sudo mv ./$FILENAME /usr/local/bin/moonlight
+
+  echo '[Desktop Entry]' > ~/.local/share/applications/moonlight.desktop
+  echo 'Name=Moonlight' >> ~/.local/share/applications/moonlight.desktop
+  echo 'Exec=moonlight' >> ~/.local/share/applications/moonlight.desktop
+  echo 'Type=Application' >> ~/.local/share/applications/moonlight.desktop
+  echo 'Icon=moonlight' >> ~/.local/share/applications/moonlight.desktop
 }
 
 export -f virtualhere-client
@@ -430,6 +429,6 @@ export -f install-imhex
 export -f install-tvhplayer
 export -f enable-backports
 export -f install-sayonara
-export -f install-k6
 export -f install-rclone
-export -f install-albert
+export -f install-yt-dlp
+export -f install-moonlight

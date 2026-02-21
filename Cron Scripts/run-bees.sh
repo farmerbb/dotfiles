@@ -11,7 +11,7 @@ start-bees() {
   [[ -f /tmp/.btrfs-maintenance ]] && exit 1
 
   sudo umount /run/bees/mnt/* >/dev/null 2>&1
-  sudo daemonize /usr/sbin/beesd $(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5)
+  sudo daemonize /usr/sbin/beesd $(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5 | head -n1)
   while [[ -z $(pgrep bees) ]]; do sleep 1; done
 
   for i in $(pgrep bees); do
@@ -20,10 +20,10 @@ start-bees() {
   done
 }
 
-CHARGING=$(cat /sys/class/power_supply/AC/online)
-BATTERY=$(cat /sys/class/power_supply/BAT0/capacity)
+CHARGING=$(cat /sys/class/power_supply/AC/online >/dev/null 2>&1)
+BATTERY=$(cat /sys/class/power_supply/BAT0/capacity >/dev/null 2>&1)
 
-if [[ $CHARGING != 0 && $BATTERY > 90 || $BATTERY = 100 ]]; then
+if [[ ! -d /sys/class/power_supply/BAT0 || $CHARGING != 0 && $BATTERY > 90 || $BATTERY = 100 ]]; then
   start-bees
 else
   sudo pkill bees || true

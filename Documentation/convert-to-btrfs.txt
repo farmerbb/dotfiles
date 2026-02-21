@@ -7,7 +7,7 @@ Documentation uses `/dev/nvme0n1p2` as an example for your root filesystem
 
   sudo fsck.ext4 -fyv /dev/nvme0n1p2
 
-* Convert to btrfs (may take a while)
+* Convert to btrfs (may take a while - take note of new UUID for later)
 
   sudo btrfs-convert /dev/nvme0n1p2
 

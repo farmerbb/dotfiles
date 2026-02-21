@@ -28,9 +28,3 @@ rm info.zip
 wget https://buildbot.libretro.com/nightly/linux/x86_64/RetroArch_cores.7z
 7z e RetroArch_cores.7z
 rm RetroArch_cores.7z
-
-echo '[Desktop Entry]' > ~/.local/share/applications/retroarch.desktop
-echo 'Name=RetroArch' >> ~/.local/share/applications/retroarch.desktop
-echo 'Exec=retroarch' >> ~/.local/share/applications/retroarch.desktop
-echo 'Type=Application' >> ~/.local/share/applications/retroarch.desktop
-echo 'Icon=retroarch' >> ~/.local/share/applications/retroarch.desktop

@@ -87,8 +87,9 @@ services:
     logging:
       driver: local
   netalertx:
+  # See breaking changes: https://github.com/netalertx/NetAlertX/issues/1150
     container_name: netalertx
-    image: ghcr.io/jokob-sk/netalertx:latest
+    image: ghcr.io/netalertx/netalertx:latest
     network_mode: host
     cap_drop:
       - ALL
@@ -96,12 +97,17 @@ services:
       - NET_RAW
       - NET_ADMIN
       - NET_BIND_SERVICE
+      - CHOWN
+      - SETUID
+      - SETGID
     restart: unless-stopped
     volumes:
       - netalertx:/data
       - /etc/localtime:/etc/localtime:ro
     environment:
       - PORT=20211
+      - GRAPHQL_PORT=20212
+      - BACKEND_API_URL=https://netalertx.[REDACTED]/server
     tmpfs:
       - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
     logging:
@@ -172,8 +178,8 @@ services:
       - TZ=America/Denver
     volumes:
       - ./transmission/data:/config
-      - ./transmission/downloads:/downloads #optional
-      - ./transmission/watch:/watch #optional
+      - ./transmission/watch:/watch
+      - /mnt/transmission:/downloads
     ports:
       - 9091:9091
       - 51413:51413
@@ -207,8 +213,8 @@ services:
       - WYZE_EMAIL=[REDACTED]
       - WYZE_PASSWORD=${password}
       - TOTP_KEY=[REDACTED]
-      - API_ID=258afa7a-1aed-4dfc-b519-27c32ea28599
-      - API_KEY=AGJdlNFJZ5AI1oKXQVmvxSGK1MImwrZIDQHYxsER7SleEmSXW0LL4stvSnAs # expires July 11, 2026
+      - API_ID=[REDACTED]
+      - API_KEY=[REDACTED] # expires February 20, 2027
       - WB_API=[REDACTED]
       - WB_IP=192.168.86.10
       - WB_AUTH=false

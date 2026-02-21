@@ -31,8 +31,10 @@ alias firmware-util="curl -LOk mrchromebox.tech/firmware-util.sh && sudo bash fi
 alias flatpak-upgrade-all="flatpak update -y; flatpak uninstall --unused -y; flatpak uninstall --delete-data -y"
 alias flush-dns-cache="sudo systemctl restart systemd-resolved; resolvectl status"
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
+alias gnome-disable-trackpad="gsettings set org.gnome.desktop.peripherals.touchpad send-events 'disabled-on-external-mouse'"
 alias hibernate="sudo swapon /swapfile; sudo systemctl --no-block hibernate || sudo swapoff /swapfile"
 alias hypercalc="perl ~/Other\ Stuff/Utilities/hypercalc.txt"
+alias imhex="flatpak-util start imhex"
 alias lazydocker='~/Other\ Stuff/Utilities/lazydocker/lazydocker'
 alias local-ip="ip -o route get to 8.8.8.8 | sed -n 's/.*src \([0-9.]\+\).*/\1/p'"
 alias make="make -j$(nproc)"
@@ -90,7 +92,7 @@ btrfs-dedupe() {
   touch /tmp/.btrfs-maintenance
   sudo pkill bees
 
-  sudo beesd $(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5)
+  sudo beesd $(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5 | head -n1)
 
 # sudo jdupes -r1BQ $BTRFS_MNT
 # gunzip ~/.hashfile
@@ -122,7 +124,7 @@ btrfs-stats() {
   echo
 
   mkdir -p /tmp/compsize-mnt
-  sudo mount UUID=$(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5) /tmp/compsize-mnt
+  sudo mount UUID=$(sudo btrfs filesystem show -m | grep uuid | cut -d' ' -f5 | head -n1) /tmp/compsize-mnt
   sudo compsize /tmp/compsize-mnt
   sudo umount /tmp/compsize-mnt
 }
@@ -140,7 +142,7 @@ btrfs-balance() {
     return 1
   fi
 
-  sudo btrfs balance start -dusage=$1 $BTRFS_MNT
+  sudo btrfs balance start -dusage=$1 -musage=$1 $BTRFS_MNT
 }
 
 find-files() {
@@ -672,7 +674,7 @@ robomirror() {
       echo "Verifying files in $DIR using rclone..."
       if [[ -d "$RCLONE_DEST_ROOT/$DIR" ]]; then
         echo
-        "$RCLONE" check -v "OneDrive:$DIR" "$RCLONE_DEST_ROOT/$DIR"
+        "$RCLONE" check -v "${RCLONE_MNT}:$DIR" "$RCLONE_DEST_ROOT/$DIR"
       else
         echo "Directory \"$RCLONE_DEST_ROOT/$DIR\" does not exist; aborting"
       fi
@@ -1185,6 +1187,15 @@ openwrt-generate-user-file() {
   grep -v -e '^Internet,' -e '^devMac,'
 }
 
+project-egg-download() {
+  CODE=$1
+  [[ -z $CODE ]] && \
+    echo "Usage: project-egg-download <code>" && \
+    return 1
+
+  curl -L "http://www.amusement-center.com/productfiles/EGGFILES/${CODE}a.bin" -X GET -H 'User-Agent: c384da2W9f73dz20403d' --output ${CODE}.bin
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -1271,3 +1282,4 @@ export -f cpupower
 export -f caddy-logs
 export -f install-rclone
 export -f openwrt-generate-user-file
+export -f project-egg-download
