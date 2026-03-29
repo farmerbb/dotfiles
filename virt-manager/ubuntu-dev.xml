@@ -35,7 +35,7 @@
     <vmport state='off'/>
   </features>
   <cpu mode='maximum' check='none' migratable='off'>
-    <topology sockets='1' dies='1' cores='4' threads='2'/>
+    <topology sockets='1' dies='1' clusters='1' cores='4' threads='2'/>
     <cache mode='passthrough'/>
     <numa>
       <cell id='0' cpus='0-7' memory='8388608' unit='KiB' memAccess='shared'/>
@@ -138,6 +138,21 @@
       <target chassis='10' port='0x19'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x1'/>
     </controller>
+    <controller type='pci' index='11' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='11' port='0x1a'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x2'/>
+    </controller>
+    <controller type='pci' index='12' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='12' port='0x1b'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x3'/>
+    </controller>
+    <controller type='pci' index='13' model='pcie-root-port'>
+      <model name='pcie-root-port'/>
+      <target chassis='13' port='0x1c'/>
+      <address type='pci' domain='0x0000' bus='0x00' slot='0x03' function='0x4'/>
+    </controller>
     <controller type='virtio-serial' index='0'>
       <address type='pci' domain='0x0000' bus='0x02' slot='0x00' function='0x0'/>
     </controller>
@@ -149,6 +164,24 @@
       <source dir='/mnt/files'/>
       <target dir='Files'/>
       <address type='pci' domain='0x0000' bus='0x0a' slot='0x00' function='0x0'/>
+    </filesystem>
+    <filesystem type='mount' accessmode='passthrough'>
+      <driver type='virtiofs'/>
+      <source dir='/home/farmerbb/Android'/>
+      <target dir='Android'/>
+      <address type='pci' domain='0x0000' bus='0x0b' slot='0x00' function='0x0'/>
+    </filesystem>
+    <filesystem type='mount' accessmode='passthrough'>
+      <driver type='virtiofs'/>
+      <source dir='/home/farmerbb/AndroidStudioProjects'/>
+      <target dir='AndroidStudioProjects'/>
+      <address type='pci' domain='0x0000' bus='0x0c' slot='0x00' function='0x0'/>
+    </filesystem>
+    <filesystem type='mount' accessmode='passthrough'>
+      <driver type='virtiofs'/>
+      <source dir='/home/farmerbb/.gradle'/>
+      <target dir='gradle'/>
+      <address type='pci' domain='0x0000' bus='0x0d' slot='0x00' function='0x0'/>
     </filesystem>
     <interface type='network'>
       <mac address='52:54:00:b3:4e:79'/>

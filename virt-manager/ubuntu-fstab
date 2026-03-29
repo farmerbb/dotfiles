@@ -1,1 +1,4 @@
-Files /mnt/files virtiofs defaults 0 0
+Files                 /mnt/files                           virtiofs defaults 0 0
+Android               /home/farmerbb/Android               virtiofs defaults 0 0
+AndroidStudioProjects /home/farmerbb/AndroidStudioProjects virtiofs defaults 0 0
+gradle                /home/farmerbb/.gradle               virtiofs defaults 0 0
