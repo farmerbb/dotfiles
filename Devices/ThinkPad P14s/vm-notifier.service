@@ -1,0 +1,13 @@
+# Install in ~/.config/systemd/user/vm-notifier.service
+# Enable with `systemctl --user enable --now vm-notifier.service`
+# Make sure socat is installed: `sudo apt install socat`
+
+[Unit]
+Description=Listen for VM notifications
+
+[Service]
+ExecStart=/usr/bin/socat -u TCP4-LISTEN:9000,fork,reuseaddr EXEC:/home/farmerbb/.config/systemd/user/vm-notifier.sh
+Restart=always
+
+[Install]
+WantedBy=default.target

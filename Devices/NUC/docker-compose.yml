@@ -18,6 +18,15 @@ services:
     image: adguard/adguardhome:latest
     logging:
       driver: local
+  asterisk:
+    image: andrius/asterisk:latest
+    container_name: asterisk
+    network_mode: host
+    volumes:
+      - ./asterisk:/etc/asterisk
+    restart: unless-stopped
+    logging:
+      driver: local
 # esphome:
 #   container_name: esphome
 #   image: esphome/esphome
@@ -153,6 +162,19 @@ services:
       - /mnt/files:/mnt/files
     devices:
       - /dev/dri:/dev/dri
+    logging:
+      driver: local
+  syncthing:
+    container_name: syncthing
+    image: syncthing/syncthing
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./syncthing:/var/syncthing
+      - /mnt/files:/mnt/files
+    network_mode: host
+    restart: unless-stopped
     logging:
       driver: local
   timelinize:

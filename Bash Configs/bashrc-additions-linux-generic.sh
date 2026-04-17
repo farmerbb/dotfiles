@@ -539,20 +539,38 @@ install-pip2() {
 }
 
 git-deep-clean() {
-  [[ -f local.properties ]] && mv local.properties /tmp
-  [[ -d .idea ]] && mv .idea /tmp
+  KEEP_FILES=(
+    "local.properties"
+    "[REDACTED]"
+  )
+
+  KEEP_DIRS=(
+    ".idea"
+  )
+
+  for file in "${KEEP_FILES[@]}"; do
+    [[ -f "$file" ]] && mv "$file" "/tmp/$file"
+  done
+
+  for dir in "${KEEP_DIRS[@]}"; do
+    [[ -d "$dir" ]] && mv "$dir" "/tmp/$dir"
+  done
 
   sudo git clean -xfd && git reset --hard
 
-  [[ -f /tmp/local.properties ]] && \
-    mv /tmp/local.properties . && \
-    echo && \
-    echo "NOTE: local.properties file has been kept"
+  for file in "${KEEP_FILES[@]}"; do
+    if [[ -f "/tmp/$file" ]]; then
+      mv "/tmp/$file" .
+      echo "NOTE: $file file has been kept"
+    fi
+  done
 
-  [[ -d /tmp/.idea ]] && \
-    mv /tmp/.idea . && \
-    echo && \
-    echo "NOTE: .idea directory has been kept"
+  for dir in "${KEEP_DIRS[@]}"; do
+    if [[ -d "/tmp/$dir" ]]; then
+      mv "/tmp/$dir" .
+      echo "NOTE: $dir directory has been kept"
+    fi
+  done
 }
 
 install-deb() {
@@ -664,7 +682,7 @@ robomirror() {
       echo "Mirroring $DIR from $RCLONE_MNT using rclone..."
       if [[ -d "$RCLONE_DEST_ROOT/$DIR" ]]; then
         echo
-        "$RCLONE" sync -v "${RCLONE_MNT}:$DIR" "$RCLONE_DEST_ROOT/$DIR"
+        "$RCLONE" sync -v "${RCLONE_MNT}:$DIR" "$RCLONE_DEST_ROOT/$DIR" --exclude "**/.stfolder/**"
       else
         echo "Directory \"$RCLONE_DEST_ROOT/$DIR\" does not exist; aborting"
       fi
@@ -743,6 +761,16 @@ wireguard-monitor() {
     COMMAND='docker exec -it wireguard wg'
   else
     COMMAND='ssh nuc -o LogLevel=QUIET -t docker exec -it wireguard wg'
+  fi
+
+  watch --color -n1 $COMMAND
+}
+
+asterisk-monitor() {
+  if [[ $HOSTNAME = NUC ]]; then
+    COMMAND='docker exec -it asterisk asterisk -rx "pjsip show endpoints"'
+  else
+    COMMAND='ssh nuc -o LogLevel=QUIET -t docker exec -it asterisk asterisk -rx \"pjsip show endpoints\"'
   fi
 
   watch --color -n1 $COMMAND
@@ -1207,7 +1235,7 @@ install-kubectl() {
   sudo chmod 644 /etc/apt/sources.list.d/kubernetes.list
 
   sudo apt-get update
-  sudo apt-get install -y kubectl
+  sudo apt-get install -y kubectl kubectx
 }
 
 export -f btrfs-dedupe
@@ -1260,6 +1288,7 @@ export -f install-wireguard-client
 export -f wireguard-run
 export -f shield-share-menu
 export -f wireguard-monitor
+export -f asterisk-monitor
 export -f toggle-vm-maintenance
 export -f install-makemkv
 export -f apt-install-held-pkgs

@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# Exit if not running in a VM
+systemd-detect-virt -q || { echo "Error: This script must be run inside a VM."; exit 1; }
+
+AUTHOR_EMAIL="[REDACTED]"
+CLAUDE_VERSION=$(claude --version | cut -d' ' -f1)
+SYSTEM_PROMPT=$(cat <<EOF
+
+Commit your changes. The commit must be authored with the name "The Robot™" and email "${AUTHOR_EMAIL}". If a git repo doesn't already exist, initialize a new one.
+
+The following MUST be included in the commit message:
+* The name and version of the harness that was used, which is Claude Code v${CLAUDE_VERSION}
+* The AI model that was used
+* The full text of the user's prompt - MUST be verbatim exactly as the user wrote it
+* A summary of the changes made, with special care taken to explain any major changes to existing files
+* Any shell commands used by the harness to generate the changes - MUST be verbatim exactly as they were run. Enclose each command inside a markdown code block.
+
+Always use hyphens [-] instead of em dashes [—] inside code. Any em dashes [—] that are used in commit messages MUST NOT have a leading and trailing space.
+
+The very last thing that you should do is run this shell command, replacing [message] with a short, robot-themed message indicating that the task is complete.
+echo "[message]" | nc -N 192.168.122.1 9000
+
+EOF
+)
+
+# Ensure a branch name/suffix is provided
+if [ -z "$1" ]; then
+  echo "Usage: the-robot <branch-name>"
+  exit 1
+fi
+
+cd ~/AndroidStudioProjects/[REDACTED]
+
+# Create a unique path for the worktree outside the current dir to avoid nesting
+WORKTREE_PATH="../$(basename "$PWD")-$(echo $1 | sed 's#/#-#')"
+
+echo "Current branch: $(git branch --show-current)"
+echo "Creating worktree at: $WORKTREE_PATH"
+echo
+
+# 1. Create the worktree and a new branch
+git worktree add -q -b "$1" "$WORKTREE_PATH"
+
+# 2. Change to the worktree directory and run Claude
+# We use a subshell to ensure we can clean up afterward
+(
+  cd "$WORKTREE_PATH" || exit
+
+  claude \
+    --dangerously-skip-permissions \
+    --append-system-prompt "${SYSTEM_PROMPT}"
+)
+
+# 3. Cleanup: Remove the worktree once the Claude session (subshell) exits
+echo
+echo "Cleaning up worktree..."
+git worktree remove "$WORKTREE_PATH"
