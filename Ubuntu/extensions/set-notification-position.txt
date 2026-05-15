@@ -1,0 +1,2 @@
+[/]
+change-banner-position=2

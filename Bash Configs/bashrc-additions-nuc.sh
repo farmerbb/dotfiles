@@ -12,9 +12,7 @@ export SYNC_DIRS=(
   "Android"
   "Documents"
   "Games"
-  "Media"
-  "Media 2:OneDrive-2"
-  "Media 3:OneDrive-3"
+# "Media"
   "Other Stuff"
 )
 

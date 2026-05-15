@@ -30,6 +30,7 @@ alias download-chromeosflex="wget --trust-server-names https://dl.google.com/chr
 alias firmware-util="curl -LOk mrchromebox.tech/firmware-util.sh && sudo bash firmware-util.sh; rm firmware-util.sh"
 alias flatpak-upgrade-all="flatpak update -y; flatpak uninstall --unused -y; flatpak uninstall --delete-data -y"
 alias flush-dns-cache="sudo systemctl restart systemd-resolved; resolvectl status"
+alias fx="FX_COLLAPSED=true fx"
 alias glados="curl -Ls https://tinyurl.com/y4xkv2dj | iconv -f windows-1252 | sort -R | head -n1"
 alias gnome-disable-trackpad="gsettings set org.gnome.desktop.peripherals.touchpad send-events 'disabled-on-external-mouse'"
 alias hibernate="sudo swapon /swapfile; sudo systemctl --no-block hibernate || sudo swapoff /swapfile"
@@ -78,6 +79,7 @@ alias wineserver="winecmd wineserver"
 alias wireguard-up="sudo wg-quick up wg0 && stop-nuc && timeout 10 bash -i -c mount-nuc; true"
 alias wireguard-down="sudo wg-quick down wg0 && stop-nuc && timeout 10 bash -i -c mount-nuc; true"
 alias youtube-dl="python3 ~/Other\ Stuff/Audio\ \&\ Video\ Tools/youtube-dl"
+alias yt-dlp-audio='yt-dlp -f "ba" -x --audio-format best'
 
 alias am="adb shell am"
 alias pm="adb shell pm"
@@ -606,7 +608,7 @@ process-args() {
 }
 
 robomirror() {
-  LOCKFILE=/run/user/$UID/.robomirror
+  LOCKFILE=/tmp/.robomirror
   $(uname -r | grep "[m|M]icrosoft" > /dev/null) && IS_WSL=true
 
   [[ -z $(which nc) ]] && INSTALL_DEPENDENCIES=true
@@ -664,7 +666,7 @@ robomirror() {
   touch $LOCKFILE
 
   for i in ${!SYNC_DIRS[@]}; do
-    SYNC_DIR_ENTRY="${SYNC_DIRS[$i]}:OneDrive"
+    SYNC_DIR_ENTRY="${SYNC_DIRS[$i]}:OneDrive-union"
     DIR=$(echo "$SYNC_DIR_ENTRY" | cut -d':' -f1)
     RCLONE_MNT=$(echo "$SYNC_DIR_ENTRY" | cut -d':' -f2)
 

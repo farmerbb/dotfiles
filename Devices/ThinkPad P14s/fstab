@@ -12,3 +12,6 @@
 /dev/mapper/rootfs                            /mnt/VMs         btrfs   defaults,noatime,compress-force=zstd:1,nodiscard,subvol=@VMs     0   1
 UUID=663ee4db-13f5-4069-9890-4e72211bb513     /boot            ext4    defaults,noatime                                                 0   1
 UUID=76A1-3D53                                /boot/efi        vfat    defaults                                                         0   1
+
+# Network mounts
+//192.168.86.10/Files                         /mnt/NUC         cifs    defaults,user=farmerbb,credentials=/home/farmerbb/.sharelogin,uid=1000,gid=1000,x-systemd.automount,x-systemd.after=wg-quick@wg0.service 0 0

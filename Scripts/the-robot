@@ -16,7 +16,7 @@ The following MUST be included in the commit message:
 * A summary of the changes made, with special care taken to explain any major changes to existing files
 * Any shell commands used by the harness to generate the changes - MUST be verbatim exactly as they were run. Enclose each command inside a markdown code block.
 
-Always use hyphens [-] instead of em dashes [—] inside code. Any em dashes [—] that are used in commit messages MUST NOT have a leading and trailing space.
+Always use hyphens [-] instead of em dashes [—].
 
 The very last thing that you should do is run this shell command, replacing [message] with a short, robot-themed message indicating that the task is complete.
 echo "[message]" | nc -N 192.168.122.1 9000

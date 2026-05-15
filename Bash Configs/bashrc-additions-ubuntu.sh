@@ -399,6 +399,15 @@ install-moonlight() {
   echo 'Icon=moonlight' >> ~/.local/share/applications/moonlight.desktop
 }
 
+install-miasma() {
+  TAG=$(curl --silent "https://api.github.com/repos/austin-weeks/miasma/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+  FILENAME=miasma-linux-x86_64
+
+  curl -LO https://github.com/austin-weeks/miasma/releases/download/$TAG/$FILENAME
+  chmod +x ./$FILENAME
+  sudo mv ./$FILENAME /usr/local/bin/miasma
+}
+
 export -f virtualhere-client
 export -f allow-all-usb
 export -f make-trackpad-great-again
@@ -432,3 +441,4 @@ export -f install-sayonara
 export -f install-rclone
 export -f install-yt-dlp
 export -f install-moonlight
+export -f install-miasma

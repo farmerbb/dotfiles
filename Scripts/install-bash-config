@@ -6,7 +6,8 @@ bashrc-additions() {
 
 IDE_DIRS=(
   "/opt/android-studio"
-  "/home/$USER/.local/share/JetBrains/Toolbox/apps/intellij-idea-ultimate*"
+  "/home/$USER/.local/share/JetBrains/Toolbox/apps/android-studio*"
+  "/home/$USER/.local/share/JetBrains/Toolbox/apps/intellij-idea*"
 )
 
 for i in ${IDE_DIRS[@]}; do
@@ -50,7 +51,15 @@ case $(tr -d '\0' 2>/dev/null < /proc/device-tree/model) in
   ;;
 
   "Raspberry Pi 3 Model B Rev 1.2")
-    bashrc-additions pi3
+    case $HOSTNAME in
+      "zigbee-hub")
+        bashrc-additions zigbee-hub
+      ;;
+
+      "3d-printer")
+        bashrc-additions 3d-printer
+      ;;
+    esac
   ;;
 esac
 

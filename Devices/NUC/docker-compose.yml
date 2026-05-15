@@ -133,20 +133,6 @@ services:
 #     - ./nodered:/data
 #   logging:
 #     driver: local
-  octoprint:
-    container_name: octoprint
-    privileged: true
-    volumes:
-      - octoprint:/octoprint
-      - /dev:/dev
-    ports:
-      - 8080:80
-    restart: unless-stopped
-    image: octoprint/octoprint:latest
-    environment:
-      - TZ=America/Denver
-    logging:
-      driver: local
   plex:
     container_name: plex
     image: plexinc/pms-docker
@@ -241,11 +227,16 @@ services:
       - WB_IP=192.168.86.10
       - WB_AUTH=false
       - ENABLE_AUDIO=true
-    network_mode: host
+    ports:
+      - 1935:1935
+    # - 8554:8554
+      - 8888:8888
+      - 8889:8889
+      - 8189:8189/udp
+      - 5000:5000
     restart: unless-stopped
     image: mrlt8/wyze-bridge:latest
     logging:
       driver: local
 volumes:
-  octoprint:
   netalertx:

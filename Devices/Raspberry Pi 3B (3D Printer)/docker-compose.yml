@@ -1,0 +1,18 @@
+name: 3d-printer
+services:
+  octoprint:
+    container_name: octoprint
+    privileged: true
+    volumes:
+      - octoprint:/octoprint
+      - /dev:/dev
+    ports:
+      - 8080:80
+    restart: unless-stopped
+    image: octoprint/octoprint:latest
+    environment:
+      - TZ=America/Denver
+    logging:
+      driver: local
+volumes:
+  octoprint:
