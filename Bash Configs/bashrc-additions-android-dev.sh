@@ -25,7 +25,7 @@ export PATH="$PLUGINS_DIR:$PLATFORM_TOOLS_DIR:$TOOLS_DIR:$CMDLINE_TOOLS_DIR:$TOO
 
 alias clear-emulator-lockfiles="rm ~/.android/avd/*.avd/*.lock"
 alias gradle-stop="pkill -f '.*GradleDaemon.*'"
-alias kill-android-studio="pkill -f '.*com.intellij.idea.Main.*' -9"
+alias kill-android-studio="pkill studio -9"
 alias kill-intellij="pkill idea -9"
 alias reset-android-studio='for i in ~/.cache ~/.local/share ~/.config; do rm -rf $i/Google; done'
 alias sdb="~/tizen-studio/tools/sdb"
@@ -113,8 +113,19 @@ sign-apk() {
   apksigner sign --ks ~/AndroidStudioProjects/Keystore --ks-key-alias farmerbb --ks-pass pass:$PASSWORD --key-pass pass:$PASSWORD --in "$1" --out "$2"
 }
 
+compile-baseline-profile() {
+  if [[ -z $1 ]]; then
+    echo "Usage: compile-baseline-profile <package-name>"
+    return 1
+  fi
+
+  adb shell cmd package compile -m speed-profile -f $1
+  adb shell am force-stop $1
+}
+
 export -f gradle-deep-clean
 export -f emulator
 export -f init-android-dev-environment
 export -f project-root
 export -f sign-apk
+export -f compile-baseline-profile

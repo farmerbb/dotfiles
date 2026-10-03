@@ -1,0 +1,31 @@
+# esphome:
+#   container_name: esphome
+#   image: esphome/esphome
+#   volumes:
+#     - ./esphome:/config
+#     - /etc/localtime:/etc/localtime:ro
+#   restart: unless-stopped
+#   privileged: true
+#   network_mode: host
+#   logging:
+#     driver: local
+# it-tools:
+#   container_name: it-tools
+#   image: corentinth/it-tools:latest
+#   restart: unless-stopped
+#   ports:
+#     - 8082:80
+#   logging:
+#     driver: local
+# nodered:
+#   container_name: nodered
+#   image: nodered/node-red:latest
+#   restart: unless-stopped
+#   environment:
+#     - TZ=America/Denver
+#   ports:
+#     - 1880:1880
+#   volumes:
+#     - ./nodered:/data
+#   logging:
+#     driver: local

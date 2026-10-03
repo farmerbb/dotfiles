@@ -56,9 +56,9 @@ case $(tr -d '\0' 2>/dev/null < /proc/device-tree/model) in
         bashrc-additions zigbee-hub
       ;;
 
-      "3d-printer")
-        bashrc-additions 3d-printer
-      ;;
+    # "3d-printer")
+    #   bashrc-additions 3d-printer
+    # ;;
     esac
   ;;
 esac

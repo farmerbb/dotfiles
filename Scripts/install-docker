@@ -18,4 +18,7 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 sudo usermod -aG docker $USER
 sudo chmod 666 /var/run/docker.sock
 
+sudo mkdir -p /etc/docker
+echo '{"dns":["1.1.1.1","8.8.8.8"]}' | sudo tee /etc/docker/daemon.json > /dev/null
+
 docker run hello-world

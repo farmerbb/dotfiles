@@ -30,11 +30,11 @@ backup-containers() {
   echo -e "\n\033[1mRunning Home Assistant backup\033[0m\n"
   home-assistant-backup
 
-  echo -e "\n\n\033[1mRunning OctoPrint backup\033[0m\n"
-  BACKUP_PATH=$(docker exec -it octoprint octoprint --basedir /octoprint/octoprint plugins backup:backup | tee /dev/stderr | tail -1 | cut -d' ' -f4 | sed 's/'$'\r//')
-  rm ~/OneDrive/Other\ Stuff/Docker/octoprint-*
-  docker cp octoprint:$BACKUP_PATH ~/OneDrive/Other\ Stuff/Docker/
-  docker exec -it octoprint rm $BACKUP_PATH
+# echo -e "\n\n\033[1mRunning OctoPrint backup\033[0m\n"
+# BACKUP_PATH=$(docker exec -it octoprint octoprint --basedir /octoprint/octoprint plugins backup:backup | tee /dev/stderr | tail -1 | cut -d' ' -f4 | sed 's/'$'\r//')
+# rm ~/OneDrive/Other\ Stuff/Docker/octoprint-*
+# docker cp octoprint:$BACKUP_PATH ~/OneDrive/Other\ Stuff/Docker/
+# docker exec -it octoprint rm $BACKUP_PATH
 }
 
 rclone-backup() {

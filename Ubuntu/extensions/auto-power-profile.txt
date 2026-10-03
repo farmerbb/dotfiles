@@ -1,4 +1,4 @@
 [/]
 bat='balanced'
-performance-apps=['jetbrains-idea-5ea61c9c-2fd8-407b-84c4-7a3e90519cbf.desktop', 'virt-manager.desktop', 'jetbrains-studio-022dfe8d-e824-4175-8007-02939b4937ac.desktop']
+performance-apps=['jetbrains-idea-5ea61c9c-2fd8-407b-84c4-7a3e90519cbf.desktop', 'virt-manager.desktop', 'jetbrains-studio-022dfe8d-e824-4175-8007-02939b4937ac.desktop', 'jetbrains-idea-f1043d8b-f8bd-49dd-8e2b-0eb16c3451d2.desktop']
 threshold=0

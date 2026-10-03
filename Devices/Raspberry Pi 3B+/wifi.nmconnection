@@ -1,0 +1,24 @@
+# Save as /etc/NetworkManager/system-connections/wifi.nmconnection
+[connection]
+id=wifi
+uuid=90aad5f1-d612-4630-80f7-108d9010520e
+type=wifi
+interface-name=wlan0
+
+[wifi]
+mode=infrastructure
+ssid=[REDACTED]
+
+[wifi-security]
+auth-alg=open
+key-mgmt=wpa-psk
+psk=[REDACTED]*
+
+[ipv4]
+method=auto
+
+[ipv6]
+addr-gen-mode=stable-privacy
+method=auto
+
+[proxy]

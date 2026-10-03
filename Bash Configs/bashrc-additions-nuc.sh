@@ -12,7 +12,7 @@ export SYNC_DIRS=(
   "Android"
   "Documents"
   "Games"
-# "Media"
+  "Media"
   "Other Stuff"
 )
 

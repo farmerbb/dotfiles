@@ -119,12 +119,20 @@ Unofficial method (skips all requirements):
 
 Activate Windows 11 using Microsoft Activation Scripts (MAS):
 
-  iwr -useb https://massgrave.dev/get | iex
+  irm https://get.activated.win | iex
 
 
 Compress the OS (to save space after install):
 
   compact.exe /compactos:always
+
+
+Switch Windows edition to IoT Enterprise (enables updates on unsupported hardware):
+
+  slmgr.vbs /ipk XQQYW-NFFMW-XJPBH-K8732-CKFFD
+  slmgr.vbs /ato
+
+  * Ignore any error messages about activation; reactivate Windows using MAS instead (see above)
 
 -------------------------------- Power Management Tweaks --------------------------------
 

@@ -1,0 +1,7 @@
+# Save as /etc/netplan/01-eno1.yaml
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    eno1:
+      dhcp4: true

@@ -206,7 +206,7 @@
       <source>
         <vendor id='0x174c'/>
         <product id='0x7720'/>
-        <address bus='2' device='4'/>
+        <address bus='2' device='2'/>
       </source>
       <address type='usb' bus='0' port='2'/>
     </hostdev>

@@ -1,0 +1,28 @@
+services:
+  llama-cpp:
+    image: ghcr.io/ggml-org/llama.cpp:server-vulkan
+    container_name: llama-cpp
+    ports:
+      - 8080:8080
+    devices:
+      - /dev/kfd:/dev/kfd
+      - /dev/dri:/dev/dri
+    environment:
+      - HSA_OVERRIDE_GFX_VERSION=11.5.0
+    volumes:
+      - ./models:/models
+    command: >
+      -m /models/gemma-4-E4B-it-qat-UD-Q4_K_XL.gguf
+      -c 65536
+      -np 1
+      -ngl 99
+      -fa on
+      -ctk q8_0
+      -ctv q8_0
+      -b 2048
+      -ub 2048
+      --host 0.0.0.0
+      --port 8080
+      --jinja
+      --tools all
+    restart: unless-stopped

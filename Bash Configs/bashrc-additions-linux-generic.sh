@@ -20,6 +20,7 @@ fi
 
 alias 7z='~/Other\ Stuff/Utilities/7-Zip/Linux/7zz'
 alias badram='sudo cat /proc/iomem | grep "Unusable memory"'
+alias btdu='~/Other\ Stuff/Utilities/btdu'
 alias chdman='~/Games/Utilities/chdman/chdman'
 alias cpu-monitor='watch -n1 "lscpu -e; echo; sensors coretemp-isa-0000 dell_smm-isa-0000"'
 alias current-governor="cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor"
@@ -49,6 +50,7 @@ alias pip3="pip"
 alias port-monitor='watch -n1 "sudo lsof -i -P -n | grep LISTEN"'
 alias ports-monitor='port-monitor'
 alias public-ip="dig @resolver4.opendns.com myip.opendns.com +short"
+alias public-ip-home="dig @resolver4.opendns.com [REDACTED] +short"
 alias public-ipv6="dig @resolver1.ipv6-sandbox.opendns.com AAAA myip.opendns.com +short -6"
 alias python="python3"
 alias qemu="qemu-system-x86_64 -monitor stdio -accel kvm -cpu host -m 4G -smp cores=6"
@@ -620,6 +622,11 @@ robomirror() {
     sudo apt-get -y install netcat-openbsd rclone rsync
   fi
 
+  if [[ -z $(which rsync-sidekick) ]]; then
+    go install github.com/m-manu/rsync-sidekick/v2@latest
+    sudo cp ~/go/bin/rsync-sidekick /usr/local/bin
+  fi
+
   if [[ -z $IS_WSL ]]; then
     RSYNC=rsync
     RSYNC_DEST_ROOT=/mnt/files
@@ -674,6 +681,7 @@ robomirror() {
       echo "Mirroring $DIR from NUC using rsync..."
       if [[ -z $IS_WSL ]] || [[ -d "$RSYNC_DEST_ROOT/$DIR" ]]; then
         echo
+        rsync-sidekick "192.168.86.10:/mnt/files/$DIR/" "$RSYNC_DEST_ROOT/$DIR"
         "$RSYNC" -avz --no-perms --delete --inplace --compress-choice=zstd --compress-level=1 "192.168.86.10::Files/$DIR/" "$RSYNC_DEST_ROOT/$DIR"
       else
         echo "Directory \"$RSYNC_DEST_ROOT/$DIR\" does not exist; aborting"
@@ -684,7 +692,7 @@ robomirror() {
       echo "Mirroring $DIR from $RCLONE_MNT using rclone..."
       if [[ -d "$RCLONE_DEST_ROOT/$DIR" ]]; then
         echo
-        "$RCLONE" sync -v "${RCLONE_MNT}:$DIR" "$RCLONE_DEST_ROOT/$DIR" --exclude "**/.stfolder/**"
+        "$RCLONE" sync -v "${RCLONE_MNT}:$DIR" "$RCLONE_DEST_ROOT/$DIR" --exclude "**/.stfolder/**" --track-renames
       else
         echo "Directory \"$RCLONE_DEST_ROOT/$DIR\" does not exist; aborting"
       fi
@@ -1240,6 +1248,24 @@ install-kubectl() {
   sudo apt-get install -y kubectl kubectx
 }
 
+local-llm-benchmark() {
+  set -o pipefail
+  while true; do
+    curl -sS http://localhost:8080/completion \
+      -H "Content-Type: application/json" \
+      -d '{"prompt": "Please make me a delicious sandwich. Be as detailed as you possibly can. NOTE: I do not like tomatoes.", "n_predict": 64, "stream": false}' \
+    | jq '.timings.predicted_per_second' || break
+  done
+}
+
+keyboard-lock() {
+  [[ $1 == "on" ]] && INHIBIT=1
+  [[ $1 == "off" ]] && INHIBIT=0
+
+  echo $INHIBIT | sudo tee /sys/devices/platform/i8042/serio0/input/input3/inhibited
+  echo $INHIBIT | sudo tee /sys/devices/platform/i8042/serio1/input/input6/inhibited
+}
+
 export -f btrfs-dedupe
 export -f btrfs-defrag
 export -f btrfs-stats
@@ -1329,3 +1355,5 @@ export -f install-rclone
 export -f openwrt-generate-user-file
 export -f project-egg-download
 export -f install-kubectl
+export -f local-llm-benchmark
+export -f keyboard-lock

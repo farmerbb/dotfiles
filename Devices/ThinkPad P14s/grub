@@ -9,7 +9,7 @@ GRUB_TIMEOUT_STYLE=hidden
 GRUB_TIMEOUT=0
 GRUB_RECORDFAIL_TIMEOUT=0
 GRUB_DISTRIBUTOR=`( . /etc/os-release && echo ${NAME} )`
-GRUB_CMDLINE_LINUX_DEFAULT="quiet splash mitigations=off sysrq_always_enabled=1"
+GRUB_CMDLINE_LINUX_DEFAULT="quiet splash mitigations=off sysrq_always_enabled=1 amdgpu.gttsize=65536 ttm.pages_limit=25165824"
 GRUB_CMDLINE_LINUX="cryptdevice=UUID=727464b6-f918-495f-83d3-214e85139c02:rootfs root=/dev/mapper/rootfs"
 
 # If your computer has multiple operating systems installed, then you

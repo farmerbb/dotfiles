@@ -1,4 +1,6 @@
 name: nuc
+include:
+  - path: ./immich/docker-compose.yml
 services:
   adguardhome:
     container_name: adguardhome
@@ -15,6 +17,12 @@ services:
       - 1443:1443/tcp
       - 1443:1443/udp
       - 853:853/tcp
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z -v -w5 127.0.0.1 53 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
     image: adguard/adguardhome:latest
     logging:
       driver: local
@@ -27,17 +35,22 @@ services:
     restart: unless-stopped
     logging:
       driver: local
-# esphome:
-#   container_name: esphome
-#   image: esphome/esphome
-#   volumes:
-#     - ./esphome:/config
-#     - /etc/localtime:/etc/localtime:ro
-#   restart: unless-stopped
-#   privileged: true
-#   network_mode: host
-#   logging:
-#     driver: local
+  cloudflare-ddns:
+    container_name: cloudflare-ddns
+    image: favonia/cloudflare-ddns:latest
+    network_mode: host
+    restart: unless-stopped
+    user: 1000:1000
+    read_only: true
+    cap_drop: [all]
+    security_opt: [no-new-privileges:true]
+    environment:
+      - CLOUDFLARE_API_TOKEN=[REDACTED]
+      - DOMAINS=[REDACTED],*.[REDACTED]
+      - PROXIED=false
+      - IP6_PROVIDER=none
+    logging:
+      driver: local
   goaccess:
     container_name: goaccess
     image: allinurl/goaccess:latest
@@ -87,14 +100,6 @@ services:
     image: ghcr.io/home-assistant/home-assistant:stable
     logging:
       driver: local
-  it-tools:
-    container_name: it-tools
-    image: corentinth/it-tools:latest
-    restart: unless-stopped
-    ports:
-      - 8082:80
-    logging:
-      driver: local
   netalertx:
   # See breaking changes: https://github.com/netalertx/NetAlertX/issues/1150
     container_name: netalertx
@@ -121,18 +126,6 @@ services:
       - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
     logging:
       driver: local
-# nodered:
-#   container_name: nodered
-#   image: nodered/node-red:latest
-#   restart: unless-stopped
-#   environment:
-#     - TZ=America/Denver
-#   ports:
-#     - 1880:1880
-#   volumes:
-#     - ./nodered:/data
-#   logging:
-#     driver: local
   plex:
     container_name: plex
     image: plexinc/pms-docker
@@ -145,7 +138,7 @@ services:
     volumes:
       - ./plex:/config
       - /dev/shm:/transcode
-      - /mnt/files:/mnt/files
+      - /mnt/files:/mnt/files:ro
     devices:
       - /dev/dri:/dev/dri
     logging:
@@ -158,7 +151,7 @@ services:
       - PGID=1000
     volumes:
       - ./syncthing:/var/syncthing
-      - /mnt/files:/mnt/files
+      - /mnt/files:/mnt/files:ro
     network_mode: host
     restart: unless-stopped
     logging:
